@@ -217,6 +217,85 @@ export type Database = {
           },
         ]
       }
+      assessment_events: {
+        Row: {
+          attempt_id: string
+          class_id: string | null
+          exam_id: string
+          exam_kind: Database["public"]["Enums"]["exam_kind"]
+          id: string
+          marking_complete: boolean
+          occurred_at: string
+          organisation_id: string
+          percentage: number
+          released_at: string | null
+          score: number
+          student_id: string
+          subject_id: string | null
+          total_marks: number
+          updated_at: string
+          voided: boolean
+        }
+        Insert: {
+          attempt_id: string
+          class_id?: string | null
+          exam_id: string
+          exam_kind: Database["public"]["Enums"]["exam_kind"]
+          id?: string
+          marking_complete?: boolean
+          occurred_at: string
+          organisation_id: string
+          percentage: number
+          released_at?: string | null
+          score: number
+          student_id: string
+          subject_id?: string | null
+          total_marks: number
+          updated_at?: string
+          voided?: boolean
+        }
+        Update: {
+          attempt_id?: string
+          class_id?: string | null
+          exam_id?: string
+          exam_kind?: Database["public"]["Enums"]["exam_kind"]
+          id?: string
+          marking_complete?: boolean
+          occurred_at?: string
+          organisation_id?: string
+          percentage?: number
+          released_at?: string | null
+          score?: number
+          student_id?: string
+          subject_id?: string | null
+          total_marks?: number
+          updated_at?: string
+          voided?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assessment_events_attempt_id_organisation_id_fkey"
+            columns: ["attempt_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "attempts"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "assessment_events_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assessment_events_student_id_organisation_id_fkey"
+            columns: ["student_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
       attempts: {
         Row: {
           attempt_no: number
@@ -1533,6 +1612,91 @@ export type Database = {
           },
         ]
       }
+      diagnoses: {
+        Row: {
+          created_at: string
+          dismissed_at: string | null
+          dismissed_by: string | null
+          dismissed_reason: string | null
+          evidence: Json
+          finding: string
+          generated_by: Database["public"]["Enums"]["diagnosis_source"]
+          id: string
+          kind: Database["public"]["Enums"]["diagnosis_kind"]
+          narrative: string | null
+          organisation_id: string
+          resolved_at: string | null
+          root_topic_key: string | null
+          severity: Database["public"]["Enums"]["severity_level"]
+          status: Database["public"]["Enums"]["diagnosis_status"]
+          student_id: string
+          topic_key: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          dismissed_at?: string | null
+          dismissed_by?: string | null
+          dismissed_reason?: string | null
+          evidence?: Json
+          finding: string
+          generated_by?: Database["public"]["Enums"]["diagnosis_source"]
+          id?: string
+          kind: Database["public"]["Enums"]["diagnosis_kind"]
+          narrative?: string | null
+          organisation_id: string
+          resolved_at?: string | null
+          root_topic_key?: string | null
+          severity: Database["public"]["Enums"]["severity_level"]
+          status?: Database["public"]["Enums"]["diagnosis_status"]
+          student_id: string
+          topic_key: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          dismissed_at?: string | null
+          dismissed_by?: string | null
+          dismissed_reason?: string | null
+          evidence?: Json
+          finding?: string
+          generated_by?: Database["public"]["Enums"]["diagnosis_source"]
+          id?: string
+          kind?: Database["public"]["Enums"]["diagnosis_kind"]
+          narrative?: string | null
+          organisation_id?: string
+          resolved_at?: string | null
+          root_topic_key?: string | null
+          severity?: Database["public"]["Enums"]["severity_level"]
+          status?: Database["public"]["Enums"]["diagnosis_status"]
+          student_id?: string
+          topic_key?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "diagnoses_dismissed_by_fkey"
+            columns: ["dismissed_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "diagnoses_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "diagnoses_student_id_organisation_id_fkey"
+            columns: ["student_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
       discounts: {
         Row: {
           code: string
@@ -1927,6 +2091,119 @@ export type Database = {
           },
         ]
       }
+      interventions: {
+        Row: {
+          assigned_at: string | null
+          assigned_by: string | null
+          assigned_to: string | null
+          baseline_mastery: number | null
+          completed_at: string | null
+          created_at: string
+          description: string | null
+          diagnosis_id: string | null
+          due_on: string | null
+          id: string
+          organisation_id: string
+          status: Database["public"]["Enums"]["intervention_status"]
+          student_id: string
+          target_note_id: string | null
+          target_topic_key: string
+          title: string
+          type: Database["public"]["Enums"]["intervention_type"]
+          updated_at: string
+        }
+        Insert: {
+          assigned_at?: string | null
+          assigned_by?: string | null
+          assigned_to?: string | null
+          baseline_mastery?: number | null
+          completed_at?: string | null
+          created_at?: string
+          description?: string | null
+          diagnosis_id?: string | null
+          due_on?: string | null
+          id?: string
+          organisation_id: string
+          status?: Database["public"]["Enums"]["intervention_status"]
+          student_id: string
+          target_note_id?: string | null
+          target_topic_key: string
+          title: string
+          type: Database["public"]["Enums"]["intervention_type"]
+          updated_at?: string
+        }
+        Update: {
+          assigned_at?: string | null
+          assigned_by?: string | null
+          assigned_to?: string | null
+          baseline_mastery?: number | null
+          completed_at?: string | null
+          created_at?: string
+          description?: string | null
+          diagnosis_id?: string | null
+          due_on?: string | null
+          id?: string
+          organisation_id?: string
+          status?: Database["public"]["Enums"]["intervention_status"]
+          student_id?: string
+          target_note_id?: string | null
+          target_topic_key?: string
+          title?: string
+          type?: Database["public"]["Enums"]["intervention_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "interventions_assigned_by_fkey"
+            columns: ["assigned_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interventions_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interventions_diagnosis_id_organisation_id_fkey"
+            columns: ["diagnosis_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "diagnoses"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "interventions_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interventions_student_id_organisation_id_fkey"
+            columns: ["student_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "interventions_target_note_id_organisation_id_fkey"
+            columns: ["target_note_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "note_current"
+            referencedColumns: ["note_id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "interventions_target_note_id_organisation_id_fkey"
+            columns: ["target_note_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "notes"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
       learning_outcomes: {
         Row: {
           code: string
@@ -1962,6 +2239,57 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organisations"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      mastery_snapshots: {
+        Row: {
+          confidence: number
+          evidence_n: number
+          id: number
+          mastery_score: number
+          organisation_id: string
+          released_mastery: number | null
+          student_id: string
+          taken_at: string
+          topic_key: string
+        }
+        Insert: {
+          confidence: number
+          evidence_n: number
+          id?: never
+          mastery_score: number
+          organisation_id: string
+          released_mastery?: number | null
+          student_id: string
+          taken_at?: string
+          topic_key: string
+        }
+        Update: {
+          confidence?: number
+          evidence_n?: number
+          id?: never
+          mastery_score?: number
+          organisation_id?: string
+          released_mastery?: number | null
+          student_id?: string
+          taken_at?: string
+          topic_key?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mastery_snapshots_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mastery_snapshots_student_id_organisation_id_fkey"
+            columns: ["student_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id", "organisation_id"]
           },
         ]
       }
@@ -2457,6 +2785,86 @@ export type Database = {
         }
         Relationships: []
       }
+      parent_reports: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          content: Json
+          created_at: string
+          created_by: string | null
+          id: string
+          organisation_id: string
+          period_end: string
+          period_start: string
+          sent_at: string | null
+          sent_via: string | null
+          status: Database["public"]["Enums"]["report_status"]
+          student_id: string
+          title: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          content: Json
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          organisation_id: string
+          period_end: string
+          period_start: string
+          sent_at?: string | null
+          sent_via?: string | null
+          status?: Database["public"]["Enums"]["report_status"]
+          student_id: string
+          title: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          content?: Json
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          organisation_id?: string
+          period_end?: string
+          period_start?: string
+          sent_at?: string | null
+          sent_via?: string | null
+          status?: Database["public"]["Enums"]["report_status"]
+          student_id?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "parent_reports_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "parent_reports_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "parent_reports_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "parent_reports_student_id_organisation_id_fkey"
+            columns: ["student_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
       parents: {
         Row: {
           created_at: string
@@ -2855,6 +3263,176 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "topic_tree"
             referencedColumns: ["topic_id", "organisation_id"]
+          },
+        ]
+      }
+      reassessments: {
+        Row: {
+          assessed_at: string
+          baseline_mastery: number | null
+          delta: number | null
+          id: string
+          intervention_id: string
+          organisation_id: string
+          outcome: Database["public"]["Enums"]["reassessment_outcome"]
+          result_mastery: number
+          student_id: string
+          topic_key: string
+        }
+        Insert: {
+          assessed_at?: string
+          baseline_mastery?: number | null
+          delta?: number | null
+          id?: string
+          intervention_id: string
+          organisation_id: string
+          outcome: Database["public"]["Enums"]["reassessment_outcome"]
+          result_mastery: number
+          student_id: string
+          topic_key: string
+        }
+        Update: {
+          assessed_at?: string
+          baseline_mastery?: number | null
+          delta?: number | null
+          id?: string
+          intervention_id?: string
+          organisation_id?: string
+          outcome?: Database["public"]["Enums"]["reassessment_outcome"]
+          result_mastery?: number
+          student_id?: string
+          topic_key?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reassessments_intervention_id_organisation_id_fkey"
+            columns: ["intervention_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "intervention_board"
+            referencedColumns: ["intervention_id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "reassessments_intervention_id_organisation_id_fkey"
+            columns: ["intervention_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "interventions"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "reassessments_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reassessments_student_id_organisation_id_fkey"
+            columns: ["student_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
+      response_events: {
+        Row: {
+          attempt_id: string
+          cognitive_level: Database["public"]["Enums"]["cognitive_level"] | null
+          correct: boolean
+          difficulty: Database["public"]["Enums"]["difficulty_level"] | null
+          exam_id: string
+          fraction: number
+          id: string
+          is_current: boolean
+          kind_weight: number
+          marks_awarded: number
+          marks_possible: number
+          occurred_at: string
+          organisation_id: string
+          question_id: string | null
+          response_id: string
+          student_id: string
+          time_spent_s: number | null
+          topic_id: string
+          topic_key: string
+          updated_at: string
+        }
+        Insert: {
+          attempt_id: string
+          cognitive_level?:
+            | Database["public"]["Enums"]["cognitive_level"]
+            | null
+          correct: boolean
+          difficulty?: Database["public"]["Enums"]["difficulty_level"] | null
+          exam_id: string
+          fraction: number
+          id?: string
+          is_current?: boolean
+          kind_weight?: number
+          marks_awarded: number
+          marks_possible: number
+          occurred_at: string
+          organisation_id: string
+          question_id?: string | null
+          response_id: string
+          student_id: string
+          time_spent_s?: number | null
+          topic_id: string
+          topic_key: string
+          updated_at?: string
+        }
+        Update: {
+          attempt_id?: string
+          cognitive_level?:
+            | Database["public"]["Enums"]["cognitive_level"]
+            | null
+          correct?: boolean
+          difficulty?: Database["public"]["Enums"]["difficulty_level"] | null
+          exam_id?: string
+          fraction?: number
+          id?: string
+          is_current?: boolean
+          kind_weight?: number
+          marks_awarded?: number
+          marks_possible?: number
+          occurred_at?: string
+          organisation_id?: string
+          question_id?: string | null
+          response_id?: string
+          student_id?: string
+          time_spent_s?: number | null
+          topic_id?: string
+          topic_key?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "response_events_attempt_id_organisation_id_fkey"
+            columns: ["attempt_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "attempts"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "response_events_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "response_events_response_id_fkey"
+            columns: ["response_id"]
+            isOneToOne: true
+            referencedRelation: "responses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "response_events_student_id_organisation_id_fkey"
+            columns: ["student_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id", "organisation_id"]
           },
         ]
       }
@@ -3653,6 +4231,75 @@ export type Database = {
           },
         ]
       }
+      topic_mastery: {
+        Row: {
+          confidence: number
+          evidence_n: number
+          first_assessed_at: string | null
+          last_assessed_at: string | null
+          level: string
+          mastery_score: number
+          organisation_id: string
+          released_confidence: number | null
+          released_evidence_n: number
+          released_mastery: number | null
+          student_id: string
+          subject_id: string | null
+          topic_id_latest: string | null
+          topic_key: string
+          updated_at: string
+        }
+        Insert: {
+          confidence: number
+          evidence_n: number
+          first_assessed_at?: string | null
+          last_assessed_at?: string | null
+          level: string
+          mastery_score: number
+          organisation_id: string
+          released_confidence?: number | null
+          released_evidence_n?: number
+          released_mastery?: number | null
+          student_id: string
+          subject_id?: string | null
+          topic_id_latest?: string | null
+          topic_key: string
+          updated_at?: string
+        }
+        Update: {
+          confidence?: number
+          evidence_n?: number
+          first_assessed_at?: string | null
+          last_assessed_at?: string | null
+          level?: string
+          mastery_score?: number
+          organisation_id?: string
+          released_confidence?: number | null
+          released_evidence_n?: number
+          released_mastery?: number | null
+          student_id?: string
+          subject_id?: string | null
+          topic_id_latest?: string | null
+          topic_key?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "topic_mastery_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "topic_mastery_student_id_organisation_id_fkey"
+            columns: ["student_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
       users: {
         Row: {
           created_at: string
@@ -3758,6 +4405,35 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "assessment_blueprints_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      class_mastery_summary: {
+        Row: {
+          avg_mastery: number | null
+          class_id: string | null
+          class_name: string | null
+          organisation_id: string | null
+          students_assessed: number | null
+          students_weak: number | null
+          subject_id: string | null
+          topic_key: string | null
+          topic_title: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "enrolments_class_id_organisation_id_fkey"
+            columns: ["class_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "enrolments_organisation_id_fkey"
             columns: ["organisation_id"]
             isOneToOne: false
             referencedRelation: "organisations"
@@ -3877,6 +4553,57 @@ export type Database = {
           },
         ]
       }
+      intervention_board: {
+        Row: {
+          diagnosis_kind: Database["public"]["Enums"]["diagnosis_kind"] | null
+          due_on: string | null
+          intervention_id: string | null
+          is_overdue: boolean | null
+          organisation_id: string | null
+          severity: Database["public"]["Enums"]["severity_level"] | null
+          status: Database["public"]["Enums"]["intervention_status"] | null
+          student_id: string | null
+          student_name: string | null
+          title: string | null
+          type: Database["public"]["Enums"]["intervention_type"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "interventions_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interventions_student_id_organisation_id_fkey"
+            columns: ["student_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
+      intervention_effectiveness: {
+        Row: {
+          avg_change: number | null
+          declined: number | null
+          improved: number | null
+          organisation_id: string | null
+          reassessed: number | null
+          type: Database["public"]["Enums"]["intervention_type"] | null
+          unchanged: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reassessments_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invoice_summary: {
         Row: {
           academic_session_id: string | null
@@ -3912,6 +4639,34 @@ export type Database = {
           },
           {
             foreignKeyName: "customer_invoices_student_id_organisation_id_fkey"
+            columns: ["student_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
+      mastery_trend: {
+        Row: {
+          delta: number | null
+          direction: string | null
+          latest: number | null
+          organisation_id: string | null
+          previous: number | null
+          student_id: string | null
+          taken_at: string | null
+          topic_key: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mastery_snapshots_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mastery_snapshots_student_id_organisation_id_fkey"
             columns: ["student_id", "organisation_id"]
             isOneToOne: false
             referencedRelation: "students"
@@ -4120,6 +4875,38 @@ export type Database = {
           },
         ]
       }
+      topic_mastery_detail: {
+        Row: {
+          admission_no: string | null
+          confidence: number | null
+          evidence_n: number | null
+          last_assessed_at: string | null
+          level: string | null
+          mastery_score: number | null
+          organisation_id: string | null
+          student_id: string | null
+          student_name: string | null
+          subject_name: string | null
+          topic_key: string | null
+          topic_title: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "topic_mastery_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "topic_mastery_student_id_organisation_id_fkey"
+            columns: ["student_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
       topic_tree: {
         Row: {
           class_level: string | null
@@ -4192,6 +4979,18 @@ export type Database = {
     }
     Functions: {
       account_for_student: { Args: { p_student_id: string }; Returns: string }
+      add_intervention: {
+        Args: {
+          p_description?: string
+          p_due_on?: string
+          p_note_id?: string
+          p_student_id: string
+          p_title: string
+          p_topic_key: string
+          p_type: Database["public"]["Enums"]["intervention_type"]
+        }
+        Returns: string
+      }
       answer_matches: {
         Args: { p_key: Json; p_text: string }
         Returns: boolean
@@ -4205,12 +5004,24 @@ export type Database = {
         Args: { p_amount?: number; p_invoice_id: string }
         Returns: number
       }
+      approve_parent_report: {
+        Args: { p_content?: Json; p_report_id: string }
+        Returns: undefined
+      }
       approve_refund: {
         Args: { p_note?: string; p_refund_id: string }
         Returns: undefined
       }
       assert_owner_authority: { Args: never; Returns: string }
       assert_service_context: { Args: never; Returns: undefined }
+      assign_intervention: {
+        Args: {
+          p_assignee?: string
+          p_due_on?: string
+          p_intervention_id: string
+        }
+        Returns: undefined
+      }
       attach_checkout: {
         Args: {
           p_attempt_id: string
@@ -4244,6 +5055,10 @@ export type Database = {
           subject_name: string
           title: string
         }[]
+      }
+      build_report_content: {
+        Args: { p_from: string; p_student_id: string; p_to: string }
+        Returns: Json
       }
       can_manage_membership: { Args: { p_org_id: string }; Returns: boolean }
       can_manage_organisation: { Args: { p_org_id: string }; Returns: boolean }
@@ -4288,6 +5103,23 @@ export type Database = {
       current_org_id: { Args: never; Returns: string }
       current_student_id: { Args: never; Returns: string }
       current_user_id: { Args: never; Returns: string }
+      dismiss_diagnosis: {
+        Args: { p_diagnosis_id: string; p_reason: string }
+        Returns: undefined
+      }
+      draft_parent_report: {
+        Args: {
+          p_from: string
+          p_student_id: string
+          p_title?: string
+          p_to: string
+        }
+        Returns: string
+      }
+      draft_parent_reports_for_class: {
+        Args: { p_class_id: string; p_from: string; p_to: string }
+        Returns: number
+      }
       fees_cleared: { Args: { p_student_id: string }; Returns: boolean }
       finalize_attempt: {
         Args: {
@@ -4339,9 +5171,22 @@ export type Database = {
       is_platform_admin: { Args: never; Returns: boolean }
       is_self_or_parent: { Args: { p_student_id: string }; Returns: boolean }
       issue_invoice: { Args: { p_invoice_id: string }; Returns: undefined }
+      learning_dashboard: { Args: { p_student_id?: string }; Returns: Json }
+      mark_intervention_done: {
+        Args: { p_intervention_id: string }
+        Returns: undefined
+      }
+      mark_report_sent: {
+        Args: { p_channel: string; p_report_id: string }
+        Returns: undefined
+      }
       mark_response: {
         Args: { p_feedback?: string; p_marks: number; p_response_id: string }
         Returns: undefined
+      }
+      mastery_level: {
+        Args: { p_conf: number; p_score: number }
+        Returns: string
       }
       migration_begin: {
         Args: { p_requires: string; p_version: string }
@@ -4411,6 +5256,11 @@ export type Database = {
         }
         Returns: undefined
       }
+      rebuild_mastery: { Args: { p_student_id?: string }; Returns: number }
+      recompute_topic_mastery: {
+        Args: { p_student_id: string; p_topic_key: string }
+        Returns: undefined
+      }
       record_manual_payment: {
         Args: {
           p_amount: number
@@ -4423,6 +5273,14 @@ export type Database = {
           p_student_id: string
         }
         Returns: string
+      }
+      record_reassessments: {
+        Args: { p_student_id: string; p_topic_key: string }
+        Returns: undefined
+      }
+      refresh_mastery_for_attempt: {
+        Args: { p_attempt_id: string }
+        Returns: undefined
       }
       reject_refund: {
         Args: { p_note?: string; p_refund_id: string }
@@ -4471,6 +5329,10 @@ export type Database = {
         Returns: boolean
       }
       run_cbt_maintenance: { Args: never; Returns: Json }
+      run_diagnosis: {
+        Args: { p_student_id: string; p_topic_key: string }
+        Returns: undefined
+      }
       run_finance_maintenance: { Args: never; Returns: number }
       save_response: {
         Args: {
@@ -4492,6 +5354,13 @@ export type Database = {
           title: string
           topic_id: string
         }[]
+      }
+      set_intervention_status: {
+        Args: {
+          p_intervention_id: string
+          p_status: Database["public"]["Enums"]["intervention_status"]
+        }
+        Returns: undefined
       }
       set_payment_provider_secret: {
         Args: {
@@ -4518,6 +5387,10 @@ export type Database = {
         Args: { p_version_id: string }
         Returns: undefined
       }
+      suggest_interventions: {
+        Args: { p_diagnosis_id: string }
+        Returns: undefined
+      }
       topic_prerequisite_chain: {
         Args: { p_topic_id: string }
         Returns: {
@@ -4534,6 +5407,14 @@ export type Database = {
       unpublish_note: { Args: { p_note_id: string }; Returns: undefined }
       unpublish_question: {
         Args: { p_question_id: string }
+        Returns: undefined
+      }
+      upsert_assessment_event: {
+        Args: { p_result_id: string }
+        Returns: undefined
+      }
+      upsert_response_event: {
+        Args: { p_response_id: string }
         Returns: undefined
       }
       void_attempt: {
@@ -4575,11 +5456,26 @@ export type Database = {
         | "archived"
       content_visibility: "private" | "organisation" | "shared"
       curriculum_status: "draft" | "published" | "archived"
+      diagnosis_kind: "weak_topic" | "prerequisite_gap" | "declining"
+      diagnosis_source: "rule" | "ai"
+      diagnosis_status: "open" | "resolved" | "superseded" | "dismissed"
       difficulty_level: "easy" | "medium" | "hard"
       enrolment_status: "active" | "completed" | "withdrawn" | "transferred"
       exam_kind: "test" | "exam" | "practice" | "mock"
       exam_status: "draft" | "published" | "closed" | "archived"
       gender_type: "female" | "male" | "other" | "undisclosed"
+      intervention_status:
+        | "suggested"
+        | "assigned"
+        | "in_progress"
+        | "completed"
+        | "cancelled"
+      intervention_type:
+        | "note"
+        | "practice"
+        | "teacher_action"
+        | "parent_message"
+        | "remedial_class"
       invoice_status: "draft" | "issued" | "partially_paid" | "paid" | "void"
       ledger_entry_type: "debit" | "credit"
       ledger_kind:
@@ -4626,11 +5522,14 @@ export type Database = {
         | "fill_blank"
         | "short_answer"
         | "theory"
+      reassessment_outcome: "improved" | "unchanged" | "declined"
       refund_source: "invoice" | "wallet"
       refund_status: "requested" | "approved" | "rejected" | "completed"
       release_policy: "manual" | "immediate" | "after_close"
+      report_status: "draft" | "approved" | "sent"
       review_decision: "approved" | "changes_requested" | "rejected"
       role_scope: "platform" | "organisation"
+      severity_level: "low" | "medium" | "high"
       term_hint: "first" | "second" | "third" | "any"
       user_status: "invited" | "active" | "suspended" | "deleted"
     }
@@ -4775,11 +5674,28 @@ export const Constants = {
       ],
       content_visibility: ["private", "organisation", "shared"],
       curriculum_status: ["draft", "published", "archived"],
+      diagnosis_kind: ["weak_topic", "prerequisite_gap", "declining"],
+      diagnosis_source: ["rule", "ai"],
+      diagnosis_status: ["open", "resolved", "superseded", "dismissed"],
       difficulty_level: ["easy", "medium", "hard"],
       enrolment_status: ["active", "completed", "withdrawn", "transferred"],
       exam_kind: ["test", "exam", "practice", "mock"],
       exam_status: ["draft", "published", "closed", "archived"],
       gender_type: ["female", "male", "other", "undisclosed"],
+      intervention_status: [
+        "suggested",
+        "assigned",
+        "in_progress",
+        "completed",
+        "cancelled",
+      ],
+      intervention_type: [
+        "note",
+        "practice",
+        "teacher_action",
+        "parent_message",
+        "remedial_class",
+      ],
       invoice_status: ["draft", "issued", "partially_paid", "paid", "void"],
       ledger_entry_type: ["debit", "credit"],
       ledger_kind: [
@@ -4831,11 +5747,14 @@ export const Constants = {
         "short_answer",
         "theory",
       ],
+      reassessment_outcome: ["improved", "unchanged", "declined"],
       refund_source: ["invoice", "wallet"],
       refund_status: ["requested", "approved", "rejected", "completed"],
       release_policy: ["manual", "immediate", "after_close"],
+      report_status: ["draft", "approved", "sent"],
       review_decision: ["approved", "changes_requested", "rejected"],
       role_scope: ["platform", "organisation"],
+      severity_level: ["low", "medium", "high"],
       term_hint: ["first", "second", "third", "any"],
       user_status: ["invited", "active", "suspended", "deleted"],
     },

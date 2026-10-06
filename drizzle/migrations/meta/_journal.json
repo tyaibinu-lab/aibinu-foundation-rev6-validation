@@ -43,6 +43,13 @@
       "when": 1791293027994,
       "tag": "0005_aibinu_006_finance_and_payments",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1791293114637,
+      "tag": "0006_aibinu_007_cas_academic_intelligence",
+      "breakpoints": true
     }
   ]
 }
