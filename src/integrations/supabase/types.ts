@@ -58,6 +58,404 @@ export type Database = {
           },
         ]
       }
+      ai_content: {
+        Row: {
+          created_at: string
+          error: string | null
+          id: string
+          job_id: string
+          kind: Database["public"]["Enums"]["ai_content_kind"]
+          organisation_id: string
+          payload: Json
+          status: Database["public"]["Enums"]["ai_content_status"]
+          student_id: string | null
+          target_id: string | null
+          target_type: string | null
+        }
+        Insert: {
+          created_at?: string
+          error?: string | null
+          id?: string
+          job_id: string
+          kind: Database["public"]["Enums"]["ai_content_kind"]
+          organisation_id: string
+          payload: Json
+          status: Database["public"]["Enums"]["ai_content_status"]
+          student_id?: string | null
+          target_id?: string | null
+          target_type?: string | null
+        }
+        Update: {
+          created_at?: string
+          error?: string | null
+          id?: string
+          job_id?: string
+          kind?: Database["public"]["Enums"]["ai_content_kind"]
+          organisation_id?: string
+          payload?: Json
+          status?: Database["public"]["Enums"]["ai_content_status"]
+          student_id?: string | null
+          target_id?: string | null
+          target_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_content_job_id_organisation_id_fkey"
+            columns: ["job_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "ai_jobs"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "ai_content_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_diagnostics: {
+        Row: {
+          created_at: string
+          findings: Json
+          id: string
+          job_id: string
+          model: string | null
+          organisation_id: string
+          review_state: Database["public"]["Enums"]["ai_review_state"]
+          reviewed_at: string | null
+          reviewed_by: string | null
+          student_id: string
+          summary: string
+        }
+        Insert: {
+          created_at?: string
+          findings: Json
+          id?: string
+          job_id: string
+          model?: string | null
+          organisation_id: string
+          review_state?: Database["public"]["Enums"]["ai_review_state"]
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          student_id: string
+          summary: string
+        }
+        Update: {
+          created_at?: string
+          findings?: Json
+          id?: string
+          job_id?: string
+          model?: string | null
+          organisation_id?: string
+          review_state?: Database["public"]["Enums"]["ai_review_state"]
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          student_id?: string
+          summary?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_diagnostics_job_id_organisation_id_fkey"
+            columns: ["job_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "ai_jobs"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "ai_diagnostics_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_diagnostics_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_diagnostics_student_id_organisation_id_fkey"
+            columns: ["student_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
+      ai_jobs: {
+        Row: {
+          attempts: number
+          cost_usd_micros: number
+          created_at: string
+          error: string | null
+          finished_at: string | null
+          id: string
+          idempotency_key: string | null
+          input: Json
+          input_tokens: number | null
+          locked_by: string | null
+          locked_until: string | null
+          max_attempts: number
+          model: string | null
+          organisation_id: string
+          output_tokens: number | null
+          priority: number
+          requested_by: string | null
+          result_summary: Json | null
+          run_after: string
+          started_at: string | null
+          status: Database["public"]["Enums"]["ai_job_status"]
+          student_id: string | null
+          target_id: string | null
+          target_type: string | null
+          type: Database["public"]["Enums"]["ai_job_type"]
+        }
+        Insert: {
+          attempts?: number
+          cost_usd_micros?: number
+          created_at?: string
+          error?: string | null
+          finished_at?: string | null
+          id?: string
+          idempotency_key?: string | null
+          input: Json
+          input_tokens?: number | null
+          locked_by?: string | null
+          locked_until?: string | null
+          max_attempts?: number
+          model?: string | null
+          organisation_id: string
+          output_tokens?: number | null
+          priority?: number
+          requested_by?: string | null
+          result_summary?: Json | null
+          run_after?: string
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["ai_job_status"]
+          student_id?: string | null
+          target_id?: string | null
+          target_type?: string | null
+          type: Database["public"]["Enums"]["ai_job_type"]
+        }
+        Update: {
+          attempts?: number
+          cost_usd_micros?: number
+          created_at?: string
+          error?: string | null
+          finished_at?: string | null
+          id?: string
+          idempotency_key?: string | null
+          input?: Json
+          input_tokens?: number | null
+          locked_by?: string | null
+          locked_until?: string | null
+          max_attempts?: number
+          model?: string | null
+          organisation_id?: string
+          output_tokens?: number | null
+          priority?: number
+          requested_by?: string | null
+          result_summary?: Json | null
+          run_after?: string
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["ai_job_status"]
+          student_id?: string | null
+          target_id?: string | null
+          target_type?: string | null
+          type?: Database["public"]["Enums"]["ai_job_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_jobs_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_jobs_requested_by_fkey"
+            columns: ["requested_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_jobs_student_id_organisation_id_fkey"
+            columns: ["student_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
+      ai_prompt_templates: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          job_type: Database["public"]["Enums"]["ai_job_type"]
+          notes: string | null
+          output_schema: Json
+          system_prompt: string
+          user_template: string
+          version: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          job_type: Database["public"]["Enums"]["ai_job_type"]
+          notes?: string | null
+          output_schema: Json
+          system_prompt: string
+          user_template: string
+          version: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          job_type?: Database["public"]["Enums"]["ai_job_type"]
+          notes?: string | null
+          output_schema?: Json
+          system_prompt?: string
+          user_template?: string
+          version?: number
+        }
+        Relationships: []
+      }
+      ai_recommendations: {
+        Row: {
+          clicked_at: string | null
+          created_at: string
+          dismissed_at: string | null
+          exam_id: string | null
+          id: string
+          is_active: boolean
+          kind: Database["public"]["Enums"]["recommendation_kind"]
+          note_id: string | null
+          organisation_id: string
+          priority: number
+          reason: string
+          shown_at: string | null
+          source: Database["public"]["Enums"]["recommendation_source"]
+          student_id: string
+          title: string
+          topic_key: string
+        }
+        Insert: {
+          clicked_at?: string | null
+          created_at?: string
+          dismissed_at?: string | null
+          exam_id?: string | null
+          id?: string
+          is_active?: boolean
+          kind: Database["public"]["Enums"]["recommendation_kind"]
+          note_id?: string | null
+          organisation_id: string
+          priority?: number
+          reason: string
+          shown_at?: string | null
+          source?: Database["public"]["Enums"]["recommendation_source"]
+          student_id: string
+          title: string
+          topic_key: string
+        }
+        Update: {
+          clicked_at?: string | null
+          created_at?: string
+          dismissed_at?: string | null
+          exam_id?: string | null
+          id?: string
+          is_active?: boolean
+          kind?: Database["public"]["Enums"]["recommendation_kind"]
+          note_id?: string | null
+          organisation_id?: string
+          priority?: number
+          reason?: string
+          shown_at?: string | null
+          source?: Database["public"]["Enums"]["recommendation_source"]
+          student_id?: string
+          title?: string
+          topic_key?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_recommendations_exam_id_organisation_id_fkey"
+            columns: ["exam_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "exams"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "ai_recommendations_note_id_organisation_id_fkey"
+            columns: ["note_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "note_current"
+            referencedColumns: ["note_id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "ai_recommendations_note_id_organisation_id_fkey"
+            columns: ["note_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "notes"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "ai_recommendations_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_recommendations_student_id_organisation_id_fkey"
+            columns: ["student_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
+      ai_usage_daily: {
+        Row: {
+          cost_usd_micros: number
+          day: string
+          input_tokens: number
+          jobs: number
+          organisation_id: string
+          output_tokens: number
+        }
+        Insert: {
+          cost_usd_micros?: number
+          day: string
+          input_tokens?: number
+          jobs?: number
+          organisation_id: string
+          output_tokens?: number
+        }
+        Update: {
+          cost_usd_micros?: number
+          day?: string
+          input_tokens?: number
+          jobs?: number
+          organisation_id?: string
+          output_tokens?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_usage_daily_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       assessment_blueprint_items: {
         Row: {
           blueprint_id: string
@@ -2293,6 +2691,67 @@ export type Database = {
           },
         ]
       }
+      membership_invitations: {
+        Row: {
+          accepted_at: string | null
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          invited_by: string
+          organisation_id: string
+          revoked_at: string | null
+          role_id: string
+          token_hash: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          created_at?: string
+          email: string
+          expires_at?: string
+          id?: string
+          invited_by: string
+          organisation_id: string
+          revoked_at?: string | null
+          role_id: string
+          token_hash: string
+        }
+        Update: {
+          accepted_at?: string | null
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          invited_by?: string
+          organisation_id?: string
+          revoked_at?: string | null
+          role_id?: string
+          token_hash?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "membership_invitations_invited_by_fkey"
+            columns: ["invited_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "membership_invitations_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "membership_invitations_role_id_fkey"
+            columns: ["role_id"]
+            isOneToOne: false
+            referencedRelation: "roles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       note_publications: {
         Row: {
           id: string
@@ -4392,6 +4851,39 @@ export type Database = {
           },
         ]
       }
+      ai_review_outcomes: {
+        Row: {
+          awaiting_review: number | null
+          generated: number | null
+          kept_by_reviewers: number | null
+          kind: Database["public"]["Enums"]["ai_content_kind"] | null
+          model: string | null
+          organisation_id: string | null
+          rejected_by_checks: number | null
+          rejected_by_reviewers: number | null
+        }
+        Relationships: []
+      }
+      ai_usage_this_month: {
+        Row: {
+          cost_usd: number | null
+          failed: number | null
+          input_tokens: number | null
+          jobs: number | null
+          organisation_id: string | null
+          output_tokens: number | null
+          type: Database["public"]["Enums"]["ai_job_type"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_jobs_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       blueprint_summary: {
         Row: {
           blueprint_id: string | null
@@ -4671,6 +5163,34 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "students"
             referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
+      my_ai_drafts: {
+        Row: {
+          ai_content_id: string | null
+          created_at: string | null
+          kind: Database["public"]["Enums"]["ai_content_kind"] | null
+          organisation_id: string | null
+          requested_by: string | null
+          status: Database["public"]["Enums"]["ai_content_status"] | null
+          target_id: string | null
+          target_type: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_content_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_jobs_requested_by_fkey"
+            columns: ["requested_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -4978,6 +5498,7 @@ export type Database = {
       }
     }
     Functions: {
+      accept_invitation: { Args: { p_token: string }; Returns: string }
       account_for_student: { Args: { p_student_id: string }; Returns: string }
       add_intervention: {
         Args: {
@@ -4991,6 +5512,7 @@ export type Database = {
         }
         Returns: string
       }
+      anonymise_student: { Args: { p_student_id: string }; Returns: undefined }
       answer_matches: {
         Args: { p_key: Json; p_text: string }
         Returns: boolean
@@ -5056,6 +5578,10 @@ export type Database = {
           title: string
         }[]
       }
+      build_ai_context: {
+        Args: { j: Database["public"]["Tables"]["ai_jobs"]["Row"] }
+        Returns: Json
+      }
       build_report_content: {
         Args: { p_from: string; p_student_id: string; p_to: string }
         Returns: Json
@@ -5085,7 +5611,16 @@ export type Database = {
       can_read_settings: { Args: { p_org_id: string }; Returns: boolean }
       can_read_user: { Args: { p_user_id: string }; Returns: boolean }
       can_view_student: { Args: { p_student_id: string }; Returns: boolean }
+      cancel_ai_job: { Args: { p_job_id: string }; Returns: undefined }
+      claim_ai_job: {
+        Args: { p_lease_seconds?: number; p_worker: string }
+        Returns: Json
+      }
       close_exam: { Args: { p_exam_id: string }; Returns: undefined }
+      complete_ai_job: {
+        Args: { p_job_id: string; p_outputs: Json; p_usage?: Json }
+        Returns: Json
+      }
       complete_refund: {
         Args: { p_provider_refund_id?: string; p_refund_id: string }
         Returns: undefined
@@ -5097,6 +5632,15 @@ export type Database = {
           p_items: Json
           p_notes?: string
           p_student_id: string
+        }
+        Returns: string
+      }
+      create_organisation: {
+        Args: {
+          p_country?: string
+          p_name: string
+          p_slug: string
+          p_type?: Database["public"]["Enums"]["org_type"]
         }
         Returns: string
       }
@@ -5119,6 +5663,27 @@ export type Database = {
       draft_parent_reports_for_class: {
         Args: { p_class_id: string; p_from: string; p_to: string }
         Returns: number
+      }
+      enqueue_ai_job: {
+        Args: {
+          p_idempotency_key: string
+          p_input: Json
+          p_priority?: number
+          p_student_id: string
+          p_target_id: string
+          p_target_type: string
+          p_type: Database["public"]["Enums"]["ai_job_type"]
+        }
+        Returns: string
+      }
+      fail_ai_job: {
+        Args: {
+          p_error: string
+          p_job_id: string
+          p_retry?: boolean
+          p_usage?: Json
+        }
+        Returns: undefined
       }
       fees_cleared: { Args: { p_student_id: string }; Returns: boolean }
       finalize_attempt: {
@@ -5162,6 +5727,10 @@ export type Database = {
         }
         Returns: Json
       }
+      invite_member: {
+        Args: { p_email: string; p_role_code: string }
+        Returns: string
+      }
       is_active_org_member: { Args: { p_org_id: string }; Returns: boolean }
       is_eligible: {
         Args: { p_exam_id: string; p_student_id: string }
@@ -5193,6 +5762,7 @@ export type Database = {
         Returns: undefined
       }
       my_attempt_review: { Args: { p_attempt_id: string }; Returns: Json }
+      my_recommendations: { Args: { p_refresh?: boolean }; Returns: Json }
       next_number: {
         Args: { p_org: string; p_prefix: string; p_scope: string }
         Returns: string
@@ -5261,6 +5831,10 @@ export type Database = {
         Args: { p_student_id: string; p_topic_key: string }
         Returns: undefined
       }
+      record_ai_usage: {
+        Args: { p_org: string; p_usage: Json }
+        Returns: undefined
+      }
       record_manual_payment: {
         Args: {
           p_amount: number
@@ -5278,9 +5852,21 @@ export type Database = {
         Args: { p_student_id: string; p_topic_key: string }
         Returns: undefined
       }
+      record_recommendation_event: {
+        Args: { p_event: string; p_id: string }
+        Returns: undefined
+      }
+      refresh_all_recommendations: {
+        Args: { p_limit?: number }
+        Returns: number
+      }
       refresh_mastery_for_attempt: {
         Args: { p_attempt_id: string }
         Returns: undefined
+      }
+      refresh_recommendations: {
+        Args: { p_student_id: string }
+        Returns: number
       }
       reject_refund: {
         Args: { p_note?: string; p_refund_id: string }
@@ -5293,6 +5879,39 @@ export type Database = {
       release_results_internal: {
         Args: { p_exam_id: string; p_force: boolean }
         Returns: number
+      }
+      request_ai_diagnosis_explanation: {
+        Args: { p_diagnosis_id: string }
+        Returns: string
+      }
+      request_ai_note: {
+        Args: {
+          p_idempotency_key?: string
+          p_instructions?: string
+          p_style?: string
+          p_topic_id: string
+        }
+        Returns: string
+      }
+      request_ai_questions: {
+        Args: {
+          p_cognitive?: Database["public"]["Enums"]["cognitive_level"]
+          p_count?: number
+          p_difficulty?: Database["public"]["Enums"]["difficulty_level"]
+          p_idempotency_key?: string
+          p_instructions?: string
+          p_topic_id: string
+          p_type?: Database["public"]["Enums"]["question_type"]
+        }
+        Returns: string
+      }
+      request_ai_report_comment: {
+        Args: { p_report_id: string }
+        Returns: string
+      }
+      request_ai_student_review: {
+        Args: { p_idempotency_key?: string; p_student_id: string }
+        Returns: string
       }
       request_refund: {
         Args: {
@@ -5320,6 +5939,10 @@ export type Database = {
           total_marks: number
         }[]
       }
+      review_ai_diagnostic: {
+        Args: { p_accept: boolean; p_id: string }
+        Returns: undefined
+      }
       revoke_organisation_owner: {
         Args: { p_new_role_code?: string; p_user_id: string }
         Returns: undefined
@@ -5328,6 +5951,7 @@ export type Database = {
         Args: { p_role_id: string }
         Returns: boolean
       }
+      run_ai_maintenance: { Args: never; Returns: Json }
       run_cbt_maintenance: { Args: never; Returns: Json }
       run_diagnosis: {
         Args: { p_student_id: string; p_topic_key: string }
@@ -5353,6 +5977,15 @@ export type Database = {
           snippet: string
           title: string
           topic_id: string
+        }[]
+      }
+      security_expected_client_functions: { Args: never; Returns: string[] }
+      security_verify: {
+        Args: never
+        Returns: {
+          check_name: string
+          detail: string
+          object_name: string
         }[]
       }
       set_intervention_status: {
@@ -5432,6 +6065,26 @@ export type Database = {
       }
     }
     Enums: {
+      ai_content_kind:
+        | "question_draft"
+        | "note_draft"
+        | "student_review"
+        | "diagnosis_narrative"
+        | "report_comment"
+      ai_content_status:
+        | "draft_created"
+        | "applied"
+        | "invalid"
+        | "duplicate"
+        | "discarded"
+      ai_job_status: "queued" | "running" | "succeeded" | "failed" | "cancelled"
+      ai_job_type:
+        | "generate_questions"
+        | "generate_note"
+        | "review_student"
+        | "explain_diagnosis"
+        | "report_comment"
+      ai_review_state: "pending_review" | "accepted" | "discarded"
       amount_kind: "percent" | "fixed"
       attempt_policy: "best" | "latest" | "first"
       attempt_status: "in_progress" | "submitted" | "auto_submitted" | "voided"
@@ -5523,6 +6176,8 @@ export type Database = {
         | "short_answer"
         | "theory"
       reassessment_outcome: "improved" | "unchanged" | "declined"
+      recommendation_kind: "note" | "practice_exam"
+      recommendation_source: "rule" | "ai"
       refund_source: "invoice" | "wallet"
       refund_status: "requested" | "approved" | "rejected" | "completed"
       release_policy: "manual" | "immediate" | "after_close"
@@ -5659,6 +6314,29 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      ai_content_kind: [
+        "question_draft",
+        "note_draft",
+        "student_review",
+        "diagnosis_narrative",
+        "report_comment",
+      ],
+      ai_content_status: [
+        "draft_created",
+        "applied",
+        "invalid",
+        "duplicate",
+        "discarded",
+      ],
+      ai_job_status: ["queued", "running", "succeeded", "failed", "cancelled"],
+      ai_job_type: [
+        "generate_questions",
+        "generate_note",
+        "review_student",
+        "explain_diagnosis",
+        "report_comment",
+      ],
+      ai_review_state: ["pending_review", "accepted", "discarded"],
       amount_kind: ["percent", "fixed"],
       attempt_policy: ["best", "latest", "first"],
       attempt_status: ["in_progress", "submitted", "auto_submitted", "voided"],
@@ -5748,6 +6426,8 @@ export const Constants = {
         "theory",
       ],
       reassessment_outcome: ["improved", "unchanged", "declined"],
+      recommendation_kind: ["note", "practice_exam"],
+      recommendation_source: ["rule", "ai"],
       refund_source: ["invoice", "wallet"],
       refund_status: ["requested", "approved", "rejected", "completed"],
       release_policy: ["manual", "immediate", "after_close"],
