@@ -217,6 +217,76 @@ export type Database = {
           },
         ]
       }
+      attempts: {
+        Row: {
+          attempt_no: number
+          deadline_at: string
+          device: string | null
+          exam_id: string
+          id: string
+          ip_address: unknown
+          layout: Json
+          organisation_id: string
+          started_at: string
+          status: Database["public"]["Enums"]["attempt_status"]
+          student_id: string
+          submitted_at: string | null
+          void_reason: string | null
+        }
+        Insert: {
+          attempt_no: number
+          deadline_at: string
+          device?: string | null
+          exam_id: string
+          id?: string
+          ip_address?: unknown
+          layout?: Json
+          organisation_id: string
+          started_at?: string
+          status?: Database["public"]["Enums"]["attempt_status"]
+          student_id: string
+          submitted_at?: string | null
+          void_reason?: string | null
+        }
+        Update: {
+          attempt_no?: number
+          deadline_at?: string
+          device?: string | null
+          exam_id?: string
+          id?: string
+          ip_address?: unknown
+          layout?: Json
+          organisation_id?: string
+          started_at?: string
+          status?: Database["public"]["Enums"]["attempt_status"]
+          student_id?: string
+          submitted_at?: string | null
+          void_reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attempts_exam_id_organisation_id_fkey"
+            columns: ["exam_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "exams"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "attempts_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attempts_student_id_organisation_id_fkey"
+            columns: ["student_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
       audit_events: {
         Row: {
           action: string
@@ -792,6 +862,269 @@ export type Database = {
             columns: ["student_id", "organisation_id"]
             isOneToOne: false
             referencedRelation: "students"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
+      exam_eligibility: {
+        Row: {
+          class_id: string | null
+          created_at: string
+          created_by: string | null
+          exam_id: string
+          extra_attempts: number
+          extra_time_min: number
+          id: string
+          is_blocked: boolean
+          organisation_id: string
+          reason: string | null
+          student_id: string | null
+        }
+        Insert: {
+          class_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          exam_id: string
+          extra_attempts?: number
+          extra_time_min?: number
+          id?: string
+          is_blocked?: boolean
+          organisation_id: string
+          reason?: string | null
+          student_id?: string | null
+        }
+        Update: {
+          class_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          exam_id?: string
+          extra_attempts?: number
+          extra_time_min?: number
+          id?: string
+          is_blocked?: boolean
+          organisation_id?: string
+          reason?: string | null
+          student_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exam_eligibility_class_id_organisation_id_fkey"
+            columns: ["class_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "exam_eligibility_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exam_eligibility_exam_id_organisation_id_fkey"
+            columns: ["exam_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "exams"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "exam_eligibility_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exam_eligibility_student_id_organisation_id_fkey"
+            columns: ["student_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
+      exam_questions: {
+        Row: {
+          created_at: string
+          exam_id: string
+          id: string
+          marks: number | null
+          organisation_id: string
+          position: number
+          question_version_id: string
+          topic_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          exam_id: string
+          id?: string
+          marks?: number | null
+          organisation_id: string
+          position?: number
+          question_version_id: string
+          topic_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          exam_id?: string
+          id?: string
+          marks?: number | null
+          organisation_id?: string
+          position?: number
+          question_version_id?: string
+          topic_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exam_questions_exam_id_organisation_id_fkey"
+            columns: ["exam_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "exams"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "exam_questions_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exam_questions_question_version_id_organisation_id_fkey"
+            columns: ["question_version_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "question_versions"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
+      exams: {
+        Row: {
+          academic_session_id: string | null
+          allow_review: boolean
+          attempt_policy: Database["public"]["Enums"]["attempt_policy"]
+          attempts_allowed: number
+          blueprint_id: string | null
+          closes_at: string
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          duration_min: number
+          hard_close: boolean
+          id: string
+          instructions: string | null
+          kind: Database["public"]["Enums"]["exam_kind"]
+          opens_at: string
+          organisation_id: string
+          pass_mark_pct: number
+          release_policy: Database["public"]["Enums"]["release_policy"]
+          requires_fees_cleared: boolean
+          shuffle_options: boolean
+          shuffle_questions: boolean
+          status: Database["public"]["Enums"]["exam_status"]
+          subject_id: string | null
+          title: string
+          total_marks: number
+          updated_at: string
+        }
+        Insert: {
+          academic_session_id?: string | null
+          allow_review?: boolean
+          attempt_policy?: Database["public"]["Enums"]["attempt_policy"]
+          attempts_allowed?: number
+          blueprint_id?: string | null
+          closes_at: string
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          duration_min: number
+          hard_close?: boolean
+          id?: string
+          instructions?: string | null
+          kind?: Database["public"]["Enums"]["exam_kind"]
+          opens_at: string
+          organisation_id: string
+          pass_mark_pct?: number
+          release_policy?: Database["public"]["Enums"]["release_policy"]
+          requires_fees_cleared?: boolean
+          shuffle_options?: boolean
+          shuffle_questions?: boolean
+          status?: Database["public"]["Enums"]["exam_status"]
+          subject_id?: string | null
+          title: string
+          total_marks?: number
+          updated_at?: string
+        }
+        Update: {
+          academic_session_id?: string | null
+          allow_review?: boolean
+          attempt_policy?: Database["public"]["Enums"]["attempt_policy"]
+          attempts_allowed?: number
+          blueprint_id?: string | null
+          closes_at?: string
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          duration_min?: number
+          hard_close?: boolean
+          id?: string
+          instructions?: string | null
+          kind?: Database["public"]["Enums"]["exam_kind"]
+          opens_at?: string
+          organisation_id?: string
+          pass_mark_pct?: number
+          release_policy?: Database["public"]["Enums"]["release_policy"]
+          requires_fees_cleared?: boolean
+          shuffle_options?: boolean
+          shuffle_questions?: boolean
+          status?: Database["public"]["Enums"]["exam_status"]
+          subject_id?: string | null
+          title?: string
+          total_marks?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exams_academic_session_id_organisation_id_fkey"
+            columns: ["academic_session_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "academic_sessions"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "exams_blueprint_id_organisation_id_fkey"
+            columns: ["blueprint_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "assessment_blueprints"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "exams_blueprint_id_organisation_id_fkey"
+            columns: ["blueprint_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "blueprint_summary"
+            referencedColumns: ["blueprint_id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "exams_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exams_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exams_subject_id_organisation_id_fkey"
+            columns: ["subject_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
             referencedColumns: ["id", "organisation_id"]
           },
         ]
@@ -1701,6 +2034,199 @@ export type Database = {
           },
         ]
       }
+      responses: {
+        Row: {
+          answer: Json | null
+          answered_at: string | null
+          attempt_id: string
+          exam_id: string
+          exam_question_id: string
+          feedback: string | null
+          flagged: boolean
+          id: string
+          is_correct: boolean | null
+          marked_at: string | null
+          marked_by: string | null
+          marking_status: Database["public"]["Enums"]["marking_state"]
+          marks_awarded: number | null
+          organisation_id: string
+          student_id: string
+          time_spent_s: number | null
+          topic_id: string | null
+        }
+        Insert: {
+          answer?: Json | null
+          answered_at?: string | null
+          attempt_id: string
+          exam_id: string
+          exam_question_id: string
+          feedback?: string | null
+          flagged?: boolean
+          id?: string
+          is_correct?: boolean | null
+          marked_at?: string | null
+          marked_by?: string | null
+          marking_status?: Database["public"]["Enums"]["marking_state"]
+          marks_awarded?: number | null
+          organisation_id: string
+          student_id: string
+          time_spent_s?: number | null
+          topic_id?: string | null
+        }
+        Update: {
+          answer?: Json | null
+          answered_at?: string | null
+          attempt_id?: string
+          exam_id?: string
+          exam_question_id?: string
+          feedback?: string | null
+          flagged?: boolean
+          id?: string
+          is_correct?: boolean | null
+          marked_at?: string | null
+          marked_by?: string | null
+          marking_status?: Database["public"]["Enums"]["marking_state"]
+          marks_awarded?: number | null
+          organisation_id?: string
+          student_id?: string
+          time_spent_s?: number | null
+          topic_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "responses_attempt_id_organisation_id_fkey"
+            columns: ["attempt_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "attempts"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "responses_exam_id_organisation_id_fkey"
+            columns: ["exam_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "exams"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "responses_exam_question_id_organisation_id_fkey"
+            columns: ["exam_question_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "exam_questions"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "responses_exam_question_id_organisation_id_fkey"
+            columns: ["exam_question_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "question_performance"
+            referencedColumns: ["exam_question_id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "responses_marked_by_fkey"
+            columns: ["marked_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "responses_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "responses_student_id_organisation_id_fkey"
+            columns: ["student_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
+      results: {
+        Row: {
+          attempt_id: string
+          class_id: string | null
+          computed_at: string
+          exam_id: string
+          grade: string | null
+          id: string
+          marking_complete: boolean
+          organisation_id: string
+          passed: boolean | null
+          percentage: number
+          position_in_class: number | null
+          released_at: string | null
+          score: number
+          student_id: string
+          total_marks: number
+        }
+        Insert: {
+          attempt_id: string
+          class_id?: string | null
+          computed_at?: string
+          exam_id: string
+          grade?: string | null
+          id?: string
+          marking_complete?: boolean
+          organisation_id: string
+          passed?: boolean | null
+          percentage: number
+          position_in_class?: number | null
+          released_at?: string | null
+          score: number
+          student_id: string
+          total_marks: number
+        }
+        Update: {
+          attempt_id?: string
+          class_id?: string | null
+          computed_at?: string
+          exam_id?: string
+          grade?: string | null
+          id?: string
+          marking_complete?: boolean
+          organisation_id?: string
+          passed?: boolean | null
+          percentage?: number
+          position_in_class?: number | null
+          released_at?: string | null
+          score?: number
+          student_id?: string
+          total_marks?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "results_attempt_id_organisation_id_fkey"
+            columns: ["attempt_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "attempts"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "results_exam_id_organisation_id_fkey"
+            columns: ["exam_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "exams"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "results_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "results_student_id_organisation_id_fkey"
+            columns: ["student_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
       role_permissions: {
         Row: {
           permission_id: string
@@ -2104,6 +2630,55 @@ export type Database = {
           },
         ]
       }
+      exam_final_results: {
+        Row: {
+          attempt_id: string | null
+          attempt_no: number | null
+          class_id: string | null
+          exam_id: string | null
+          grade: string | null
+          id: string | null
+          marking_complete: boolean | null
+          organisation_id: string | null
+          passed: boolean | null
+          percentage: number | null
+          position_in_class: number | null
+          released_at: string | null
+          score: number | null
+          student_id: string | null
+          total_marks: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "results_attempt_id_organisation_id_fkey"
+            columns: ["attempt_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "attempts"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "results_exam_id_organisation_id_fkey"
+            columns: ["exam_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "exams"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "results_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "results_student_id_organisation_id_fkey"
+            columns: ["student_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
       note_current: {
         Row: {
           note_id: string | null
@@ -2181,6 +2756,36 @@ export type Database = {
           },
         ]
       }
+      question_performance: {
+        Row: {
+          answered: number | null
+          avg_time_s: number | null
+          correct: number | null
+          exam_id: string | null
+          exam_question_id: string | null
+          organisation_id: string | null
+          pct_correct: number | null
+          position: number | null
+          responses: number | null
+          topic_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exam_questions_exam_id_organisation_id_fkey"
+            columns: ["exam_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "exams"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "exam_questions_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       topic_tree: {
         Row: {
           class_level: string | null
@@ -2214,9 +2819,28 @@ export type Database = {
       }
     }
     Functions: {
+      answer_matches: {
+        Args: { p_key: Json; p_text: string }
+        Returns: boolean
+      }
       assert_owner_authority: { Args: never; Returns: string }
       assert_service_context: { Args: never; Returns: undefined }
       audit_redact: { Args: { p: Json }; Returns: Json }
+      available_exams: {
+        Args: never
+        Returns: {
+          attempts_allowed: number
+          attempts_used: number
+          closes_at: string
+          duration_min: number
+          exam_id: string
+          kind: Database["public"]["Enums"]["exam_kind"]
+          open_attempt_id: string
+          opens_at: string
+          subject_name: string
+          title: string
+        }[]
+      }
       can_manage_membership: { Args: { p_org_id: string }; Returns: boolean }
       can_manage_organisation: { Args: { p_org_id: string }; Returns: boolean }
       can_manage_role: {
@@ -2241,26 +2865,57 @@ export type Database = {
       can_read_settings: { Args: { p_org_id: string }; Returns: boolean }
       can_read_user: { Args: { p_user_id: string }; Returns: boolean }
       can_view_student: { Args: { p_student_id: string }; Returns: boolean }
+      close_exam: { Args: { p_exam_id: string }; Returns: undefined }
       current_org_id: { Args: never; Returns: string }
+      current_student_id: { Args: never; Returns: string }
       current_user_id: { Args: never; Returns: string }
+      fees_cleared: { Args: { p_student_id: string }; Returns: boolean }
+      finalize_attempt: {
+        Args: {
+          p_attempt_id: string
+          p_status: Database["public"]["Enums"]["attempt_status"]
+        }
+        Returns: undefined
+      }
+      generate_exam_from_blueprint: {
+        Args: { p_exam_id: string }
+        Returns: {
+          out_found: number
+          out_requested: number
+          out_topic_id: string
+        }[]
+      }
+      get_attempt_paper: { Args: { p_attempt_id: string }; Returns: Json }
+      grade_for: { Args: { p_org: string; p_pct: number }; Returns: string }
       grant_organisation_owner: {
         Args: { p_user_id: string }
         Returns: undefined
       }
       has_permission: { Args: { perm: string }; Returns: boolean }
       is_active_org_member: { Args: { p_org_id: string }; Returns: boolean }
+      is_eligible: {
+        Args: { p_exam_id: string; p_student_id: string }
+        Returns: boolean
+      }
       is_org_member: { Args: never; Returns: boolean }
       is_platform_admin: { Args: never; Returns: boolean }
+      is_self_or_parent: { Args: { p_student_id: string }; Returns: boolean }
+      mark_response: {
+        Args: { p_feedback?: string; p_marks: number; p_response_id: string }
+        Returns: undefined
+      }
       migration_begin: {
         Args: { p_requires: string; p_version: string }
         Returns: undefined
       }
+      my_attempt_review: { Args: { p_attempt_id: string }; Returns: Json }
       normalise_auth_email: { Args: { p_email: string }; Returns: string }
       normalise_auth_phone: { Args: { p_phone: string }; Returns: string }
       provision_public_user: {
         Args: { p: Database["public"]["Tables"]["users"]["Row"] }
         Returns: undefined
       }
+      publish_exam: { Args: { p_exam_id: string }; Returns: undefined }
       publish_note_version: {
         Args: {
           p_version_id: string
@@ -2275,6 +2930,31 @@ export type Database = {
         }
         Returns: undefined
       }
+      release_results: {
+        Args: { p_exam_id: string; p_force?: boolean }
+        Returns: number
+      }
+      release_results_internal: {
+        Args: { p_exam_id: string; p_force: boolean }
+        Returns: number
+      }
+      results_for_student: {
+        Args: { p_student_id: string }
+        Returns: {
+          attempt_no: number
+          exam_id: string
+          exam_title: string
+          grade: string
+          is_official: boolean
+          kind: Database["public"]["Enums"]["exam_kind"]
+          passed: boolean
+          percentage: number
+          position_in_class: number
+          released_at: string
+          score: number
+          total_marks: number
+        }[]
+      }
       revoke_organisation_owner: {
         Args: { p_new_role_code?: string; p_user_id: string }
         Returns: undefined
@@ -2283,6 +2963,18 @@ export type Database = {
         Args: { p_role_id: string }
         Returns: boolean
       }
+      run_cbt_maintenance: { Args: never; Returns: Json }
+      save_response: {
+        Args: {
+          p_answer: Json
+          p_attempt_id: string
+          p_exam_question_id: string
+          p_flagged?: boolean
+          p_time_spent_s?: number
+        }
+        Returns: string
+      }
+      score_attempt: { Args: { p_attempt_id: string }; Returns: undefined }
       search_notes: {
         Args: { p_query: string; p_topic_id?: string }
         Returns: {
@@ -2293,6 +2985,15 @@ export type Database = {
           topic_id: string
         }[]
       }
+      staff_can_view_results: {
+        Args: { p_student_id: string }
+        Returns: boolean
+      }
+      start_attempt: {
+        Args: { p_device?: string; p_exam_id: string; p_ip?: unknown }
+        Returns: string
+      }
+      submit_attempt: { Args: { p_attempt_id: string }; Returns: Json }
       submit_note_version: {
         Args: { p_version_id: string }
         Returns: undefined
@@ -2319,8 +3020,14 @@ export type Database = {
         Args: { p_question_id: string }
         Returns: undefined
       }
+      void_attempt: {
+        Args: { p_attempt_id: string; p_reason: string }
+        Returns: undefined
+      }
     }
     Enums: {
+      attempt_policy: "best" | "latest" | "first"
+      attempt_status: "in_progress" | "submitted" | "auto_submitted" | "voided"
       audit_actor_type:
         | "user"
         | "service_role"
@@ -2344,7 +3051,10 @@ export type Database = {
       curriculum_status: "draft" | "published" | "archived"
       difficulty_level: "easy" | "medium" | "hard"
       enrolment_status: "active" | "completed" | "withdrawn" | "transferred"
+      exam_kind: "test" | "exam" | "practice" | "mock"
+      exam_status: "draft" | "published" | "closed" | "archived"
       gender_type: "female" | "male" | "other" | "undisclosed"
+      marking_state: "pending" | "auto" | "marked"
       membership_status: "invited" | "active" | "suspended" | "removed"
       org_status: "active" | "suspended" | "closed"
       org_type: "school" | "individual" | "partner"
@@ -2356,6 +3066,7 @@ export type Database = {
         | "fill_blank"
         | "short_answer"
         | "theory"
+      release_policy: "manual" | "immediate" | "after_close"
       review_decision: "approved" | "changes_requested" | "rejected"
       role_scope: "platform" | "organisation"
       term_hint: "first" | "second" | "third" | "any"
@@ -2487,6 +3198,8 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      attempt_policy: ["best", "latest", "first"],
+      attempt_status: ["in_progress", "submitted", "auto_submitted", "voided"],
       audit_actor_type: ["user", "service_role", "webhook", "worker", "system"],
       cognitive_level: ["recall", "understand", "apply", "analyse", "evaluate"],
       content_source: ["manual", "ai", "imported", "adopted"],
@@ -2501,7 +3214,10 @@ export const Constants = {
       curriculum_status: ["draft", "published", "archived"],
       difficulty_level: ["easy", "medium", "hard"],
       enrolment_status: ["active", "completed", "withdrawn", "transferred"],
+      exam_kind: ["test", "exam", "practice", "mock"],
+      exam_status: ["draft", "published", "closed", "archived"],
       gender_type: ["female", "male", "other", "undisclosed"],
+      marking_state: ["pending", "auto", "marked"],
       membership_status: ["invited", "active", "suspended", "removed"],
       org_status: ["active", "suspended", "closed"],
       org_type: ["school", "individual", "partner"],
@@ -2514,6 +3230,7 @@ export const Constants = {
         "short_answer",
         "theory",
       ],
+      release_policy: ["manual", "immediate", "after_close"],
       review_decision: ["approved", "changes_requested", "rejected"],
       role_scope: ["platform", "organisation"],
       term_hint: ["first", "second", "third", "any"],
