@@ -20,7 +20,7 @@ export interface NoteRow {
   topic_id: string;
   title: string;
   status: ContentStatus;
-  // Provenance set by the database (008 complete_ai_job sets 'ai'); never written by the client.
+  // Provenance set by the database (migration 008 AI worker sets 'ai'); never written by the client.
   source: "manual" | "ai" | "imported" | "adopted";
   current_version_id: string | null;
   created_by: string | null;
