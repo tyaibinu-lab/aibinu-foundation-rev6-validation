@@ -1,0 +1,55 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1791292772635,
+      "tag": "0000_aibinu_001_identity_and_tenancy",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791292809510,
+      "tag": "0001_aibinu_002_academic_management",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791292845608,
+      "tag": "0002_aibinu_003_curriculum",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1791292892665,
+      "tag": "0003_aibinu_004_question_bank_and_notebank",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1791292955144,
+      "tag": "0004_aibinu_005_cbt_and_results",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1791293027994,
+      "tag": "0005_aibinu_006_finance_and_payments",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1791293114637,
+      "tag": "0006_aibinu_007_cas_academic_intelligence",
+      "breakpoints": true
+    }
+  ]
+}
