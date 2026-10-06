@@ -14,6 +14,50 @@ export type Database = {
   }
   public: {
     Tables: {
+      academic_sessions: {
+        Row: {
+          created_at: string
+          ends_on: string
+          id: string
+          is_current: boolean
+          name: string
+          organisation_id: string
+          starts_on: string
+          term: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          ends_on: string
+          id?: string
+          is_current?: boolean
+          name: string
+          organisation_id: string
+          starts_on: string
+          term: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          ends_on?: string
+          id?: string
+          is_current?: boolean
+          name?: string
+          organisation_id?: string
+          starts_on?: string
+          term?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "academic_sessions_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_events: {
         Row: {
           action: string
@@ -74,6 +118,195 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organisations"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      class_subjects: {
+        Row: {
+          class_id: string
+          created_at: string
+          id: string
+          organisation_id: string
+          subject_id: string
+          teacher_id: string | null
+        }
+        Insert: {
+          class_id: string
+          created_at?: string
+          id?: string
+          organisation_id: string
+          subject_id: string
+          teacher_id?: string | null
+        }
+        Update: {
+          class_id?: string
+          created_at?: string
+          id?: string
+          organisation_id?: string
+          subject_id?: string
+          teacher_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "class_subjects_class_id_organisation_id_fkey"
+            columns: ["class_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "class_subjects_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "class_subjects_subject_id_organisation_id_fkey"
+            columns: ["subject_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "class_subjects_teacher_id_organisation_id_fkey"
+            columns: ["teacher_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "teachers"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
+      classes: {
+        Row: {
+          academic_session_id: string
+          capacity: number | null
+          created_at: string
+          form_teacher_id: string | null
+          id: string
+          name: string
+          organisation_id: string
+          programme_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          academic_session_id: string
+          capacity?: number | null
+          created_at?: string
+          form_teacher_id?: string | null
+          id?: string
+          name: string
+          organisation_id: string
+          programme_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          academic_session_id?: string
+          capacity?: number | null
+          created_at?: string
+          form_teacher_id?: string | null
+          id?: string
+          name?: string
+          organisation_id?: string
+          programme_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "classes_academic_session_id_organisation_id_fkey"
+            columns: ["academic_session_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "academic_sessions"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "classes_form_teacher_id_organisation_id_fkey"
+            columns: ["form_teacher_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "teachers"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "classes_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "classes_programme_id_organisation_id_fkey"
+            columns: ["programme_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "programmes"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
+      enrolments: {
+        Row: {
+          academic_session_id: string
+          class_id: string
+          created_at: string
+          ended_on: string | null
+          enrolled_on: string
+          id: string
+          organisation_id: string
+          status: Database["public"]["Enums"]["enrolment_status"]
+          student_id: string
+          updated_at: string
+        }
+        Insert: {
+          academic_session_id: string
+          class_id: string
+          created_at?: string
+          ended_on?: string | null
+          enrolled_on?: string
+          id?: string
+          organisation_id: string
+          status?: Database["public"]["Enums"]["enrolment_status"]
+          student_id: string
+          updated_at?: string
+        }
+        Update: {
+          academic_session_id?: string
+          class_id?: string
+          created_at?: string
+          ended_on?: string | null
+          enrolled_on?: string
+          id?: string
+          organisation_id?: string
+          status?: Database["public"]["Enums"]["enrolment_status"]
+          student_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "enrolments_academic_session_id_organisation_id_fkey"
+            columns: ["academic_session_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "academic_sessions"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "enrolments_class_id_organisation_id_fkey"
+            columns: ["class_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "enrolments_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "enrolments_student_id_organisation_id_fkey"
+            columns: ["student_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id", "organisation_id"]
           },
         ]
       }
@@ -214,6 +447,60 @@ export type Database = {
         }
         Relationships: []
       }
+      parents: {
+        Row: {
+          created_at: string
+          deleted_at: string | null
+          email: string | null
+          full_name: string
+          id: string
+          organisation_id: string
+          phone: string | null
+          updated_at: string
+          user_id: string | null
+          whatsapp: string | null
+        }
+        Insert: {
+          created_at?: string
+          deleted_at?: string | null
+          email?: string | null
+          full_name: string
+          id?: string
+          organisation_id: string
+          phone?: string | null
+          updated_at?: string
+          user_id?: string | null
+          whatsapp?: string | null
+        }
+        Update: {
+          created_at?: string
+          deleted_at?: string | null
+          email?: string | null
+          full_name?: string
+          id?: string
+          organisation_id?: string
+          phone?: string | null
+          updated_at?: string
+          user_id?: string | null
+          whatsapp?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "parents_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "parents_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       permissions: {
         Row: {
           code: string
@@ -231,6 +518,47 @@ export type Database = {
           id?: string
         }
         Relationships: []
+      }
+      programmes: {
+        Row: {
+          code: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          level: string | null
+          name: string
+          organisation_id: string
+          updated_at: string
+        }
+        Insert: {
+          code?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          level?: string | null
+          name: string
+          organisation_id: string
+          updated_at?: string
+        }
+        Update: {
+          code?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          level?: string | null
+          name?: string
+          organisation_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "programmes_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       role_permissions: {
         Row: {
@@ -324,6 +652,216 @@ export type Database = {
         }
         Relationships: []
       }
+      student_parents: {
+        Row: {
+          created_at: string
+          id: string
+          is_primary: boolean
+          organisation_id: string
+          parent_id: string
+          relationship: string
+          student_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_primary?: boolean
+          organisation_id: string
+          parent_id: string
+          relationship?: string
+          student_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_primary?: boolean
+          organisation_id?: string
+          parent_id?: string
+          relationship?: string
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_parents_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_parents_parent_id_organisation_id_fkey"
+            columns: ["parent_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "parents"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "student_parents_student_id_organisation_id_fkey"
+            columns: ["student_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
+      students: {
+        Row: {
+          admission_no: string | null
+          created_at: string
+          date_of_birth: string | null
+          deleted_at: string | null
+          email: string | null
+          full_name: string
+          gender: Database["public"]["Enums"]["gender_type"]
+          id: string
+          organisation_id: string
+          phone: string | null
+          status: Database["public"]["Enums"]["person_status"]
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          admission_no?: string | null
+          created_at?: string
+          date_of_birth?: string | null
+          deleted_at?: string | null
+          email?: string | null
+          full_name: string
+          gender?: Database["public"]["Enums"]["gender_type"]
+          id?: string
+          organisation_id: string
+          phone?: string | null
+          status?: Database["public"]["Enums"]["person_status"]
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          admission_no?: string | null
+          created_at?: string
+          date_of_birth?: string | null
+          deleted_at?: string | null
+          email?: string | null
+          full_name?: string
+          gender?: Database["public"]["Enums"]["gender_type"]
+          id?: string
+          organisation_id?: string
+          phone?: string | null
+          status?: Database["public"]["Enums"]["person_status"]
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "students_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "students_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      subjects: {
+        Row: {
+          code: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          organisation_id: string
+          updated_at: string
+        }
+        Insert: {
+          code?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          organisation_id: string
+          updated_at?: string
+        }
+        Update: {
+          code?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          organisation_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subjects_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      teachers: {
+        Row: {
+          created_at: string
+          deleted_at: string | null
+          email: string | null
+          full_name: string
+          id: string
+          organisation_id: string
+          phone: string | null
+          staff_no: string | null
+          status: Database["public"]["Enums"]["person_status"]
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          deleted_at?: string | null
+          email?: string | null
+          full_name: string
+          id?: string
+          organisation_id: string
+          phone?: string | null
+          staff_no?: string | null
+          status?: Database["public"]["Enums"]["person_status"]
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          deleted_at?: string | null
+          email?: string | null
+          full_name?: string
+          id?: string
+          organisation_id?: string
+          phone?: string | null
+          staff_no?: string | null
+          status?: Database["public"]["Enums"]["person_status"]
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "teachers_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teachers_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       users: {
         Row: {
           created_at: string
@@ -371,7 +909,40 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      class_roster: {
+        Row: {
+          academic_session_id: string | null
+          admission_no: string | null
+          class_id: string | null
+          class_name: string | null
+          full_name: string | null
+          organisation_id: string | null
+          student_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "enrolments_academic_session_id_organisation_id_fkey"
+            columns: ["academic_session_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "academic_sessions"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "enrolments_class_id_organisation_id_fkey"
+            columns: ["class_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "enrolments_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       assert_owner_authority: { Args: never; Returns: string }
@@ -400,6 +971,7 @@ export type Database = {
       }
       can_read_settings: { Args: { p_org_id: string }; Returns: boolean }
       can_read_user: { Args: { p_user_id: string }; Returns: boolean }
+      can_view_student: { Args: { p_student_id: string }; Returns: boolean }
       current_org_id: { Args: never; Returns: string }
       current_user_id: { Args: never; Returns: string }
       grant_organisation_owner: {
@@ -408,6 +980,7 @@ export type Database = {
       }
       has_permission: { Args: { perm: string }; Returns: boolean }
       is_active_org_member: { Args: { p_org_id: string }; Returns: boolean }
+      is_org_member: { Args: never; Returns: boolean }
       is_platform_admin: { Args: never; Returns: boolean }
       migration_begin: {
         Args: { p_requires: string; p_version: string }
@@ -439,9 +1012,12 @@ export type Database = {
         | "webhook"
         | "worker"
         | "system"
+      enrolment_status: "active" | "completed" | "withdrawn" | "transferred"
+      gender_type: "female" | "male" | "other" | "undisclosed"
       membership_status: "invited" | "active" | "suspended" | "removed"
       org_status: "active" | "suspended" | "closed"
       org_type: "school" | "individual" | "partner"
+      person_status: "active" | "inactive" | "graduated" | "withdrawn"
       role_scope: "platform" | "organisation"
       user_status: "invited" | "active" | "suspended" | "deleted"
     }
@@ -572,9 +1148,12 @@ export const Constants = {
   public: {
     Enums: {
       audit_actor_type: ["user", "service_role", "webhook", "worker", "system"],
+      enrolment_status: ["active", "completed", "withdrawn", "transferred"],
+      gender_type: ["female", "male", "other", "undisclosed"],
       membership_status: ["invited", "active", "suspended", "removed"],
       org_status: ["active", "suspended", "closed"],
       org_type: ["school", "individual", "partner"],
+      person_status: ["active", "inactive", "graduated", "withdrawn"],
       role_scope: ["platform", "organisation"],
       user_status: ["invited", "active", "suspended", "deleted"],
     },

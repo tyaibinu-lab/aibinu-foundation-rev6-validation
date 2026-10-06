@@ -8,6 +8,13 @@
       "when": 1791292772635,
       "tag": "0000_aibinu_001_identity_and_tenancy",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791292809510,
+      "tag": "0001_aibinu_002_academic_management",
+      "breakpoints": true
     }
   ]
 }
