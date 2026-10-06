@@ -13,6 +13,10 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as NotebankIndexRouteImport } from './routes/notebank.index'
 import { Route as NotebankNoteIdRouteImport } from './routes/notebank.$noteId'
 import { Route as NotebankReviewRouteImport } from './routes/notebank.review'
+import { Route as QuestionbankIndexRouteImport } from './routes/questionbank.index'
+import { Route as QuestionbankQuestionIdRouteImport } from './routes/questionbank.$questionId'
+import { Route as QuestionbankNewRouteImport } from './routes/questionbank.new'
+import { Route as QuestionbankReviewRouteImport } from './routes/questionbank.review'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -34,39 +38,100 @@ const NotebankReviewRoute = NotebankReviewRouteImport.update({
   path: '/notebank/review',
   getParentRoute: () => rootRouteImport,
 } as any)
+const QuestionbankIndexRoute = QuestionbankIndexRouteImport.update({
+  id: '/questionbank/',
+  path: '/questionbank/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuestionbankQuestionIdRoute = QuestionbankQuestionIdRouteImport.update({
+  id: '/questionbank/$questionId',
+  path: '/questionbank/$questionId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuestionbankNewRoute = QuestionbankNewRouteImport.update({
+  id: '/questionbank/new',
+  path: '/questionbank/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuestionbankReviewRoute = QuestionbankReviewRouteImport.update({
+  id: '/questionbank/review',
+  path: '/questionbank/review',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/notebank/$noteId': typeof NotebankNoteIdRoute
   '/notebank/review': typeof NotebankReviewRoute
+  '/questionbank/$questionId': typeof QuestionbankQuestionIdRoute
+  '/questionbank/new': typeof QuestionbankNewRoute
+  '/questionbank/review': typeof QuestionbankReviewRoute
   '/notebank/': typeof NotebankIndexRoute
+  '/questionbank/': typeof QuestionbankIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/notebank/$noteId': typeof NotebankNoteIdRoute
   '/notebank/review': typeof NotebankReviewRoute
+  '/questionbank/$questionId': typeof QuestionbankQuestionIdRoute
+  '/questionbank/new': typeof QuestionbankNewRoute
+  '/questionbank/review': typeof QuestionbankReviewRoute
   '/notebank': typeof NotebankIndexRoute
+  '/questionbank': typeof QuestionbankIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/notebank/$noteId': typeof NotebankNoteIdRoute
   '/notebank/review': typeof NotebankReviewRoute
+  '/questionbank/$questionId': typeof QuestionbankQuestionIdRoute
+  '/questionbank/new': typeof QuestionbankNewRoute
+  '/questionbank/review': typeof QuestionbankReviewRoute
   '/notebank/': typeof NotebankIndexRoute
+  '/questionbank/': typeof QuestionbankIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/notebank/$noteId' | '/notebank/review' | '/notebank/'
+  fullPaths:
+    | '/'
+    | '/notebank/$noteId'
+    | '/notebank/review'
+    | '/questionbank/$questionId'
+    | '/questionbank/new'
+    | '/questionbank/review'
+    | '/notebank/'
+    | '/questionbank/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/notebank/$noteId' | '/notebank/review' | '/notebank'
-  id: '__root__' | '/' | '/notebank/$noteId' | '/notebank/review' | '/notebank/'
+  to:
+    | '/'
+    | '/notebank/$noteId'
+    | '/notebank/review'
+    | '/questionbank/$questionId'
+    | '/questionbank/new'
+    | '/questionbank/review'
+    | '/notebank'
+    | '/questionbank'
+  id:
+    | '__root__'
+    | '/'
+    | '/notebank/$noteId'
+    | '/notebank/review'
+    | '/questionbank/$questionId'
+    | '/questionbank/new'
+    | '/questionbank/review'
+    | '/notebank/'
+    | '/questionbank/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   NotebankNoteIdRoute: typeof NotebankNoteIdRoute
   NotebankReviewRoute: typeof NotebankReviewRoute
+  QuestionbankQuestionIdRoute: typeof QuestionbankQuestionIdRoute
+  QuestionbankNewRoute: typeof QuestionbankNewRoute
+  QuestionbankReviewRoute: typeof QuestionbankReviewRoute
   NotebankIndexRoute: typeof NotebankIndexRoute
+  QuestionbankIndexRoute: typeof QuestionbankIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -99,6 +164,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NotebankReviewRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/questionbank/': {
+      id: '/questionbank/'
+      path: '/questionbank'
+      fullPath: '/questionbank/'
+      preLoaderRoute: typeof QuestionbankIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/questionbank/$questionId': {
+      id: '/questionbank/$questionId'
+      path: '/questionbank/$questionId'
+      fullPath: '/questionbank/$questionId'
+      preLoaderRoute: typeof QuestionbankQuestionIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/questionbank/new': {
+      id: '/questionbank/new'
+      path: '/questionbank/new'
+      fullPath: '/questionbank/new'
+      preLoaderRoute: typeof QuestionbankNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/questionbank/review': {
+      id: '/questionbank/review'
+      path: '/questionbank/review'
+      fullPath: '/questionbank/review'
+      preLoaderRoute: typeof QuestionbankReviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -106,7 +199,11 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   NotebankNoteIdRoute: NotebankNoteIdRoute,
   NotebankReviewRoute: NotebankReviewRoute,
+  QuestionbankQuestionIdRoute: QuestionbankQuestionIdRoute,
+  QuestionbankNewRoute: QuestionbankNewRoute,
+  QuestionbankReviewRoute: QuestionbankReviewRoute,
   NotebankIndexRoute: NotebankIndexRoute,
+  QuestionbankIndexRoute: QuestionbankIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
