@@ -571,6 +571,7 @@ export type Database = {
           suggested_periods: number | null
           term: Database["public"]["Enums"]["term_hint"]
           title: string
+          topic_key: string
           unit_id: string
           updated_at: string
           version_id: string
@@ -586,6 +587,7 @@ export type Database = {
           suggested_periods?: number | null
           term?: Database["public"]["Enums"]["term_hint"]
           title: string
+          topic_key?: string
           unit_id: string
           updated_at?: string
           version_id: string
@@ -601,6 +603,7 @@ export type Database = {
           suggested_periods?: number | null
           term?: Database["public"]["Enums"]["term_hint"]
           title?: string
+          topic_key?: string
           unit_id?: string
           updated_at?: string
           version_id?: string
@@ -828,6 +831,335 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organisations"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      note_publications: {
+        Row: {
+          id: string
+          note_id: string
+          note_version_id: string
+          organisation_id: string
+          published_at: string
+          published_by: string | null
+          unpublished_at: string | null
+          visibility: Database["public"]["Enums"]["content_visibility"]
+        }
+        Insert: {
+          id?: string
+          note_id: string
+          note_version_id: string
+          organisation_id: string
+          published_at?: string
+          published_by?: string | null
+          unpublished_at?: string | null
+          visibility?: Database["public"]["Enums"]["content_visibility"]
+        }
+        Update: {
+          id?: string
+          note_id?: string
+          note_version_id?: string
+          organisation_id?: string
+          published_at?: string
+          published_by?: string | null
+          unpublished_at?: string | null
+          visibility?: Database["public"]["Enums"]["content_visibility"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "note_publications_note_id_organisation_id_fkey"
+            columns: ["note_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "note_current"
+            referencedColumns: ["note_id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "note_publications_note_id_organisation_id_fkey"
+            columns: ["note_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "notes"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "note_publications_note_version_id_organisation_id_fkey"
+            columns: ["note_version_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "note_versions"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "note_publications_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "note_publications_published_by_fkey"
+            columns: ["published_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      note_reviews: {
+        Row: {
+          comments: string | null
+          decision: Database["public"]["Enums"]["review_decision"]
+          id: string
+          note_version_id: string
+          organisation_id: string
+          reviewed_at: string
+          reviewer_id: string
+        }
+        Insert: {
+          comments?: string | null
+          decision: Database["public"]["Enums"]["review_decision"]
+          id?: string
+          note_version_id: string
+          organisation_id: string
+          reviewed_at?: string
+          reviewer_id: string
+        }
+        Update: {
+          comments?: string | null
+          decision?: Database["public"]["Enums"]["review_decision"]
+          id?: string
+          note_version_id?: string
+          organisation_id?: string
+          reviewed_at?: string
+          reviewer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "note_reviews_note_version_id_organisation_id_fkey"
+            columns: ["note_version_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "note_versions"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "note_reviews_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "note_reviews_reviewer_id_fkey"
+            columns: ["reviewer_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      note_versions: {
+        Row: {
+          body: string
+          created_at: string
+          created_by: string | null
+          id: string
+          media: Json
+          note_id: string
+          organisation_id: string
+          reading_minutes: number | null
+          search_vector: unknown
+          status: Database["public"]["Enums"]["content_status"]
+          summary: string | null
+          version_no: number | null
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          media?: Json
+          note_id: string
+          organisation_id: string
+          reading_minutes?: number | null
+          search_vector?: unknown
+          status?: Database["public"]["Enums"]["content_status"]
+          summary?: string | null
+          version_no?: number | null
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          media?: Json
+          note_id?: string
+          organisation_id?: string
+          reading_minutes?: number | null
+          search_vector?: unknown
+          status?: Database["public"]["Enums"]["content_status"]
+          summary?: string | null
+          version_no?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "note_versions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "note_versions_note_id_organisation_id_fkey"
+            columns: ["note_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "note_current"
+            referencedColumns: ["note_id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "note_versions_note_id_organisation_id_fkey"
+            columns: ["note_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "notes"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "note_versions_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      note_views: {
+        Row: {
+          duration_s: number | null
+          id: string
+          note_id: string
+          organisation_id: string
+          student_id: string
+          viewed_at: string
+        }
+        Insert: {
+          duration_s?: number | null
+          id?: string
+          note_id: string
+          organisation_id: string
+          student_id: string
+          viewed_at?: string
+        }
+        Update: {
+          duration_s?: number | null
+          id?: string
+          note_id?: string
+          organisation_id?: string
+          student_id?: string
+          viewed_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "note_views_note_id_organisation_id_fkey"
+            columns: ["note_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "note_current"
+            referencedColumns: ["note_id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "note_views_note_id_organisation_id_fkey"
+            columns: ["note_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "notes"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "note_views_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "note_views_student_id_organisation_id_fkey"
+            columns: ["student_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
+      notes: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          current_version_id: string | null
+          deleted_at: string | null
+          id: string
+          organisation_id: string
+          source: Database["public"]["Enums"]["content_source"]
+          status: Database["public"]["Enums"]["content_status"]
+          title: string
+          topic_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          current_version_id?: string | null
+          deleted_at?: string | null
+          id?: string
+          organisation_id: string
+          source?: Database["public"]["Enums"]["content_source"]
+          status?: Database["public"]["Enums"]["content_status"]
+          title: string
+          topic_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          current_version_id?: string | null
+          deleted_at?: string | null
+          id?: string
+          organisation_id?: string
+          source?: Database["public"]["Enums"]["content_source"]
+          status?: Database["public"]["Enums"]["content_status"]
+          title?: string
+          topic_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_notes_current_version"
+            columns: ["current_version_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "note_versions"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "notes_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notes_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notes_topic_id_organisation_id_fkey"
+            columns: ["topic_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "curriculum_topics"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "notes_topic_id_organisation_id_fkey"
+            columns: ["topic_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "topic_tree"
+            referencedColumns: ["topic_id", "organisation_id"]
           },
         ]
       }
@@ -1078,6 +1410,294 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organisations"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      question_publications: {
+        Row: {
+          id: string
+          organisation_id: string
+          published_at: string
+          published_by: string | null
+          question_id: string
+          question_version_id: string
+          unpublished_at: string | null
+          visibility: Database["public"]["Enums"]["content_visibility"]
+        }
+        Insert: {
+          id?: string
+          organisation_id: string
+          published_at?: string
+          published_by?: string | null
+          question_id: string
+          question_version_id: string
+          unpublished_at?: string | null
+          visibility?: Database["public"]["Enums"]["content_visibility"]
+        }
+        Update: {
+          id?: string
+          organisation_id?: string
+          published_at?: string
+          published_by?: string | null
+          question_id?: string
+          question_version_id?: string
+          unpublished_at?: string | null
+          visibility?: Database["public"]["Enums"]["content_visibility"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_publications_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_publications_published_by_fkey"
+            columns: ["published_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_publications_question_id_organisation_id_fkey"
+            columns: ["question_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "question_current"
+            referencedColumns: ["question_id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "question_publications_question_id_organisation_id_fkey"
+            columns: ["question_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "question_publications_question_version_id_organisation_id_fkey"
+            columns: ["question_version_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "question_versions"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
+      question_reviews: {
+        Row: {
+          comments: string | null
+          decision: Database["public"]["Enums"]["review_decision"]
+          id: string
+          organisation_id: string
+          question_version_id: string
+          reviewed_at: string
+          reviewer_id: string
+        }
+        Insert: {
+          comments?: string | null
+          decision: Database["public"]["Enums"]["review_decision"]
+          id?: string
+          organisation_id: string
+          question_version_id: string
+          reviewed_at?: string
+          reviewer_id: string
+        }
+        Update: {
+          comments?: string | null
+          decision?: Database["public"]["Enums"]["review_decision"]
+          id?: string
+          organisation_id?: string
+          question_version_id?: string
+          reviewed_at?: string
+          reviewer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_reviews_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_reviews_question_version_id_organisation_id_fkey"
+            columns: ["question_version_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "question_versions"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "question_reviews_reviewer_id_fkey"
+            columns: ["reviewer_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      question_versions: {
+        Row: {
+          answer_key: Json | null
+          cognitive_level: Database["public"]["Enums"]["cognitive_level"]
+          created_at: string
+          created_by: string | null
+          difficulty: Database["public"]["Enums"]["difficulty_level"]
+          estimated_seconds: number | null
+          explanation: string | null
+          id: string
+          marks: number
+          options: Json | null
+          organisation_id: string
+          question_id: string
+          search_vector: unknown
+          status: Database["public"]["Enums"]["content_status"]
+          stem: string
+          stem_media: Json
+          version_no: number | null
+        }
+        Insert: {
+          answer_key?: Json | null
+          cognitive_level?: Database["public"]["Enums"]["cognitive_level"]
+          created_at?: string
+          created_by?: string | null
+          difficulty?: Database["public"]["Enums"]["difficulty_level"]
+          estimated_seconds?: number | null
+          explanation?: string | null
+          id?: string
+          marks?: number
+          options?: Json | null
+          organisation_id: string
+          question_id: string
+          search_vector?: unknown
+          status?: Database["public"]["Enums"]["content_status"]
+          stem: string
+          stem_media?: Json
+          version_no?: number | null
+        }
+        Update: {
+          answer_key?: Json | null
+          cognitive_level?: Database["public"]["Enums"]["cognitive_level"]
+          created_at?: string
+          created_by?: string | null
+          difficulty?: Database["public"]["Enums"]["difficulty_level"]
+          estimated_seconds?: number | null
+          explanation?: string | null
+          id?: string
+          marks?: number
+          options?: Json | null
+          organisation_id?: string
+          question_id?: string
+          search_vector?: unknown
+          status?: Database["public"]["Enums"]["content_status"]
+          stem?: string
+          stem_media?: Json
+          version_no?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_versions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_versions_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_versions_question_id_organisation_id_fkey"
+            columns: ["question_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "question_current"
+            referencedColumns: ["question_id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "question_versions_question_id_organisation_id_fkey"
+            columns: ["question_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
+      questions: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          current_version_id: string | null
+          deleted_at: string | null
+          id: string
+          organisation_id: string
+          source: Database["public"]["Enums"]["content_source"]
+          status: Database["public"]["Enums"]["content_status"]
+          topic_id: string
+          type: Database["public"]["Enums"]["question_type"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          current_version_id?: string | null
+          deleted_at?: string | null
+          id?: string
+          organisation_id: string
+          source?: Database["public"]["Enums"]["content_source"]
+          status?: Database["public"]["Enums"]["content_status"]
+          topic_id: string
+          type: Database["public"]["Enums"]["question_type"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          current_version_id?: string | null
+          deleted_at?: string | null
+          id?: string
+          organisation_id?: string
+          source?: Database["public"]["Enums"]["content_source"]
+          status?: Database["public"]["Enums"]["content_status"]
+          topic_id?: string
+          type?: Database["public"]["Enums"]["question_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_questions_current_version"
+            columns: ["current_version_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "question_versions"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "questions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "questions_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "questions_topic_id_organisation_id_fkey"
+            columns: ["topic_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "curriculum_topics"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "questions_topic_id_organisation_id_fkey"
+            columns: ["topic_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "topic_tree"
+            referencedColumns: ["topic_id", "organisation_id"]
           },
         ]
       }
@@ -1484,6 +2104,83 @@ export type Database = {
           },
         ]
       }
+      note_current: {
+        Row: {
+          note_id: string | null
+          note_status: Database["public"]["Enums"]["content_status"] | null
+          organisation_id: string | null
+          reading_minutes: number | null
+          summary: string | null
+          title: string | null
+          topic_id: string | null
+          version_id: string | null
+          version_no: number | null
+          version_status: Database["public"]["Enums"]["content_status"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notes_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notes_topic_id_organisation_id_fkey"
+            columns: ["topic_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "curriculum_topics"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "notes_topic_id_organisation_id_fkey"
+            columns: ["topic_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "topic_tree"
+            referencedColumns: ["topic_id", "organisation_id"]
+          },
+        ]
+      }
+      question_current: {
+        Row: {
+          cognitive_level: Database["public"]["Enums"]["cognitive_level"] | null
+          difficulty: Database["public"]["Enums"]["difficulty_level"] | null
+          marks: number | null
+          options: Json | null
+          organisation_id: string | null
+          question_id: string | null
+          question_status: Database["public"]["Enums"]["content_status"] | null
+          stem: string | null
+          topic_id: string | null
+          type: Database["public"]["Enums"]["question_type"] | null
+          version_id: string | null
+          version_no: number | null
+          version_status: Database["public"]["Enums"]["content_status"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "questions_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "questions_topic_id_organisation_id_fkey"
+            columns: ["topic_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "curriculum_topics"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "questions_topic_id_organisation_id_fkey"
+            columns: ["topic_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "topic_tree"
+            referencedColumns: ["topic_id", "organisation_id"]
+          },
+        ]
+      }
       topic_tree: {
         Row: {
           class_level: string | null
@@ -1564,6 +2261,20 @@ export type Database = {
         Args: { p: Database["public"]["Tables"]["users"]["Row"] }
         Returns: undefined
       }
+      publish_note_version: {
+        Args: {
+          p_version_id: string
+          p_visibility?: Database["public"]["Enums"]["content_visibility"]
+        }
+        Returns: undefined
+      }
+      publish_question_version: {
+        Args: {
+          p_version_id: string
+          p_visibility?: Database["public"]["Enums"]["content_visibility"]
+        }
+        Returns: undefined
+      }
       revoke_organisation_owner: {
         Args: { p_new_role_code?: string; p_user_id: string }
         Returns: undefined
@@ -1571,6 +2282,24 @@ export type Database = {
       role_within_caller_ceiling: {
         Args: { p_role_id: string }
         Returns: boolean
+      }
+      search_notes: {
+        Args: { p_query: string; p_topic_id?: string }
+        Returns: {
+          note_id: string
+          rank: number
+          snippet: string
+          title: string
+          topic_id: string
+        }[]
+      }
+      submit_note_version: {
+        Args: { p_version_id: string }
+        Returns: undefined
+      }
+      submit_question_version: {
+        Args: { p_version_id: string }
+        Returns: undefined
       }
       topic_prerequisite_chain: {
         Args: { p_topic_id: string }
@@ -1583,6 +2312,11 @@ export type Database = {
       }
       transfer_organisation_ownership: {
         Args: { p_new_owner_id: string; p_previous_owner_role?: string }
+        Returns: undefined
+      }
+      unpublish_note: { Args: { p_note_id: string }; Returns: undefined }
+      unpublish_question: {
+        Args: { p_question_id: string }
         Returns: undefined
       }
     }
@@ -1599,6 +2333,14 @@ export type Database = {
         | "apply"
         | "analyse"
         | "evaluate"
+      content_source: "manual" | "ai" | "imported" | "adopted"
+      content_status:
+        | "draft"
+        | "in_review"
+        | "approved"
+        | "published"
+        | "archived"
+      content_visibility: "private" | "organisation" | "shared"
       curriculum_status: "draft" | "published" | "archived"
       difficulty_level: "easy" | "medium" | "hard"
       enrolment_status: "active" | "completed" | "withdrawn" | "transferred"
@@ -1607,6 +2349,14 @@ export type Database = {
       org_status: "active" | "suspended" | "closed"
       org_type: "school" | "individual" | "partner"
       person_status: "active" | "inactive" | "graduated" | "withdrawn"
+      question_type:
+        | "mcq"
+        | "multi_select"
+        | "true_false"
+        | "fill_blank"
+        | "short_answer"
+        | "theory"
+      review_decision: "approved" | "changes_requested" | "rejected"
       role_scope: "platform" | "organisation"
       term_hint: "first" | "second" | "third" | "any"
       user_status: "invited" | "active" | "suspended" | "deleted"
@@ -1739,6 +2489,15 @@ export const Constants = {
     Enums: {
       audit_actor_type: ["user", "service_role", "webhook", "worker", "system"],
       cognitive_level: ["recall", "understand", "apply", "analyse", "evaluate"],
+      content_source: ["manual", "ai", "imported", "adopted"],
+      content_status: [
+        "draft",
+        "in_review",
+        "approved",
+        "published",
+        "archived",
+      ],
+      content_visibility: ["private", "organisation", "shared"],
       curriculum_status: ["draft", "published", "archived"],
       difficulty_level: ["easy", "medium", "hard"],
       enrolment_status: ["active", "completed", "withdrawn", "transferred"],
@@ -1747,6 +2506,15 @@ export const Constants = {
       org_status: ["active", "suspended", "closed"],
       org_type: ["school", "individual", "partner"],
       person_status: ["active", "inactive", "graduated", "withdrawn"],
+      question_type: [
+        "mcq",
+        "multi_select",
+        "true_false",
+        "fill_blank",
+        "short_answer",
+        "theory",
+      ],
+      review_decision: ["approved", "changes_requested", "rejected"],
       role_scope: ["platform", "organisation"],
       term_hint: ["first", "second", "third", "any"],
       user_status: ["invited", "active", "suspended", "deleted"],

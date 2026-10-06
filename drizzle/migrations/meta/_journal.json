@@ -22,6 +22,13 @@
       "when": 1791292845608,
       "tag": "0002_aibinu_003_curriculum",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1791292892665,
+      "tag": "0003_aibinu_004_question_bank_and_notebank",
+      "breakpoints": true
     }
   ]
 }
