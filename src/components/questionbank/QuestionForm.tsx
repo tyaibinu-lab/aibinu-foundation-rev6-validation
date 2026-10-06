@@ -53,7 +53,7 @@ export function draftFromVersion(type: QuestionType, v: QuestionVersionRow): Dra
   };
 }
 
-export function QuestionFields({ value, onChange, disabled }: { value: DraftInput; onChange: (d: DraftInput) => void; disabled?: boolean }) {
+export function QuestionFields({ value, onChange, disabled = false }: { value: DraftInput; onChange: (d: DraftInput) => void; disabled?: boolean | undefined }) {
   const set = (p: Partial<DraftInput>) => onChange({ ...value, ...p });
   const setOpt = (i: number, p: Partial<QuestionOption>) => set({ options: value.options.map((o, j) => (j === i ? { ...o, ...p } : o)) });
   const single = value.type === "mcq" || value.type === "true_false";

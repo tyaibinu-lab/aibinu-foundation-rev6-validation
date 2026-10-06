@@ -89,7 +89,8 @@ export interface TopicOption {
   subjectName: string;
 }
 
-function unwrap<T>(res: { data: T; error: unknown }): T {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function unwrap<T = any>(res: { data: T; error: unknown }): T {
   if (res.error) throw res.error;
   return res.data;
 }
@@ -110,11 +111,11 @@ export async function currentContext(): Promise<{ userId: string | null; orgId: 
 }
 
 export interface QuestionFilters {
-  search?: string;
-  topicIds?: string[];
-  type?: QuestionType;
-  difficulty?: Difficulty;
-  status?: ContentStatus;
+  search?: string | undefined;
+  topicIds?: string[] | undefined;
+  type?: QuestionType | undefined;
+  difficulty?: Difficulty | undefined;
+  status?: ContentStatus | undefined;
 }
 
 /** Latest/current version per question via question_current (no answer keys in this view). */
