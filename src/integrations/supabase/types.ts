@@ -58,6 +58,165 @@ export type Database = {
           },
         ]
       }
+      assessment_blueprint_items: {
+        Row: {
+          blueprint_id: string
+          cognitive_level: Database["public"]["Enums"]["cognitive_level"] | null
+          created_at: string
+          difficulty: Database["public"]["Enums"]["difficulty_level"] | null
+          id: string
+          marks_per_question: number
+          organisation_id: string
+          position: number
+          question_count: number
+          topic_id: string
+        }
+        Insert: {
+          blueprint_id: string
+          cognitive_level?:
+            | Database["public"]["Enums"]["cognitive_level"]
+            | null
+          created_at?: string
+          difficulty?: Database["public"]["Enums"]["difficulty_level"] | null
+          id?: string
+          marks_per_question?: number
+          organisation_id: string
+          position?: number
+          question_count: number
+          topic_id: string
+        }
+        Update: {
+          blueprint_id?: string
+          cognitive_level?:
+            | Database["public"]["Enums"]["cognitive_level"]
+            | null
+          created_at?: string
+          difficulty?: Database["public"]["Enums"]["difficulty_level"] | null
+          id?: string
+          marks_per_question?: number
+          organisation_id?: string
+          position?: number
+          question_count?: number
+          topic_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assessment_blueprint_items_blueprint_id_organisation_id_fkey"
+            columns: ["blueprint_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "assessment_blueprints"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "assessment_blueprint_items_blueprint_id_organisation_id_fkey"
+            columns: ["blueprint_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "blueprint_summary"
+            referencedColumns: ["blueprint_id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "assessment_blueprint_items_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assessment_blueprint_items_topic_id_organisation_id_fkey"
+            columns: ["topic_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "curriculum_topics"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "assessment_blueprint_items_topic_id_organisation_id_fkey"
+            columns: ["topic_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "topic_tree"
+            referencedColumns: ["topic_id", "organisation_id"]
+          },
+        ]
+      }
+      assessment_blueprints: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          curriculum_version_id: string | null
+          deleted_at: string | null
+          description: string | null
+          difficulty_mix: Json
+          duration_min: number | null
+          id: string
+          name: string
+          organisation_id: string
+          status: Database["public"]["Enums"]["curriculum_status"]
+          subject_id: string
+          total_marks: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          curriculum_version_id?: string | null
+          deleted_at?: string | null
+          description?: string | null
+          difficulty_mix?: Json
+          duration_min?: number | null
+          id?: string
+          name: string
+          organisation_id: string
+          status?: Database["public"]["Enums"]["curriculum_status"]
+          subject_id: string
+          total_marks: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          curriculum_version_id?: string | null
+          deleted_at?: string | null
+          description?: string | null
+          difficulty_mix?: Json
+          duration_min?: number | null
+          id?: string
+          name?: string
+          organisation_id?: string
+          status?: Database["public"]["Enums"]["curriculum_status"]
+          subject_id?: string
+          total_marks?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assessment_blueprints_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assessment_blueprints_curriculum_version_id_organisation_i_fkey"
+            columns: ["curriculum_version_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "curriculum_versions"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "assessment_blueprints_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assessment_blueprints_subject_id_organisation_id_fkey"
+            columns: ["subject_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
       audit_events: {
         Row: {
           action: string
@@ -242,6 +401,330 @@ export type Database = {
           },
         ]
       }
+      curricula: {
+        Row: {
+          created_at: string
+          deleted_at: string | null
+          description: string | null
+          exam_body: string
+          id: string
+          level: string | null
+          name: string
+          organisation_id: string
+          subject_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          deleted_at?: string | null
+          description?: string | null
+          exam_body?: string
+          id?: string
+          level?: string | null
+          name: string
+          organisation_id: string
+          subject_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          deleted_at?: string | null
+          description?: string | null
+          exam_body?: string
+          id?: string
+          level?: string | null
+          name?: string
+          organisation_id?: string
+          subject_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "curricula_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "curricula_subject_id_organisation_id_fkey"
+            columns: ["subject_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
+      curriculum_outcomes: {
+        Row: {
+          organisation_id: string
+          outcome_id: string
+          topic_id: string
+        }
+        Insert: {
+          organisation_id: string
+          outcome_id: string
+          topic_id: string
+        }
+        Update: {
+          organisation_id?: string
+          outcome_id?: string
+          topic_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "curriculum_outcomes_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "curriculum_outcomes_outcome_id_organisation_id_fkey"
+            columns: ["outcome_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "learning_outcomes"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "curriculum_outcomes_topic_id_organisation_id_fkey"
+            columns: ["topic_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "curriculum_topics"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "curriculum_outcomes_topic_id_organisation_id_fkey"
+            columns: ["topic_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "topic_tree"
+            referencedColumns: ["topic_id", "organisation_id"]
+          },
+        ]
+      }
+      curriculum_prerequisites: {
+        Row: {
+          organisation_id: string
+          requires_topic_id: string
+          strength: number
+          topic_id: string
+        }
+        Insert: {
+          organisation_id: string
+          requires_topic_id: string
+          strength?: number
+          topic_id: string
+        }
+        Update: {
+          organisation_id?: string
+          requires_topic_id?: string
+          strength?: number
+          topic_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "curriculum_prerequisites_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "curriculum_prerequisites_requires_topic_id_organisation_id_fkey"
+            columns: ["requires_topic_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "curriculum_topics"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "curriculum_prerequisites_requires_topic_id_organisation_id_fkey"
+            columns: ["requires_topic_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "topic_tree"
+            referencedColumns: ["topic_id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "curriculum_prerequisites_topic_id_organisation_id_fkey"
+            columns: ["topic_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "curriculum_topics"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "curriculum_prerequisites_topic_id_organisation_id_fkey"
+            columns: ["topic_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "topic_tree"
+            referencedColumns: ["topic_id", "organisation_id"]
+          },
+        ]
+      }
+      curriculum_topics: {
+        Row: {
+          class_level: string | null
+          code: string
+          created_at: string
+          exam_weight: number | null
+          id: string
+          organisation_id: string
+          position: number
+          suggested_periods: number | null
+          term: Database["public"]["Enums"]["term_hint"]
+          title: string
+          unit_id: string
+          updated_at: string
+          version_id: string
+        }
+        Insert: {
+          class_level?: string | null
+          code: string
+          created_at?: string
+          exam_weight?: number | null
+          id?: string
+          organisation_id: string
+          position?: number
+          suggested_periods?: number | null
+          term?: Database["public"]["Enums"]["term_hint"]
+          title: string
+          unit_id: string
+          updated_at?: string
+          version_id: string
+        }
+        Update: {
+          class_level?: string | null
+          code?: string
+          created_at?: string
+          exam_weight?: number | null
+          id?: string
+          organisation_id?: string
+          position?: number
+          suggested_periods?: number | null
+          term?: Database["public"]["Enums"]["term_hint"]
+          title?: string
+          unit_id?: string
+          updated_at?: string
+          version_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "curriculum_topics_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "curriculum_topics_unit_id_organisation_id_fkey"
+            columns: ["unit_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "curriculum_units"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "curriculum_topics_unit_id_version_id_fkey"
+            columns: ["unit_id", "version_id"]
+            isOneToOne: false
+            referencedRelation: "curriculum_units"
+            referencedColumns: ["id", "version_id"]
+          },
+        ]
+      }
+      curriculum_units: {
+        Row: {
+          created_at: string
+          id: string
+          organisation_id: string
+          position: number
+          title: string
+          updated_at: string
+          version_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          organisation_id: string
+          position?: number
+          title: string
+          updated_at?: string
+          version_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          organisation_id?: string
+          position?: number
+          title?: string
+          updated_at?: string
+          version_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "curriculum_units_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "curriculum_units_version_id_organisation_id_fkey"
+            columns: ["version_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "curriculum_versions"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
+      curriculum_versions: {
+        Row: {
+          created_at: string
+          curriculum_id: string
+          effective_from: string | null
+          id: string
+          organisation_id: string
+          published_at: string | null
+          status: Database["public"]["Enums"]["curriculum_status"]
+          updated_at: string
+          version_label: string
+        }
+        Insert: {
+          created_at?: string
+          curriculum_id: string
+          effective_from?: string | null
+          id?: string
+          organisation_id: string
+          published_at?: string | null
+          status?: Database["public"]["Enums"]["curriculum_status"]
+          updated_at?: string
+          version_label: string
+        }
+        Update: {
+          created_at?: string
+          curriculum_id?: string
+          effective_from?: string | null
+          id?: string
+          organisation_id?: string
+          published_at?: string | null
+          status?: Database["public"]["Enums"]["curriculum_status"]
+          updated_at?: string
+          version_label?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "curriculum_versions_curriculum_id_organisation_id_fkey"
+            columns: ["curriculum_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "curricula"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "curriculum_versions_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       enrolments: {
         Row: {
           academic_session_id: string
@@ -307,6 +790,44 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "students"
             referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
+      learning_outcomes: {
+        Row: {
+          code: string
+          cognitive_level: Database["public"]["Enums"]["cognitive_level"]
+          created_at: string
+          id: string
+          organisation_id: string
+          statement: string
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          cognitive_level?: Database["public"]["Enums"]["cognitive_level"]
+          created_at?: string
+          id?: string
+          organisation_id: string
+          statement: string
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          cognitive_level?: Database["public"]["Enums"]["cognitive_level"]
+          created_at?: string
+          id?: string
+          organisation_id?: string
+          statement?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "learning_outcomes_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -909,6 +1430,26 @@ export type Database = {
       }
     }
     Views: {
+      blueprint_summary: {
+        Row: {
+          blueprint_id: string | null
+          marks_match: boolean | null
+          name: string | null
+          organisation_id: string | null
+          planned_marks: number | null
+          planned_questions: number | null
+          total_marks: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assessment_blueprints_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       class_roster: {
         Row: {
           academic_session_id: string | null
@@ -936,6 +1477,37 @@ export type Database = {
           },
           {
             foreignKeyName: "enrolments_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      topic_tree: {
+        Row: {
+          class_level: string | null
+          curriculum_id: string | null
+          curriculum_name: string | null
+          organisation_id: string | null
+          subject_name: string | null
+          term: Database["public"]["Enums"]["term_hint"] | null
+          topic_code: string | null
+          topic_id: string | null
+          topic_position: number | null
+          topic_title: string | null
+          unit_id: string | null
+          unit_position: number | null
+          unit_title: string | null
+          version_id: string | null
+          version_label: string | null
+          version_status:
+            | Database["public"]["Enums"]["curriculum_status"]
+            | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "curriculum_topics_organisation_id_fkey"
             columns: ["organisation_id"]
             isOneToOne: false
             referencedRelation: "organisations"
@@ -1000,6 +1572,15 @@ export type Database = {
         Args: { p_role_id: string }
         Returns: boolean
       }
+      topic_prerequisite_chain: {
+        Args: { p_topic_id: string }
+        Returns: {
+          depth: number
+          strength: number
+          topic_id: string
+          topic_title: string
+        }[]
+      }
       transfer_organisation_ownership: {
         Args: { p_new_owner_id: string; p_previous_owner_role?: string }
         Returns: undefined
@@ -1012,6 +1593,14 @@ export type Database = {
         | "webhook"
         | "worker"
         | "system"
+      cognitive_level:
+        | "recall"
+        | "understand"
+        | "apply"
+        | "analyse"
+        | "evaluate"
+      curriculum_status: "draft" | "published" | "archived"
+      difficulty_level: "easy" | "medium" | "hard"
       enrolment_status: "active" | "completed" | "withdrawn" | "transferred"
       gender_type: "female" | "male" | "other" | "undisclosed"
       membership_status: "invited" | "active" | "suspended" | "removed"
@@ -1019,6 +1608,7 @@ export type Database = {
       org_type: "school" | "individual" | "partner"
       person_status: "active" | "inactive" | "graduated" | "withdrawn"
       role_scope: "platform" | "organisation"
+      term_hint: "first" | "second" | "third" | "any"
       user_status: "invited" | "active" | "suspended" | "deleted"
     }
     CompositeTypes: {
@@ -1148,6 +1738,9 @@ export const Constants = {
   public: {
     Enums: {
       audit_actor_type: ["user", "service_role", "webhook", "worker", "system"],
+      cognitive_level: ["recall", "understand", "apply", "analyse", "evaluate"],
+      curriculum_status: ["draft", "published", "archived"],
+      difficulty_level: ["easy", "medium", "hard"],
       enrolment_status: ["active", "completed", "withdrawn", "transferred"],
       gender_type: ["female", "male", "other", "undisclosed"],
       membership_status: ["invited", "active", "suspended", "removed"],
@@ -1155,6 +1748,7 @@ export const Constants = {
       org_type: ["school", "individual", "partner"],
       person_status: ["active", "inactive", "graduated", "withdrawn"],
       role_scope: ["platform", "organisation"],
+      term_hint: ["first", "second", "third", "any"],
       user_status: ["invited", "active", "suspended", "deleted"],
     },
   },

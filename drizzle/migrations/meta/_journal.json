@@ -15,6 +15,13 @@
       "when": 1791292809510,
       "tag": "0001_aibinu_002_academic_management",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791292845608,
+      "tag": "0002_aibinu_003_curriculum",
+      "breakpoints": true
     }
   ]
 }
