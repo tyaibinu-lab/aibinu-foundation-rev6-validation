@@ -88,7 +88,7 @@ export async function listVersionsByStatus(status: ContentStatus): Promise<(Note
     unwrap(
       await db
         .from("note_versions")
-        .select("*, notes(title)")
+        .select("*, notes!note_versions_note_id_organisation_id_fkey(title)")
         .eq("status", status)
         .order("created_at", { ascending: false }),
     ) ?? []
