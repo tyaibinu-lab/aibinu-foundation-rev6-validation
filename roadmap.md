@@ -9,3 +9,9 @@
 
 ## Backlog
 - NoteBank end-to-end against the real database (after migrations)
+
+## External Supabase connection (Option 2 — approved)
+- [x] Connect external Supabase project Aibinu-flexiprep DB Validation (mdcmwhcjfpgewetsnunk) — done via UI
+- [x] Fixed stale client .env (still points at vzmbcodyatxbtbhbnviy) via backend rebind, not hand-editing
+- [x] Read-only preflight: project identity, schema_migrations, RLS, roles, security definer functions
+- [x] Reported identity/state — STOPPED, awaiting approval — no migrations, no wiring until explicit approval
