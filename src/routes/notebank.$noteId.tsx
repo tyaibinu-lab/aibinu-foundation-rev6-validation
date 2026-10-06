@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { DbError, NoteBankShell, StatusBadge, useNoteAccess } from "@/components/notebank/shared";
+import { DbError, NoteBankShell, SourceBadge, StatusBadge, useNoteAccess } from "@/components/notebank/shared";
 import { createVersion, getNote, publishVersion, reviewVersion, submitVersion, unpublishNote, updateDraft, type NoteVersionRow } from "@/lib/notebank/api";
 import { noteCapabilities, type ContentVisibility, type ReviewDecision } from "@/lib/notebank/permissions";
 
@@ -43,7 +43,10 @@ function NotePage() {
 
   return (
     <NoteBankShell title={note.title} subtitle="Server-enforced workflow: draft → in review → approved → published.">
-      <div className="flex items-center gap-2"><span className="text-sm text-muted-foreground">Note status:</span><StatusBadge status={note.status} /></div>
+      <div className="flex items-center gap-2"><span className="text-sm text-muted-foreground">Note status:</span><StatusBadge status={note.status} /><SourceBadge source={note.source} /></div>
+      {note.source === "ai" && note.status !== "published" && (
+        <p className="text-sm text-muted-foreground">This note was drafted by AI. Check and edit it before submitting; it cannot be published until a reviewer approves it.</p>
+      )}
       {latest && <Editor key={latest.id} version={latest} canWrite={cap.canAuthor} orgId={ctx.orgId} userId={ctx.userId} noteId={note.id} onDone={refresh} />}
       {latest?.status === "in_review" && cap.canReview && isAuthor && (
         <p className="text-sm text-muted-foreground">You wrote this version, so another reviewer must review it. The database also blocks self-review.</p>

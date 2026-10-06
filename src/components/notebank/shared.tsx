@@ -22,6 +22,11 @@ export function StatusBadge({ status }: { status: ContentStatus }) {
   return <Badge variant={variant} className={status === "in_review" ? "border-accent bg-accent/30" : ""}>{STATUS_LABEL[status]}</Badge>;
 }
 
+export function SourceBadge({ source }: { source: string }) {
+  if (source !== "ai") return null;
+  return <Badge variant="outline" className="border-accent">AI draft</Badge>;
+}
+
 export function DbError({ error }: { error: unknown }) {
   return (
     <Alert variant="destructive">
