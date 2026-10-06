@@ -798,6 +798,804 @@ export type Database = {
           },
         ]
       }
+      customer_accounts: {
+        Row: {
+          balance: number
+          created_at: string
+          currency: string
+          id: string
+          organisation_id: string
+          student_id: string
+          updated_at: string
+        }
+        Insert: {
+          balance?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          organisation_id: string
+          student_id: string
+          updated_at?: string
+        }
+        Update: {
+          balance?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          organisation_id?: string
+          student_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_accounts_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_accounts_student_id_organisation_id_fkey"
+            columns: ["student_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
+      customer_invoice_items: {
+        Row: {
+          description: string
+          discount_amount: number
+          discount_id: string | null
+          gross: number
+          id: string
+          invoice_id: string
+          line_total: number
+          organisation_id: string
+          product_id: string
+          quantity: number
+          scholarship_amount: number
+          scholarships_applied: Json
+          unit_price: number
+        }
+        Insert: {
+          description: string
+          discount_amount?: number
+          discount_id?: string | null
+          gross: number
+          id?: string
+          invoice_id: string
+          line_total: number
+          organisation_id: string
+          product_id: string
+          quantity?: number
+          scholarship_amount?: number
+          scholarships_applied?: Json
+          unit_price: number
+        }
+        Update: {
+          description?: string
+          discount_amount?: number
+          discount_id?: string | null
+          gross?: number
+          id?: string
+          invoice_id?: string
+          line_total?: number
+          organisation_id?: string
+          product_id?: string
+          quantity?: number
+          scholarship_amount?: number
+          scholarships_applied?: Json
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_invoice_items_discount_id_organisation_id_fkey"
+            columns: ["discount_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "discounts"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "customer_invoice_items_invoice_id_organisation_id_fkey"
+            columns: ["invoice_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "customer_invoices"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "customer_invoice_items_invoice_id_organisation_id_fkey"
+            columns: ["invoice_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "invoice_summary"
+            referencedColumns: ["invoice_id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "customer_invoice_items_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_invoice_items_product_id_organisation_id_fkey"
+            columns: ["product_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "tenant_products"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
+      customer_invoices: {
+        Row: {
+          academic_session_id: string | null
+          account_id: string
+          balance: number
+          created_at: string
+          created_by: string | null
+          currency: string
+          discount_total: number
+          due_on: string | null
+          id: string
+          issued_at: string | null
+          notes: string | null
+          number: string | null
+          organisation_id: string
+          paid_at: string | null
+          scholarship_total: number
+          status: Database["public"]["Enums"]["invoice_status"]
+          student_id: string
+          subtotal: number
+          total: number
+          updated_at: string
+          void_reason: string | null
+          voided_at: string | null
+        }
+        Insert: {
+          academic_session_id?: string | null
+          account_id: string
+          balance?: number
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          discount_total?: number
+          due_on?: string | null
+          id?: string
+          issued_at?: string | null
+          notes?: string | null
+          number?: string | null
+          organisation_id: string
+          paid_at?: string | null
+          scholarship_total?: number
+          status?: Database["public"]["Enums"]["invoice_status"]
+          student_id: string
+          subtotal?: number
+          total?: number
+          updated_at?: string
+          void_reason?: string | null
+          voided_at?: string | null
+        }
+        Update: {
+          academic_session_id?: string | null
+          account_id?: string
+          balance?: number
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          discount_total?: number
+          due_on?: string | null
+          id?: string
+          issued_at?: string | null
+          notes?: string | null
+          number?: string | null
+          organisation_id?: string
+          paid_at?: string | null
+          scholarship_total?: number
+          status?: Database["public"]["Enums"]["invoice_status"]
+          student_id?: string
+          subtotal?: number
+          total?: number
+          updated_at?: string
+          void_reason?: string | null
+          voided_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_invoices_academic_session_id_organisation_id_fkey"
+            columns: ["academic_session_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "academic_sessions"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "customer_invoices_account_id_organisation_id_fkey"
+            columns: ["account_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "customer_accounts"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "customer_invoices_account_id_organisation_id_fkey"
+            columns: ["account_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "outstanding_balances"
+            referencedColumns: ["account_id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "customer_invoices_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_invoices_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_invoices_student_id_organisation_id_fkey"
+            columns: ["student_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
+      customer_payment_attempts: {
+        Row: {
+          account_id: string
+          amount: number
+          checkout_url: string | null
+          completed_at: string | null
+          created_at: string
+          created_by: string | null
+          currency: string
+          failure_reason: string | null
+          id: string
+          idempotency_key: string | null
+          invoice_id: string
+          organisation_id: string
+          payer_email: string | null
+          provider: Database["public"]["Enums"]["payment_provider"]
+          provider_ref: string | null
+          reference: string
+          status: Database["public"]["Enums"]["payment_attempt_state"]
+          student_id: string
+        }
+        Insert: {
+          account_id: string
+          amount: number
+          checkout_url?: string | null
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          failure_reason?: string | null
+          id?: string
+          idempotency_key?: string | null
+          invoice_id: string
+          organisation_id: string
+          payer_email?: string | null
+          provider: Database["public"]["Enums"]["payment_provider"]
+          provider_ref?: string | null
+          reference: string
+          status?: Database["public"]["Enums"]["payment_attempt_state"]
+          student_id: string
+        }
+        Update: {
+          account_id?: string
+          amount?: number
+          checkout_url?: string | null
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          failure_reason?: string | null
+          id?: string
+          idempotency_key?: string | null
+          invoice_id?: string
+          organisation_id?: string
+          payer_email?: string | null
+          provider?: Database["public"]["Enums"]["payment_provider"]
+          provider_ref?: string | null
+          reference?: string
+          status?: Database["public"]["Enums"]["payment_attempt_state"]
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_payment_attempts_account_id_organisation_id_fkey"
+            columns: ["account_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "customer_accounts"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "customer_payment_attempts_account_id_organisation_id_fkey"
+            columns: ["account_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "outstanding_balances"
+            referencedColumns: ["account_id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "customer_payment_attempts_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_payment_attempts_invoice_id_organisation_id_fkey"
+            columns: ["invoice_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "customer_invoices"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "customer_payment_attempts_invoice_id_organisation_id_fkey"
+            columns: ["invoice_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "invoice_summary"
+            referencedColumns: ["invoice_id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "customer_payment_attempts_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_payment_attempts_student_id_organisation_id_fkey"
+            columns: ["student_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
+      customer_payment_transactions: {
+        Row: {
+          account_id: string
+          amount: number
+          applied_amount: number
+          attempt_id: string | null
+          channel: string | null
+          created_at: string
+          currency: string
+          fee: number
+          id: string
+          invoice_id: string | null
+          note: string | null
+          organisation_id: string
+          paid_at: string
+          payer_email: string | null
+          payer_name: string | null
+          provider: Database["public"]["Enums"]["payment_provider"]
+          provider_txn_id: string | null
+          recorded_by: string | null
+          student_id: string
+          verified_at: string
+          wallet_amount: number
+        }
+        Insert: {
+          account_id: string
+          amount: number
+          applied_amount?: number
+          attempt_id?: string | null
+          channel?: string | null
+          created_at?: string
+          currency?: string
+          fee?: number
+          id?: string
+          invoice_id?: string | null
+          note?: string | null
+          organisation_id: string
+          paid_at?: string
+          payer_email?: string | null
+          payer_name?: string | null
+          provider: Database["public"]["Enums"]["payment_provider"]
+          provider_txn_id?: string | null
+          recorded_by?: string | null
+          student_id: string
+          verified_at?: string
+          wallet_amount?: number
+        }
+        Update: {
+          account_id?: string
+          amount?: number
+          applied_amount?: number
+          attempt_id?: string | null
+          channel?: string | null
+          created_at?: string
+          currency?: string
+          fee?: number
+          id?: string
+          invoice_id?: string | null
+          note?: string | null
+          organisation_id?: string
+          paid_at?: string
+          payer_email?: string | null
+          payer_name?: string | null
+          provider?: Database["public"]["Enums"]["payment_provider"]
+          provider_txn_id?: string | null
+          recorded_by?: string | null
+          student_id?: string
+          verified_at?: string
+          wallet_amount?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_payment_transactions_account_id_organisation_id_fkey"
+            columns: ["account_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "customer_accounts"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "customer_payment_transactions_account_id_organisation_id_fkey"
+            columns: ["account_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "outstanding_balances"
+            referencedColumns: ["account_id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "customer_payment_transactions_attempt_id_organisation_id_fkey"
+            columns: ["attempt_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "customer_payment_attempts"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "customer_payment_transactions_attempt_id_organisation_id_fkey"
+            columns: ["attempt_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "payments_needing_review"
+            referencedColumns: ["attempt_id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "customer_payment_transactions_invoice_id_organisation_id_fkey"
+            columns: ["invoice_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "customer_invoices"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "customer_payment_transactions_invoice_id_organisation_id_fkey"
+            columns: ["invoice_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "invoice_summary"
+            referencedColumns: ["invoice_id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "customer_payment_transactions_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_payment_transactions_recorded_by_fkey"
+            columns: ["recorded_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_payment_transactions_student_id_organisation_id_fkey"
+            columns: ["student_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
+      customer_payment_webhooks: {
+        Row: {
+          delivery_count: number
+          event_id: string
+          event_type: string
+          id: number
+          organisation_id: string | null
+          outcome: string | null
+          payload: Json
+          processed_at: string | null
+          provider: Database["public"]["Enums"]["payment_provider"]
+          received_at: string
+          reference: string | null
+          signature_valid: boolean
+        }
+        Insert: {
+          delivery_count?: number
+          event_id: string
+          event_type: string
+          id?: never
+          organisation_id?: string | null
+          outcome?: string | null
+          payload: Json
+          processed_at?: string | null
+          provider: Database["public"]["Enums"]["payment_provider"]
+          received_at?: string
+          reference?: string | null
+          signature_valid: boolean
+        }
+        Update: {
+          delivery_count?: number
+          event_id?: string
+          event_type?: string
+          id?: never
+          organisation_id?: string | null
+          outcome?: string | null
+          payload?: Json
+          processed_at?: string | null
+          provider?: Database["public"]["Enums"]["payment_provider"]
+          received_at?: string
+          reference?: string | null
+          signature_valid?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_payment_webhooks_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      customer_receipts: {
+        Row: {
+          amount: number
+          id: string
+          invoice_id: string | null
+          issued_at: string
+          number: string
+          organisation_id: string
+          student_id: string
+          transaction_id: string
+        }
+        Insert: {
+          amount: number
+          id?: string
+          invoice_id?: string | null
+          issued_at?: string
+          number: string
+          organisation_id: string
+          student_id: string
+          transaction_id: string
+        }
+        Update: {
+          amount?: number
+          id?: string
+          invoice_id?: string | null
+          issued_at?: string
+          number?: string
+          organisation_id?: string
+          student_id?: string
+          transaction_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_receipts_invoice_id_organisation_id_fkey"
+            columns: ["invoice_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "customer_invoices"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "customer_receipts_invoice_id_organisation_id_fkey"
+            columns: ["invoice_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "invoice_summary"
+            referencedColumns: ["invoice_id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "customer_receipts_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_receipts_student_id_organisation_id_fkey"
+            columns: ["student_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "customer_receipts_transaction_id_organisation_id_fkey"
+            columns: ["transaction_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "customer_payment_transactions"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
+      customer_refunds: {
+        Row: {
+          amount: number
+          approved_by: string | null
+          completed_at: string | null
+          completed_by: string | null
+          created_at: string
+          decided_at: string | null
+          decision_note: string | null
+          id: string
+          invoice_id: string | null
+          organisation_id: string
+          provider_refund_id: string | null
+          reason: string
+          requested_by: string | null
+          source: Database["public"]["Enums"]["refund_source"]
+          status: Database["public"]["Enums"]["refund_status"]
+          student_id: string
+          transaction_id: string
+        }
+        Insert: {
+          amount: number
+          approved_by?: string | null
+          completed_at?: string | null
+          completed_by?: string | null
+          created_at?: string
+          decided_at?: string | null
+          decision_note?: string | null
+          id?: string
+          invoice_id?: string | null
+          organisation_id: string
+          provider_refund_id?: string | null
+          reason: string
+          requested_by?: string | null
+          source?: Database["public"]["Enums"]["refund_source"]
+          status?: Database["public"]["Enums"]["refund_status"]
+          student_id: string
+          transaction_id: string
+        }
+        Update: {
+          amount?: number
+          approved_by?: string | null
+          completed_at?: string | null
+          completed_by?: string | null
+          created_at?: string
+          decided_at?: string | null
+          decision_note?: string | null
+          id?: string
+          invoice_id?: string | null
+          organisation_id?: string
+          provider_refund_id?: string | null
+          reason?: string
+          requested_by?: string | null
+          source?: Database["public"]["Enums"]["refund_source"]
+          status?: Database["public"]["Enums"]["refund_status"]
+          student_id?: string
+          transaction_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_refunds_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_refunds_completed_by_fkey"
+            columns: ["completed_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_refunds_invoice_id_organisation_id_fkey"
+            columns: ["invoice_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "customer_invoices"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "customer_refunds_invoice_id_organisation_id_fkey"
+            columns: ["invoice_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "invoice_summary"
+            referencedColumns: ["invoice_id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "customer_refunds_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_refunds_requested_by_fkey"
+            columns: ["requested_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_refunds_student_id_organisation_id_fkey"
+            columns: ["student_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "customer_refunds_transaction_id_organisation_id_fkey"
+            columns: ["transaction_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "customer_payment_transactions"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
+      discounts: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          is_active: boolean
+          kind: Database["public"]["Enums"]["amount_kind"]
+          name: string
+          organisation_id: string
+          product_id: string | null
+          usage_limit: number | null
+          used_count: number
+          valid_from: string | null
+          valid_to: string | null
+          value: number
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          kind: Database["public"]["Enums"]["amount_kind"]
+          name: string
+          organisation_id: string
+          product_id?: string | null
+          usage_limit?: number | null
+          used_count?: number
+          valid_from?: string | null
+          valid_to?: string | null
+          value: number
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          kind?: Database["public"]["Enums"]["amount_kind"]
+          name?: string
+          organisation_id?: string
+          product_id?: string | null
+          usage_limit?: number | null
+          used_count?: number
+          valid_from?: string | null
+          valid_to?: string | null
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "discounts_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "discounts_product_id_organisation_id_fkey"
+            columns: ["product_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "tenant_products"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
       enrolments: {
         Row: {
           academic_session_id: string
@@ -1493,6 +2291,32 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "topic_tree"
             referencedColumns: ["topic_id", "organisation_id"]
+          },
+        ]
+      }
+      org_counters: {
+        Row: {
+          key: string
+          next_value: number
+          organisation_id: string
+        }
+        Insert: {
+          key: string
+          next_value?: number
+          organisation_id: string
+        }
+        Update: {
+          key?: string
+          next_value?: number
+          organisation_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "org_counters_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -2319,6 +3143,83 @@ export type Database = {
         }
         Relationships: []
       }
+      scholarships: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          is_active: boolean
+          kind: Database["public"]["Enums"]["amount_kind"]
+          name: string
+          organisation_id: string
+          product_id: string | null
+          sponsor: string | null
+          student_id: string
+          valid_from: string | null
+          valid_to: string | null
+          value: number
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean
+          kind: Database["public"]["Enums"]["amount_kind"]
+          name: string
+          organisation_id: string
+          product_id?: string | null
+          sponsor?: string | null
+          student_id: string
+          valid_from?: string | null
+          valid_to?: string | null
+          value: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean
+          kind?: Database["public"]["Enums"]["amount_kind"]
+          name?: string
+          organisation_id?: string
+          product_id?: string | null
+          sponsor?: string | null
+          student_id?: string
+          valid_from?: string | null
+          valid_to?: string | null
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scholarships_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scholarships_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scholarships_product_id_organisation_id_fkey"
+            columns: ["product_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "tenant_products"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "scholarships_student_id_organisation_id_fkey"
+            columns: ["student_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
       student_parents: {
         Row: {
           created_at: string
@@ -2529,6 +3430,229 @@ export type Database = {
           },
         ]
       }
+      tenant_ledger: {
+        Row: {
+          account_id: string
+          amount: number
+          balance_after: number
+          currency: string
+          entry_type: Database["public"]["Enums"]["ledger_entry_type"]
+          id: number
+          invoice_id: string | null
+          kind: Database["public"]["Enums"]["ledger_kind"]
+          memo: string | null
+          organisation_id: string
+          posted_at: string
+          posted_by: string | null
+          refund_id: string | null
+          student_id: string
+          transaction_id: string | null
+        }
+        Insert: {
+          account_id: string
+          amount: number
+          balance_after: number
+          currency?: string
+          entry_type: Database["public"]["Enums"]["ledger_entry_type"]
+          id?: never
+          invoice_id?: string | null
+          kind: Database["public"]["Enums"]["ledger_kind"]
+          memo?: string | null
+          organisation_id: string
+          posted_at?: string
+          posted_by?: string | null
+          refund_id?: string | null
+          student_id: string
+          transaction_id?: string | null
+        }
+        Update: {
+          account_id?: string
+          amount?: number
+          balance_after?: number
+          currency?: string
+          entry_type?: Database["public"]["Enums"]["ledger_entry_type"]
+          id?: never
+          invoice_id?: string | null
+          kind?: Database["public"]["Enums"]["ledger_kind"]
+          memo?: string | null
+          organisation_id?: string
+          posted_at?: string
+          posted_by?: string | null
+          refund_id?: string | null
+          student_id?: string
+          transaction_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenant_ledger_account_id_organisation_id_fkey"
+            columns: ["account_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "customer_accounts"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "tenant_ledger_account_id_organisation_id_fkey"
+            columns: ["account_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "outstanding_balances"
+            referencedColumns: ["account_id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "tenant_ledger_invoice_id_organisation_id_fkey"
+            columns: ["invoice_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "customer_invoices"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "tenant_ledger_invoice_id_organisation_id_fkey"
+            columns: ["invoice_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "invoice_summary"
+            referencedColumns: ["invoice_id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "tenant_ledger_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tenant_ledger_posted_by_fkey"
+            columns: ["posted_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tenant_ledger_refund_id_organisation_id_fkey"
+            columns: ["refund_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "customer_refunds"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "tenant_ledger_student_id_organisation_id_fkey"
+            columns: ["student_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "tenant_ledger_transaction_id_organisation_id_fkey"
+            columns: ["transaction_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "customer_payment_transactions"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
+      tenant_prices: {
+        Row: {
+          academic_session_id: string | null
+          amount: number
+          created_at: string
+          currency: string
+          id: string
+          is_active: boolean
+          organisation_id: string
+          product_id: string
+          valid_from: string | null
+          valid_to: string | null
+        }
+        Insert: {
+          academic_session_id?: string | null
+          amount: number
+          created_at?: string
+          currency?: string
+          id?: string
+          is_active?: boolean
+          organisation_id: string
+          product_id: string
+          valid_from?: string | null
+          valid_to?: string | null
+        }
+        Update: {
+          academic_session_id?: string | null
+          amount?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          is_active?: boolean
+          organisation_id?: string
+          product_id?: string
+          valid_from?: string | null
+          valid_to?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenant_prices_academic_session_id_organisation_id_fkey"
+            columns: ["academic_session_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "academic_sessions"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "tenant_prices_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tenant_prices_product_id_organisation_id_fkey"
+            columns: ["product_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "tenant_products"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
+      tenant_products: {
+        Row: {
+          code: string
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          organisation_id: string
+          type: Database["public"]["Enums"]["product_type"]
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          organisation_id: string
+          type?: Database["public"]["Enums"]["product_type"]
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          organisation_id?: string
+          type?: Database["public"]["Enums"]["product_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenant_products_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       users: {
         Row: {
           created_at: string
@@ -2576,6 +3700,51 @@ export type Database = {
       }
     }
     Views: {
+      account_statement: {
+        Row: {
+          account_id: string | null
+          amount: number | null
+          balance_after: number | null
+          entry_id: number | null
+          entry_type: Database["public"]["Enums"]["ledger_entry_type"] | null
+          invoice_number: string | null
+          kind: Database["public"]["Enums"]["ledger_kind"] | null
+          memo: string | null
+          organisation_id: string | null
+          posted_at: string | null
+          student_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenant_ledger_account_id_organisation_id_fkey"
+            columns: ["account_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "customer_accounts"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "tenant_ledger_account_id_organisation_id_fkey"
+            columns: ["account_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "outstanding_balances"
+            referencedColumns: ["account_id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "tenant_ledger_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tenant_ledger_student_id_organisation_id_fkey"
+            columns: ["student_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
       blueprint_summary: {
         Row: {
           blueprint_id: string | null
@@ -2679,6 +3848,77 @@ export type Database = {
           },
         ]
       }
+      fee_collection_summary: {
+        Row: {
+          academic_session_id: string | null
+          billed: number | null
+          collected: number | null
+          discounts_given: number | null
+          invoices: number | null
+          organisation_id: string | null
+          outstanding: number | null
+          overdue: number | null
+          scholarships_given: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_invoices_academic_session_id_organisation_id_fkey"
+            columns: ["academic_session_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "academic_sessions"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "customer_invoices_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoice_summary: {
+        Row: {
+          academic_session_id: string | null
+          admission_no: string | null
+          balance: number | null
+          days_overdue: number | null
+          due_on: string | null
+          invoice_id: string | null
+          is_overdue: boolean | null
+          issued_at: string | null
+          number: string | null
+          organisation_id: string | null
+          paid: number | null
+          status: Database["public"]["Enums"]["invoice_status"] | null
+          student_id: string | null
+          student_name: string | null
+          total: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_invoices_academic_session_id_organisation_id_fkey"
+            columns: ["academic_session_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "academic_sessions"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "customer_invoices_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_invoices_student_id_organisation_id_fkey"
+            columns: ["student_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
       note_current: {
         Row: {
           note_id: string | null
@@ -2713,6 +3953,100 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "topic_tree"
             referencedColumns: ["topic_id", "organisation_id"]
+          },
+        ]
+      }
+      outstanding_balances: {
+        Row: {
+          account_balance: number | null
+          account_id: string | null
+          organisation_id: string | null
+          outstanding: number | null
+          overdue: number | null
+          student_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_accounts_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_accounts_student_id_organisation_id_fkey"
+            columns: ["student_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
+      payments_needing_review: {
+        Row: {
+          amount: number | null
+          attempt_id: string | null
+          created_at: string | null
+          currency: string | null
+          failure_reason: string | null
+          invoice_id: string | null
+          organisation_id: string | null
+          provider: Database["public"]["Enums"]["payment_provider"] | null
+          reference: string | null
+          student_id: string | null
+        }
+        Insert: {
+          amount?: number | null
+          attempt_id?: string | null
+          created_at?: string | null
+          currency?: string | null
+          failure_reason?: string | null
+          invoice_id?: string | null
+          organisation_id?: string | null
+          provider?: Database["public"]["Enums"]["payment_provider"] | null
+          reference?: string | null
+          student_id?: string | null
+        }
+        Update: {
+          amount?: number | null
+          attempt_id?: string | null
+          created_at?: string | null
+          currency?: string | null
+          failure_reason?: string | null
+          invoice_id?: string | null
+          organisation_id?: string | null
+          provider?: Database["public"]["Enums"]["payment_provider"] | null
+          reference?: string | null
+          student_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_payment_attempts_invoice_id_organisation_id_fkey"
+            columns: ["invoice_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "customer_invoices"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "customer_payment_attempts_invoice_id_organisation_id_fkey"
+            columns: ["invoice_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "invoice_summary"
+            referencedColumns: ["invoice_id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "customer_payment_attempts_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_payment_attempts_student_id_organisation_id_fkey"
+            columns: ["student_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id", "organisation_id"]
           },
         ]
       }
@@ -2817,14 +4151,84 @@ export type Database = {
           },
         ]
       }
+      wallet_balances: {
+        Row: {
+          account_id: string | null
+          organisation_id: string | null
+          student_id: string | null
+          wallet_balance: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenant_ledger_account_id_organisation_id_fkey"
+            columns: ["account_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "customer_accounts"
+            referencedColumns: ["id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "tenant_ledger_account_id_organisation_id_fkey"
+            columns: ["account_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "outstanding_balances"
+            referencedColumns: ["account_id", "organisation_id"]
+          },
+          {
+            foreignKeyName: "tenant_ledger_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tenant_ledger_student_id_organisation_id_fkey"
+            columns: ["student_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
     }
     Functions: {
+      account_for_student: { Args: { p_student_id: string }; Returns: string }
       answer_matches: {
         Args: { p_key: Json; p_text: string }
         Returns: boolean
       }
+      apply_payment: { Args: { p_txn_id: string }; Returns: undefined }
+      apply_wallet_internal: {
+        Args: { p_amount: number; p_invoice_id: string }
+        Returns: number
+      }
+      apply_wallet_to_invoice: {
+        Args: { p_amount?: number; p_invoice_id: string }
+        Returns: number
+      }
+      approve_refund: {
+        Args: { p_note?: string; p_refund_id: string }
+        Returns: undefined
+      }
       assert_owner_authority: { Args: never; Returns: string }
       assert_service_context: { Args: never; Returns: undefined }
+      attach_checkout: {
+        Args: {
+          p_attempt_id: string
+          p_checkout_url: string
+          p_provider_ref?: string
+        }
+        Returns: undefined
+      }
+      audit_finance: {
+        Args: {
+          p_action: string
+          p_after: Json
+          p_entity: string
+          p_entity_id: string
+          p_org: string
+        }
+        Returns: undefined
+      }
       audit_redact: { Args: { p: Json }; Returns: Json }
       available_exams: {
         Args: never
@@ -2852,6 +4256,7 @@ export type Database = {
         Returns: boolean
       }
       can_manage_settings: { Args: { p_org_id: string }; Returns: boolean }
+      can_pay_for_student: { Args: { p_student_id: string }; Returns: boolean }
       can_read_audit: { Args: { p_org_id: string }; Returns: boolean }
       can_read_membership: {
         Args: { p_membership_org_id: string; p_user_id: string }
@@ -2866,6 +4271,20 @@ export type Database = {
       can_read_user: { Args: { p_user_id: string }; Returns: boolean }
       can_view_student: { Args: { p_student_id: string }; Returns: boolean }
       close_exam: { Args: { p_exam_id: string }; Returns: undefined }
+      complete_refund: {
+        Args: { p_provider_refund_id?: string; p_refund_id: string }
+        Returns: undefined
+      }
+      create_invoice: {
+        Args: {
+          p_academic_session_id?: string
+          p_due_on?: string
+          p_items: Json
+          p_notes?: string
+          p_student_id: string
+        }
+        Returns: string
+      }
       current_org_id: { Args: never; Returns: string }
       current_student_id: { Args: never; Returns: string }
       current_user_id: { Args: never; Returns: string }
@@ -2892,6 +4311,25 @@ export type Database = {
         Returns: undefined
       }
       has_permission: { Args: { perm: string }; Returns: boolean }
+      ingest_payment_event: {
+        Args: {
+          p_provider: Database["public"]["Enums"]["payment_provider"]
+          p_raw_body: string
+          p_signature: string
+          p_verification?: Json
+        }
+        Returns: string
+      }
+      initiate_payment: {
+        Args: {
+          p_amount?: number
+          p_idempotency_key?: string
+          p_invoice_id: string
+          p_payer_email?: string
+          p_provider: Database["public"]["Enums"]["payment_provider"]
+        }
+        Returns: Json
+      }
       is_active_org_member: { Args: { p_org_id: string }; Returns: boolean }
       is_eligible: {
         Args: { p_exam_id: string; p_student_id: string }
@@ -2900,6 +4338,7 @@ export type Database = {
       is_org_member: { Args: never; Returns: boolean }
       is_platform_admin: { Args: never; Returns: boolean }
       is_self_or_parent: { Args: { p_student_id: string }; Returns: boolean }
+      issue_invoice: { Args: { p_invoice_id: string }; Returns: undefined }
       mark_response: {
         Args: { p_feedback?: string; p_marks: number; p_response_id: string }
         Returns: undefined
@@ -2909,8 +4348,50 @@ export type Database = {
         Returns: undefined
       }
       my_attempt_review: { Args: { p_attempt_id: string }; Returns: Json }
+      next_number: {
+        Args: { p_org: string; p_prefix: string; p_scope: string }
+        Returns: string
+      }
       normalise_auth_email: { Args: { p_email: string }; Returns: string }
       normalise_auth_phone: { Args: { p_phone: string }; Returns: string }
+      org_setting: {
+        Args: { p_default: Json; p_key: string; p_org: string }
+        Returns: Json
+      }
+      post_ledger: {
+        Args: {
+          p_account_id: string
+          p_amount: number
+          p_invoice_id: string
+          p_kind: Database["public"]["Enums"]["ledger_kind"]
+          p_memo?: string
+          p_refund_id?: string
+          p_txn_id?: string
+          p_type: Database["public"]["Enums"]["ledger_entry_type"]
+        }
+        Returns: number
+      }
+      price_for: {
+        Args: { p_product_id: string; p_session_id?: string }
+        Returns: {
+          academic_session_id: string | null
+          amount: number
+          created_at: string
+          currency: string
+          id: string
+          is_active: boolean
+          organisation_id: string
+          product_id: string
+          valid_from: string | null
+          valid_to: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "tenant_prices"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       provision_public_user: {
         Args: { p: Database["public"]["Tables"]["users"]["Row"] }
         Returns: undefined
@@ -2930,6 +4411,23 @@ export type Database = {
         }
         Returns: undefined
       }
+      record_manual_payment: {
+        Args: {
+          p_amount: number
+          p_invoice_id?: string
+          p_note?: string
+          p_paid_at?: string
+          p_payer_name?: string
+          p_provider: Database["public"]["Enums"]["payment_provider"]
+          p_reference?: string
+          p_student_id: string
+        }
+        Returns: string
+      }
+      reject_refund: {
+        Args: { p_note?: string; p_refund_id: string }
+        Returns: undefined
+      }
       release_results: {
         Args: { p_exam_id: string; p_force?: boolean }
         Returns: number
@@ -2937,6 +4435,15 @@ export type Database = {
       release_results_internal: {
         Args: { p_exam_id: string; p_force: boolean }
         Returns: number
+      }
+      request_refund: {
+        Args: {
+          p_amount: number
+          p_reason: string
+          p_source?: Database["public"]["Enums"]["refund_source"]
+          p_transaction_id: string
+        }
+        Returns: string
       }
       results_for_student: {
         Args: { p_student_id: string }
@@ -2964,6 +4471,7 @@ export type Database = {
         Returns: boolean
       }
       run_cbt_maintenance: { Args: never; Returns: Json }
+      run_finance_maintenance: { Args: never; Returns: number }
       save_response: {
         Args: {
           p_answer: Json
@@ -2984,6 +4492,14 @@ export type Database = {
           title: string
           topic_id: string
         }[]
+      }
+      set_payment_provider_secret: {
+        Args: {
+          p_organisation_id?: string
+          p_provider: Database["public"]["Enums"]["payment_provider"]
+          p_secret: string
+        }
+        Returns: undefined
       }
       staff_can_view_results: {
         Args: { p_student_id: string }
@@ -3024,8 +4540,18 @@ export type Database = {
         Args: { p_attempt_id: string; p_reason: string }
         Returns: undefined
       }
+      void_invoice: {
+        Args: { p_invoice_id: string; p_reason: string }
+        Returns: undefined
+      }
+      wallet_balance_of: { Args: { p_account_id: string }; Returns: number }
+      write_off_balance: {
+        Args: { p_amount: number; p_invoice_id: string; p_reason: string }
+        Returns: undefined
+      }
     }
     Enums: {
+      amount_kind: "percent" | "fixed"
       attempt_policy: "best" | "latest" | "first"
       attempt_status: "in_progress" | "submitted" | "auto_submitted" | "voided"
       audit_actor_type:
@@ -3054,11 +4580,45 @@ export type Database = {
       exam_kind: "test" | "exam" | "practice" | "mock"
       exam_status: "draft" | "published" | "closed" | "archived"
       gender_type: "female" | "male" | "other" | "undisclosed"
+      invoice_status: "draft" | "issued" | "partially_paid" | "paid" | "void"
+      ledger_entry_type: "debit" | "credit"
+      ledger_kind:
+        | "invoice"
+        | "invoice_void"
+        | "payment"
+        | "wallet_credit"
+        | "wallet_apply"
+        | "wallet_transfer"
+        | "refund"
+        | "adjustment"
       marking_state: "pending" | "auto" | "marked"
       membership_status: "invited" | "active" | "suspended" | "removed"
       org_status: "active" | "suspended" | "closed"
       org_type: "school" | "individual" | "partner"
+      payment_attempt_state:
+        | "initiated"
+        | "pending"
+        | "succeeded"
+        | "failed"
+        | "abandoned"
+        | "expired"
+        | "needs_review"
+      payment_provider:
+        | "paystack"
+        | "flutterwave"
+        | "bank_transfer"
+        | "cash"
+        | "pos"
+        | "other"
       person_status: "active" | "inactive" | "graduated" | "withdrawn"
+      product_type:
+        | "tuition"
+        | "registration"
+        | "exam_fee"
+        | "coaching"
+        | "materials"
+        | "subscription"
+        | "other"
       question_type:
         | "mcq"
         | "multi_select"
@@ -3066,6 +4626,8 @@ export type Database = {
         | "fill_blank"
         | "short_answer"
         | "theory"
+      refund_source: "invoice" | "wallet"
+      refund_status: "requested" | "approved" | "rejected" | "completed"
       release_policy: "manual" | "immediate" | "after_close"
       review_decision: "approved" | "changes_requested" | "rejected"
       role_scope: "platform" | "organisation"
@@ -3198,6 +4760,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      amount_kind: ["percent", "fixed"],
       attempt_policy: ["best", "latest", "first"],
       attempt_status: ["in_progress", "submitted", "auto_submitted", "voided"],
       audit_actor_type: ["user", "service_role", "webhook", "worker", "system"],
@@ -3217,11 +4780,49 @@ export const Constants = {
       exam_kind: ["test", "exam", "practice", "mock"],
       exam_status: ["draft", "published", "closed", "archived"],
       gender_type: ["female", "male", "other", "undisclosed"],
+      invoice_status: ["draft", "issued", "partially_paid", "paid", "void"],
+      ledger_entry_type: ["debit", "credit"],
+      ledger_kind: [
+        "invoice",
+        "invoice_void",
+        "payment",
+        "wallet_credit",
+        "wallet_apply",
+        "wallet_transfer",
+        "refund",
+        "adjustment",
+      ],
       marking_state: ["pending", "auto", "marked"],
       membership_status: ["invited", "active", "suspended", "removed"],
       org_status: ["active", "suspended", "closed"],
       org_type: ["school", "individual", "partner"],
+      payment_attempt_state: [
+        "initiated",
+        "pending",
+        "succeeded",
+        "failed",
+        "abandoned",
+        "expired",
+        "needs_review",
+      ],
+      payment_provider: [
+        "paystack",
+        "flutterwave",
+        "bank_transfer",
+        "cash",
+        "pos",
+        "other",
+      ],
       person_status: ["active", "inactive", "graduated", "withdrawn"],
+      product_type: [
+        "tuition",
+        "registration",
+        "exam_fee",
+        "coaching",
+        "materials",
+        "subscription",
+        "other",
+      ],
       question_type: [
         "mcq",
         "multi_select",
@@ -3230,6 +4831,8 @@ export const Constants = {
         "short_answer",
         "theory",
       ],
+      refund_source: ["invoice", "wallet"],
+      refund_status: ["requested", "approved", "rejected", "completed"],
       release_policy: ["manual", "immediate", "after_close"],
       review_decision: ["approved", "changes_requested", "rejected"],
       role_scope: ["platform", "organisation"],
