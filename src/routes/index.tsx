@@ -67,7 +67,10 @@ function Index() {
             business logic is implemented yet — the next approved gate is
             Supabase preflight, followed by migration 001.
           </p>
-          <Link to="/notebank" className="mt-5 inline-flex rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground">Open NoteBank</Link>
+          <div className="mt-5 flex flex-wrap gap-3">
+            <Link to="/notebank" className="inline-flex rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground">Open NoteBank</Link>
+            <Link to="/questionbank" className="inline-flex rounded-md border border-primary px-4 py-2 text-sm font-medium text-primary">Open Question Bank</Link>
+          </div>
         </section>
 
         <section className="mt-10">
