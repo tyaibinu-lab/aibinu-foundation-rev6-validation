@@ -12,7 +12,7 @@ import { safeRedirect } from "@/lib/auth/org-context";
 export const Route = createFileRoute("/login")({
   ssr: false,
   validateSearch: (s: Record<string, unknown>): { redirect?: string } =>
-    typeof s.redirect === "string" ? { redirect: s.redirect } : {},
+    typeof s['redirect'] === "string" ? { redirect: s['redirect'] } : {},
   head: () => ({
     meta: [
       { title: "Sign in — Aibinu Flexiprep" },
