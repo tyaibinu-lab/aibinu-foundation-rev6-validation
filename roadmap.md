@@ -15,3 +15,7 @@
 - [x] Fixed stale client .env (still points at vzmbcodyatxbtbhbnviy) via backend rebind, not hand-editing
 - [x] Read-only preflight: project identity, schema_migrations, RLS, roles, security definer functions
 - [x] Reported identity/state — STOPPED, awaiting approval — no migrations, no wiring until explicit approval
+
+## Gate 7 — Browser auth + organisation context (approved)
+- [x] /login, session restore, sign-out, protected NoteBank/Question Bank, org context + x-organisation-id
+- [x] Automated tests, live Teacher browser test, forged-org checks — STOPPED, awaiting approval
