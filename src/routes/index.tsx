@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { AccountBar } from "@/components/auth/TenantGate";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -49,9 +50,7 @@ function Index() {
               <p className="text-xs text-muted-foreground">Global Learning Platform</p>
             </div>
           </div>
-          <span className="rounded-full border border-border bg-secondary px-3 py-1 text-xs font-medium text-secondary-foreground">
-            Engineering Baseline
-          </span>
+          <AccountBar />
         </div>
       </header>
 
