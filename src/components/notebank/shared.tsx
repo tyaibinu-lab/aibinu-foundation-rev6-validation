@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
+import { AccountBar } from "@/components/auth/TenantGate";
 import { currentContext, fetchPermissions } from "@/lib/notebank/api";
 import { describeDbError, EMPTY_PERMISSIONS, STATUS_LABEL, type ContentStatus } from "@/lib/notebank/permissions";
 
@@ -49,6 +50,7 @@ export function NoteBankShell({ title, subtitle, children }: { title: string; su
             <Link to="/notebank" activeOptions={{ exact: true }} activeProps={{ className: "underline decoration-accent decoration-2 underline-offset-4" }}>Teacher workspace</Link>
             <Link to="/notebank/review" activeProps={{ className: "underline decoration-accent decoration-2 underline-offset-4" }}>Reviewer workspace</Link>
           </nav>
+          <AccountBar />
         </div>
       </header>
       <main className="mx-auto max-w-6xl px-4 py-8">

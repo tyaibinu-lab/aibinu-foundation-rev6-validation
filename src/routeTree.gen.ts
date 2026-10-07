@@ -10,6 +10,9 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as NotebankRouteImport } from './routes/notebank'
+import { Route as QuestionbankRouteImport } from './routes/questionbank'
 import { Route as NotebankIndexRouteImport } from './routes/notebank.index'
 import { Route as NotebankNoteIdRouteImport } from './routes/notebank.$noteId'
 import { Route as NotebankReviewRouteImport } from './routes/notebank.review'
@@ -23,44 +26,62 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const NotebankIndexRoute = NotebankIndexRouteImport.update({
-  id: '/notebank/',
-  path: '/notebank/',
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
+} as any)
+const NotebankRoute = NotebankRouteImport.update({
+  id: '/notebank',
+  path: '/notebank',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuestionbankRoute = QuestionbankRouteImport.update({
+  id: '/questionbank',
+  path: '/questionbank',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotebankIndexRoute = NotebankIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => NotebankRoute,
 } as any)
 const NotebankNoteIdRoute = NotebankNoteIdRouteImport.update({
-  id: '/notebank/$noteId',
-  path: '/notebank/$noteId',
-  getParentRoute: () => rootRouteImport,
+  id: '/$noteId',
+  path: '/$noteId',
+  getParentRoute: () => NotebankRoute,
 } as any)
 const NotebankReviewRoute = NotebankReviewRouteImport.update({
-  id: '/notebank/review',
-  path: '/notebank/review',
-  getParentRoute: () => rootRouteImport,
+  id: '/review',
+  path: '/review',
+  getParentRoute: () => NotebankRoute,
 } as any)
 const QuestionbankIndexRoute = QuestionbankIndexRouteImport.update({
-  id: '/questionbank/',
-  path: '/questionbank/',
-  getParentRoute: () => rootRouteImport,
+  id: '/',
+  path: '/',
+  getParentRoute: () => QuestionbankRoute,
 } as any)
 const QuestionbankQuestionIdRoute = QuestionbankQuestionIdRouteImport.update({
-  id: '/questionbank/$questionId',
-  path: '/questionbank/$questionId',
-  getParentRoute: () => rootRouteImport,
+  id: '/$questionId',
+  path: '/$questionId',
+  getParentRoute: () => QuestionbankRoute,
 } as any)
 const QuestionbankNewRoute = QuestionbankNewRouteImport.update({
-  id: '/questionbank/new',
-  path: '/questionbank/new',
-  getParentRoute: () => rootRouteImport,
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => QuestionbankRoute,
 } as any)
 const QuestionbankReviewRoute = QuestionbankReviewRouteImport.update({
-  id: '/questionbank/review',
-  path: '/questionbank/review',
-  getParentRoute: () => rootRouteImport,
+  id: '/review',
+  path: '/review',
+  getParentRoute: () => QuestionbankRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/notebank': typeof NotebankRouteWithChildren
+  '/questionbank': typeof QuestionbankRouteWithChildren
   '/notebank/$noteId': typeof NotebankNoteIdRoute
   '/notebank/review': typeof NotebankReviewRoute
   '/questionbank/$questionId': typeof QuestionbankQuestionIdRoute
@@ -71,6 +92,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
   '/notebank/$noteId': typeof NotebankNoteIdRoute
   '/notebank/review': typeof NotebankReviewRoute
   '/questionbank/$questionId': typeof QuestionbankQuestionIdRoute
@@ -82,6 +104,9 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/notebank': typeof NotebankRouteWithChildren
+  '/questionbank': typeof QuestionbankRouteWithChildren
   '/notebank/$noteId': typeof NotebankNoteIdRoute
   '/notebank/review': typeof NotebankReviewRoute
   '/questionbank/$questionId': typeof QuestionbankQuestionIdRoute
@@ -94,6 +119,9 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/login'
+    | '/notebank'
+    | '/questionbank'
     | '/notebank/$noteId'
     | '/notebank/review'
     | '/questionbank/$questionId'
@@ -104,6 +132,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/login'
     | '/notebank/$noteId'
     | '/notebank/review'
     | '/questionbank/$questionId'
@@ -114,6 +143,9 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/login'
+    | '/notebank'
+    | '/questionbank'
     | '/notebank/$noteId'
     | '/notebank/review'
     | '/questionbank/$questionId'
@@ -125,13 +157,9 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  NotebankNoteIdRoute: typeof NotebankNoteIdRoute
-  NotebankReviewRoute: typeof NotebankReviewRoute
-  QuestionbankQuestionIdRoute: typeof QuestionbankQuestionIdRoute
-  QuestionbankNewRoute: typeof QuestionbankNewRoute
-  QuestionbankReviewRoute: typeof QuestionbankReviewRoute
-  NotebankIndexRoute: typeof NotebankIndexRoute
-  QuestionbankIndexRoute: typeof QuestionbankIndexRoute
+  LoginRoute: typeof LoginRoute
+  NotebankRoute: typeof NotebankRouteWithChildren
+  QuestionbankRoute: typeof QuestionbankRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -143,67 +171,118 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notebank': {
+      id: '/notebank'
+      path: '/notebank'
+      fullPath: '/notebank'
+      preLoaderRoute: typeof NotebankRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/questionbank': {
+      id: '/questionbank'
+      path: '/questionbank'
+      fullPath: '/questionbank'
+      preLoaderRoute: typeof QuestionbankRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/notebank/': {
       id: '/notebank/'
-      path: '/notebank'
+      path: '/'
       fullPath: '/notebank/'
       preLoaderRoute: typeof NotebankIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof NotebankRoute
     }
     '/notebank/$noteId': {
       id: '/notebank/$noteId'
-      path: '/notebank/$noteId'
+      path: '/$noteId'
       fullPath: '/notebank/$noteId'
       preLoaderRoute: typeof NotebankNoteIdRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof NotebankRoute
     }
     '/notebank/review': {
       id: '/notebank/review'
-      path: '/notebank/review'
+      path: '/review'
       fullPath: '/notebank/review'
       preLoaderRoute: typeof NotebankReviewRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof NotebankRoute
     }
     '/questionbank/': {
       id: '/questionbank/'
-      path: '/questionbank'
+      path: '/'
       fullPath: '/questionbank/'
       preLoaderRoute: typeof QuestionbankIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof QuestionbankRoute
     }
     '/questionbank/$questionId': {
       id: '/questionbank/$questionId'
-      path: '/questionbank/$questionId'
+      path: '/$questionId'
       fullPath: '/questionbank/$questionId'
       preLoaderRoute: typeof QuestionbankQuestionIdRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof QuestionbankRoute
     }
     '/questionbank/new': {
       id: '/questionbank/new'
-      path: '/questionbank/new'
+      path: '/new'
       fullPath: '/questionbank/new'
       preLoaderRoute: typeof QuestionbankNewRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof QuestionbankRoute
     }
     '/questionbank/review': {
       id: '/questionbank/review'
-      path: '/questionbank/review'
+      path: '/review'
       fullPath: '/questionbank/review'
       preLoaderRoute: typeof QuestionbankReviewRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof QuestionbankRoute
     }
   }
 }
 
-const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+interface NotebankRouteChildren {
+  NotebankNoteIdRoute: typeof NotebankNoteIdRoute
+  NotebankReviewRoute: typeof NotebankReviewRoute
+  NotebankIndexRoute: typeof NotebankIndexRoute
+}
+
+const NotebankRouteChildren: NotebankRouteChildren = {
   NotebankNoteIdRoute: NotebankNoteIdRoute,
   NotebankReviewRoute: NotebankReviewRoute,
+  NotebankIndexRoute: NotebankIndexRoute,
+}
+
+const NotebankRouteWithChildren = NotebankRoute._addFileChildren(
+  NotebankRouteChildren,
+)
+
+interface QuestionbankRouteChildren {
+  QuestionbankQuestionIdRoute: typeof QuestionbankQuestionIdRoute
+  QuestionbankNewRoute: typeof QuestionbankNewRoute
+  QuestionbankReviewRoute: typeof QuestionbankReviewRoute
+  QuestionbankIndexRoute: typeof QuestionbankIndexRoute
+}
+
+const QuestionbankRouteChildren: QuestionbankRouteChildren = {
   QuestionbankQuestionIdRoute: QuestionbankQuestionIdRoute,
   QuestionbankNewRoute: QuestionbankNewRoute,
   QuestionbankReviewRoute: QuestionbankReviewRoute,
-  NotebankIndexRoute: NotebankIndexRoute,
   QuestionbankIndexRoute: QuestionbankIndexRoute,
+}
+
+const QuestionbankRouteWithChildren = QuestionbankRoute._addFileChildren(
+  QuestionbankRouteChildren,
+)
+
+const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
+  LoginRoute: LoginRoute,
+  NotebankRoute: NotebankRouteWithChildren,
+  QuestionbankRoute: QuestionbankRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
+import { AccountBar } from "@/components/auth/TenantGate";
 import { currentContext, fetchQuestionPermissions } from "@/lib/questionbank/api";
 import {
   describeQuestionError,
@@ -62,6 +63,7 @@ export function QuestionBankShell({ title, subtitle, actions, children }: { titl
             <Link to="/questionbank/new" activeProps={navActive}>New question</Link>
             <Link to="/questionbank/review" activeProps={navActive}>Review queue</Link>
           </nav>
+          <AccountBar />
         </div>
       </header>
       <main className="mx-auto max-w-6xl px-4 py-8">
