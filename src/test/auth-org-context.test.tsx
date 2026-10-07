@@ -113,7 +113,7 @@ vi.mock("@tanstack/react-router", async (orig) => {
   return {
     ...mod,
     useNavigate: () => navigateMock,
-    useLocation: () => ({ href: "/questionbank" }),
+    useLocation: () => ({ href: "/questionbank", pathname: "/questionbank" }),
     Outlet: () => <div>PROTECTED CONTENT</div>,
     Link: ({ children }: { children: React.ReactNode }) => <a>{children}</a>,
   };

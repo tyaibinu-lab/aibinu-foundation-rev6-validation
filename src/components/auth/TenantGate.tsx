@@ -1,5 +1,5 @@
 import { Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -20,11 +20,15 @@ export function TenantGate() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const redirected = useRef(false);
   useEffect(() => {
-    if (auth.status === "signed_out") {
+    // Redirect once; the gate can stay mounted while /login loads, so never re-wrap /login.
+    if (auth.status === "signed_out" && !redirected.current && !location.pathname.startsWith("/login")) {
+      redirected.current = true;
       void navigate({ to: "/login", search: { redirect: location.href }, replace: true });
     }
-  }, [auth.status, location.href, navigate]);
+    if (auth.status === "signed_in") redirected.current = false;
+  }, [auth.status, location.href, location.pathname, navigate]);
 
   if (auth.status !== "signed_in" || auth.orgStatus === "idle" || auth.orgStatus === "loading") {
     return <Centered><p className="text-sm text-muted-foreground" role="status">Checking your sign-in…</p></Centered>;
