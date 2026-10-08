@@ -58,6 +58,79 @@ export type Database = {
           },
         ]
       }
+      ai_agents: {
+        Row: {
+          code: string
+          created_at: string
+          credit_base: number
+          default_model_id: string | null
+          description: string | null
+          enabled: boolean
+          fallback_model_id: string | null
+          job_types: Database["public"]["Enums"]["ai_job_type"][]
+          max_batch: number | null
+          name: string
+          required_permission: string
+          safety_class: Database["public"]["Enums"]["ai_safety_class"]
+          updated_at: string
+          version: number
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          credit_base?: number
+          default_model_id?: string | null
+          description?: string | null
+          enabled?: boolean
+          fallback_model_id?: string | null
+          job_types: Database["public"]["Enums"]["ai_job_type"][]
+          max_batch?: number | null
+          name: string
+          required_permission: string
+          safety_class: Database["public"]["Enums"]["ai_safety_class"]
+          updated_at?: string
+          version?: number
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          credit_base?: number
+          default_model_id?: string | null
+          description?: string | null
+          enabled?: boolean
+          fallback_model_id?: string | null
+          job_types?: Database["public"]["Enums"]["ai_job_type"][]
+          max_batch?: number | null
+          name?: string
+          required_permission?: string
+          safety_class?: Database["public"]["Enums"]["ai_safety_class"]
+          updated_at?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_agents_default_model_id_fkey"
+            columns: ["default_model_id"]
+            isOneToOne: false
+            referencedRelation: "ai_model_registry"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_agents_fallback_model_id_fkey"
+            columns: ["fallback_model_id"]
+            isOneToOne: false
+            referencedRelation: "ai_model_registry"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_agents_required_permission_fkey"
+            columns: ["required_permission"]
+            isOneToOne: false
+            referencedRelation: "permissions"
+            referencedColumns: ["code"]
+          },
+        ]
+      }
       ai_content: {
         Row: {
           created_at: string
@@ -291,6 +364,150 @@ export type Database = {
             referencedColumns: ["id", "organisation_id"]
           },
         ]
+      }
+      ai_model_registry: {
+        Row: {
+          context_tokens: number
+          created_at: string
+          credit_multiplier: number
+          id: string
+          input_usd_micros_per_1k: number | null
+          output_usd_micros_per_1k: number | null
+          provider: string
+          provider_model: string
+          retired_at: string | null
+          safety_classes: Database["public"]["Enums"]["ai_safety_class"][]
+          state: Database["public"]["Enums"]["ai_model_state"]
+          updated_at: string
+        }
+        Insert: {
+          context_tokens: number
+          created_at?: string
+          credit_multiplier?: number
+          id: string
+          input_usd_micros_per_1k?: number | null
+          output_usd_micros_per_1k?: number | null
+          provider: string
+          provider_model: string
+          retired_at?: string | null
+          safety_classes: Database["public"]["Enums"]["ai_safety_class"][]
+          state?: Database["public"]["Enums"]["ai_model_state"]
+          updated_at?: string
+        }
+        Update: {
+          context_tokens?: number
+          created_at?: string
+          credit_multiplier?: number
+          id?: string
+          input_usd_micros_per_1k?: number | null
+          output_usd_micros_per_1k?: number | null
+          provider?: string
+          provider_model?: string
+          retired_at?: string | null
+          safety_classes?: Database["public"]["Enums"]["ai_safety_class"][]
+          state?: Database["public"]["Enums"]["ai_model_state"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      ai_org_plans: {
+        Row: {
+          approval_threshold_override: number | null
+          assigned_by: string | null
+          created_at: string
+          effective_from: string
+          effective_to: string | null
+          id: string
+          organisation_id: string
+          plan_code: string
+        }
+        Insert: {
+          approval_threshold_override?: number | null
+          assigned_by?: string | null
+          created_at?: string
+          effective_from: string
+          effective_to?: string | null
+          id?: string
+          organisation_id: string
+          plan_code: string
+        }
+        Update: {
+          approval_threshold_override?: number | null
+          assigned_by?: string | null
+          created_at?: string
+          effective_from?: string
+          effective_to?: string | null
+          id?: string
+          organisation_id?: string
+          plan_code?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_org_plans_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_org_plans_plan_code_fkey"
+            columns: ["plan_code"]
+            isOneToOne: false
+            referencedRelation: "ai_plans"
+            referencedColumns: ["code"]
+          },
+        ]
+      }
+      ai_plans: {
+        Row: {
+          active: boolean
+          allowed_agents: string[]
+          allowed_models: string[]
+          approval_threshold_credits: number | null
+          code: string
+          created_at: string
+          daily_job_limit: number
+          fair_use: Json
+          grant_expires_after_days: number | null
+          max_concurrent_jobs: number
+          monthly_credit_grant: number
+          name: string
+          per_user_daily_jobs: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          allowed_agents: string[]
+          allowed_models: string[]
+          approval_threshold_credits?: number | null
+          code: string
+          created_at?: string
+          daily_job_limit: number
+          fair_use?: Json
+          grant_expires_after_days?: number | null
+          max_concurrent_jobs?: number
+          monthly_credit_grant: number
+          name: string
+          per_user_daily_jobs?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          allowed_agents?: string[]
+          allowed_models?: string[]
+          approval_threshold_credits?: number | null
+          code?: string
+          created_at?: string
+          daily_job_limit?: number
+          fair_use?: Json
+          grant_expires_after_days?: number | null
+          max_concurrent_jobs?: number
+          monthly_credit_grant?: number
+          name?: string
+          per_user_daily_jobs?: number
+          updated_at?: string
+        }
+        Relationships: []
       }
       ai_prompt_templates: {
         Row: {
