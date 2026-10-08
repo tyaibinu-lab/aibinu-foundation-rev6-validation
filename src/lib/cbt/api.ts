@@ -265,5 +265,6 @@ export async function listSessions(): Promise<(NamedOption & { term: string | nu
 export function describeCbtError(e: unknown): string {
   const m = (e as { message?: string })?.message ?? String(e);
   if (/row-level security|permission denied/i.test(m)) return "You do not have permission to do this in the active organisation.";
+  if (/uq_eligibility_class|uq_eligibility_student/.test(m)) return "This class or student is already eligible for the exam.";
   return m;
 }
