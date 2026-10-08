@@ -26,7 +26,7 @@ describe("P4 CBT audit trail", () => {
   it("result release only on first release, without score/grade", () => {
     expect(body).toContain("WHEN (OLD.released_at IS NULL AND NEW.released_at IS NOT NULL)");
     expect(body).toContain("'result.released'");
-    const seg = body.split("'result.released'")[1].split("ELSIF")[0];
+    const seg = (body.split("'result.released'")[1] ?? "").split("ELSIF")[0] ?? "";
     expect(seg).not.toMatch(/score|grade|percentage/);
   });
   it("manual marking audited with before/after marks, never answer or feedback text", () => {
