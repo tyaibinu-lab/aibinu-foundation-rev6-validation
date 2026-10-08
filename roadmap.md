@@ -23,4 +23,5 @@
 ## Gate 8C Phase 1 — CBT Exam Administration (approved)
 - [x] /cbt, /cbt/new, /cbt/$examId behind TenantGate; publish_exam/close_exam only
 - [x] Contract tests + live Publisher validation; UAT exam "[Gate8B UAT] Quadratics Check" published with 3 pinned versions, class UAT SS2 A
-- [ ] Phase 2 (student taking) — awaiting approval
+- [x] Phase 2 student taking: /cbt/my, /cbt/take/$attemptId; live UAT attempt submitted (results unreleased)
+- [ ] Phase 3 (marking/result release UI) — awaiting approval
