@@ -21,3 +21,4 @@
 - CBT Manual Marking (src/lib/cbt/marking.ts, src/routes/cbt.mark.$attemptId.tsx) reads responses only through RLS and writes marks only via mark_response(p_response_id, p_marks, p_feedback). It never selects answer keys, never writes responses/results, and never computes totals. Why: the database checks result.mark, student scope, attempt state and mark range, then re-scores the attempt server-side.
 
 - AI governance extends the Rev6 ai_jobs pipeline (enqueue/claim/complete/fail) and ai_prompt_templates; credits go in one append-only ledger keyed to ai_jobs. Why: avoids a parallel AI system and keeps provider calls server-side with draft-only outputs.
+- Gate 10 AI governance design (docs/gate10-ai-governance-schema-proposal.md) is the approved spec for future AI migrations; credit reservations live only as ledger rows, never as ai_jobs columns. Why: one source of truth prevents double-reserve/charge.
