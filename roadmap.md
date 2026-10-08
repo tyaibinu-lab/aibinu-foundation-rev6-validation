@@ -32,3 +32,4 @@
 - [x] Gate 8G-2 P3 applied (DB-stamped created_by on exams/exam_eligibility). P2/P4 pending approval.
 - [x] Gate 8G-3 P2 applied (owner-scoped exam administration via can_manage_exam). P4 pending approval.
 - [x] Gate 8G-4 P4 applied (audit_cbt_event triggers: exam.published/closed, result.released, response.marked).
+- [x] Gate 8G-5 final CBT sign-off: Owner-only audit.read kept (no RBAC change); permanent UAT Owner, Teacher B, Teacher row + SS2 Maths assignment; full regression passed.
