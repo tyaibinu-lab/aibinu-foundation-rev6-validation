@@ -175,7 +175,7 @@ function files(dir: string): string[] {
   return readdirSync(dir).flatMap((f) => { const p = join(dir, f); return statSync(p).isDirectory() ? files(p) : [p]; });
 }
 // Gate 8D results/review sources have their own boundary tests in cbt-results-contract.test.ts.
-const STUDENT = /(lib\/cbt\/student|lib\/cbt\/results|components\/cbt\/student|routes\/cbt\.(my|take|results|review))/;
+const STUDENT = /(lib\/cbt\/student|lib\/cbt\/results|lib\/cbt\/marking|components\/cbt\/student|routes\/cbt\.(my|take|results|review|mark))/;
 const cbtSources = [...files("src/lib/cbt"), ...files("src/components/cbt"), ...files("src/routes").filter((f) => /routes\/cbt/.test(f))].filter((f) => !STUDENT.test(f));
 
 describe("CBT security boundary (static)", () => {
