@@ -36,3 +36,4 @@
 - [x] Gate 9 AI architecture audit/reservation (read-only; report in Files). Next: Gate 10 AI governance schema proposal.
 - [x] Gate 10 AI governance schema & lifecycle design (docs/gate10-ai-governance-schema-proposal.md) — DESIGN ONLY, no DDL. Next: Gate 11 migrations M1–M8 on approval.
 - [x] Gate 10 v1.1 design revision (C1–C5 from Gate 11A) — document only. Next: Gate 11B M1 on approval.
+- [x] Gate 11B M1 applied (validation only): AI governance enum/type foundation, schema_migrations 011-m1. Next: M2 on approval.
