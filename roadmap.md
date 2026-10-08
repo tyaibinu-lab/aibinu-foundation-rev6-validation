@@ -34,3 +34,4 @@
 - [x] Gate 8G-4 P4 applied (audit_cbt_event triggers: exam.published/closed, result.released, response.marked).
 - [x] Gate 8G-5 final CBT sign-off: Owner-only audit.read kept (no RBAC change); permanent UAT Owner, Teacher B, Teacher row + SS2 Maths assignment; full regression passed.
 - [x] Gate 9 AI architecture audit/reservation (read-only; report in Files). Next: Gate 10 AI governance schema proposal.
+- [x] Gate 10 AI governance schema & lifecycle design (docs/gate10-ai-governance-schema-proposal.md) — DESIGN ONLY, no DDL. Next: Gate 11 migrations M1–M8 on approval.
