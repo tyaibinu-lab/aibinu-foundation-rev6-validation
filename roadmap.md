@@ -31,3 +31,4 @@
 - [x] Gate 8G-1 P1 applied (release_results scope). P2/P3/P4 pending approval.
 - [x] Gate 8G-2 P3 applied (DB-stamped created_by on exams/exam_eligibility). P2/P4 pending approval.
 - [x] Gate 8G-3 P2 applied (owner-scoped exam administration via can_manage_exam). P4 pending approval.
+- [x] Gate 8G-4 P4 applied (audit_cbt_event triggers: exam.published/closed, result.released, response.marked).
