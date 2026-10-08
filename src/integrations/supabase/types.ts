@@ -5586,6 +5586,7 @@ export type Database = {
         Args: { p_from: string; p_student_id: string; p_to: string }
         Returns: Json
       }
+      can_manage_exam: { Args: { p_exam_id: string }; Returns: boolean }
       can_manage_membership: { Args: { p_org_id: string }; Returns: boolean }
       can_manage_organisation: { Args: { p_org_id: string }; Returns: boolean }
       can_manage_role: {
