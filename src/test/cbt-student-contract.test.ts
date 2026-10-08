@@ -147,7 +147,7 @@ describe("security boundary (static)", () => {
     const c = src(f);
     expect(c).not.toMatch(/\.from\(/);
     expect(c).not.toMatch(/finalize_attempt|score_attempt|mark_response|release_results|grade_for|answer_matches|publish_exam|close_exam/);
-    expect(c).not.toMatch(/organisation_id|x-organisation-id|p_student_id:\s*(?!studentId)/);
+    expect(c).not.toMatch(/organisation_id|x-organisation-id|p_student_id:(?!\s*studentId\b)/);
   });
   it.each(STUDENT_SRC)("%s: no secrets, admin client or AI runtime", (f) => {
     const c = src(f);
