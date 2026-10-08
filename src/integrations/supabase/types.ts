@@ -6072,20 +6072,44 @@ export type Database = {
         | "student_review"
         | "diagnosis_narrative"
         | "report_comment"
+        | "mark_suggestion"
       ai_content_status:
         | "draft_created"
         | "applied"
         | "invalid"
         | "duplicate"
         | "discarded"
-      ai_job_status: "queued" | "running" | "succeeded" | "failed" | "cancelled"
+      ai_credit_kind:
+        | "grant"
+        | "reserve"
+        | "settle"
+        | "release"
+        | "refund"
+        | "adjust"
+        | "expire"
+      ai_job_status:
+        | "awaiting_approval"
+        | "queued"
+        | "running"
+        | "succeeded"
+        | "failed"
+        | "cancelled"
+        | "expired"
+        | "rejected"
       ai_job_type:
         | "generate_questions"
         | "generate_note"
         | "review_student"
         | "explain_diagnosis"
         | "report_comment"
+      ai_model_state: "enabled" | "disabled" | "retired"
+      ai_prompt_state: "draft" | "active" | "retired"
       ai_review_state: "pending_review" | "accepted" | "discarded"
+      ai_safety_class:
+        | "staff_generation"
+        | "staff_assist"
+        | "student_facing"
+        | "analytics"
       amount_kind: "percent" | "fixed"
       attempt_policy: "best" | "latest" | "first"
       attempt_status: "in_progress" | "submitted" | "auto_submitted" | "voided"
@@ -6321,6 +6345,7 @@ export const Constants = {
         "student_review",
         "diagnosis_narrative",
         "report_comment",
+        "mark_suggestion",
       ],
       ai_content_status: [
         "draft_created",
@@ -6329,7 +6354,25 @@ export const Constants = {
         "duplicate",
         "discarded",
       ],
-      ai_job_status: ["queued", "running", "succeeded", "failed", "cancelled"],
+      ai_credit_kind: [
+        "grant",
+        "reserve",
+        "settle",
+        "release",
+        "refund",
+        "adjust",
+        "expire",
+      ],
+      ai_job_status: [
+        "awaiting_approval",
+        "queued",
+        "running",
+        "succeeded",
+        "failed",
+        "cancelled",
+        "expired",
+        "rejected",
+      ],
       ai_job_type: [
         "generate_questions",
         "generate_note",
@@ -6337,7 +6380,15 @@ export const Constants = {
         "explain_diagnosis",
         "report_comment",
       ],
+      ai_model_state: ["enabled", "disabled", "retired"],
+      ai_prompt_state: ["draft", "active", "retired"],
       ai_review_state: ["pending_review", "accepted", "discarded"],
+      ai_safety_class: [
+        "staff_generation",
+        "staff_assist",
+        "student_facing",
+        "analytics",
+      ],
       amount_kind: ["percent", "fixed"],
       attempt_policy: ["best", "latest", "first"],
       attempt_status: ["in_progress", "submitted", "auto_submitted", "voided"],
