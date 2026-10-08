@@ -1,4 +1,6 @@
-# Gate 10 — AI Governance Schema & Lifecycle Design
+# Gate 10 — AI Governance Schema & Lifecycle Design — v1.1
+
+> **Version 1.1 (2026-10-08)** — v1.0 approved; v1.1 incorporates Gate 11A preflight corrections C1–C5 only (see §13, which is authoritative where it differs from earlier sections).
 
 > **DESIGN ONLY. NO DDL EXECUTED.** No tables, columns, functions, RLS, grants,
 > permissions, workers, providers, UI or credit charging were created or changed.
@@ -11,7 +13,7 @@
 ### Tables
 | Object | Exact columns (live) |
 |---|---|
-| `ai_jobs` | id, organisation_id NN, type ai_job_type NN, status ai_job_status='queued', priority smallint=5, input jsonb NN, target_type, target_id, student_id, idempotency_key, requested_by=current_user_id(), attempts=0, max_attempts=3, run_after=now(), locked_by, locked_until, model text, input_tokens, output_tokens, cost_usd_micros bigint=0, error, result_summary jsonb, created_at, started_at, finished_at. Unique (organisation_id, idempotency_key). |
+| `ai_jobs` | id, organisation_id NN, type ai_job_type NN, status ai_job_status='queued', priority smallint=5, input jsonb NN, target_type, target_id, student_id, idempotency_key, requested_by=current_user_id(), attempts=0, max_attempts=3, run_after=now(), locked_by, locked_until, model text, input_tokens, output_tokens, cost_usd_micros bigint=0, error, result_summary jsonb, created_at, started_at, finished_at. Partial unique `uq_ai_job_idem` (organisation_id, idempotency_key) WHERE key NOT NULL AND status NOT IN (failed, cancelled) — see §13.3. |
 | `ai_prompt_templates` | id, job_type NN, version int NN, system_prompt NN, user_template NN, output_schema jsonb NN, is_active bool=false, notes, created_at. (Platform-global, no org.) |
 | `ai_content` | id, organisation_id, job_id NN, kind ai_content_kind, status ai_content_status, student_id, payload jsonb, target_type, target_id, error, created_at |
 | `ai_diagnostics` | id, organisation_id, student_id, job_id, summary, findings jsonb, model, review_state ai_review_state='pending_review', reviewed_by, reviewed_at, created_at |
@@ -83,7 +85,7 @@ CREATE TYPE ai_prompt_state AS ENUM ('draft','active','retired');
 CREATE TYPE ai_safety_class AS ENUM ('staff_generation','staff_assist','student_facing','analytics');
 CREATE TYPE ai_model_state AS ENUM ('enabled','disabled','retired');
 ALTER TYPE ai_content_kind ADD VALUE 'mark_suggestion';      -- Marking Assistant (future)
-ALTER TYPE ai_content_kind ADD VALUE 'diagnosis_suggestion'; -- F1
+-- v1.1 C2: no new kind for F1; existing 'diagnosis_narrative' is reused.
 ```
 (`ALTER TYPE … ADD VALUE` runs in its own migration before use.)
 
@@ -255,7 +257,7 @@ All: `SECURITY DEFINER`, `SET search_path = pg_catalog, public, pg_temp`, `REVOK
 
 | Function | Caller | Behaviour / authz | Idempotency | Failure |
 |---|---|---|---|---|
-| `enqueue_ai_job(p_type, p_input, p_target_type, p_target_id, p_student_id, p_idempotency_key, p_priority)` — **signature unchanged** | internal (called by request_ai_*); EXECUTE stays revoked from authenticated as today | existing checks kept (ai_enabled, daily cap, budget, 10/user) **plus**: resolve agent by type → agent.enabled, `global_ai_enabled` platform flag, plan allows agent; resolve model = agent.default_model (fallback if disabled) and plan allows; pin active prompt for type; `requester_role` snapshot; concurrent-job and per-user limits; estimate credits; `ai_credit_reserve()`; status = awaiting_approval if estimate > threshold else queued | existing unique (org, idempotency_key): same key returns existing job id **without a second reserve** | raises `ai_disabled`, `agent_disabled`, `model_unavailable`, `no_active_prompt`, `limit_exceeded`, `insufficient_credits`; whole txn rolls back (no job, no reserve) |
+| `enqueue_ai_job(p_type, p_input, p_target_type, p_target_id, p_student_id, p_idempotency_key, p_priority)` — **signature unchanged** | internal (called by request_ai_*); EXECUTE stays revoked from authenticated as today | existing checks kept (ai_enabled, daily cap, budget, 10/user) **plus**: resolve agent by type → agent.enabled, `global_ai_enabled` platform flag, plan allows agent; resolve model = agent.default_model (fallback if disabled) and plan allows; pin active prompt for type; `requester_role` snapshot; concurrent-job and per-user limits; estimate credits; `ai_credit_reserve()`; status = awaiting_approval if estimate > threshold else queued | partial `uq_ai_job_idem` semantics per §13.3 (C3) | raises `ai_disabled`, `agent_disabled`, `model_unavailable`, `no_active_prompt`, `limit_exceeded`, `insufficient_credits`; whole txn rolls back (no job, no reserve) |
 | `request_ai_*` (5) — signatures unchanged | authenticated | existing permission & scope checks unchanged; F3 cap via `ai_max_batch()` | via key | as today |
 | `ai_estimate_credits(p_agent text, p_model text, p_units int) → int` | internal, IMMUTABLE-ish STABLE | `ceil(agent.credit_base + model.credit_multiplier × units × plan policy multiplier)`; units = batch count (questions) or 1 | pure | raises on unknown agent/model |
 | `ai_credit_reserve(p_job_id uuid, p_amount int) → void` | internal only (no EXECUTE to any client role) | advisory lock on org; compute available; if `available − amount < 0` raise; check user allocation (Phase 2); insert reserve | unique (job_id,'reserve') — conflict = no-op | raise `insufficient_credits` |
@@ -269,7 +271,7 @@ All: `SECURITY DEFINER`, `SET search_path = pg_catalog, public, pg_temp`, `REVOK
 | `complete_ai_job(p_job_id, p_outputs, p_usage)` — unchanged signature | service_role only, must hold current lease (locked_by matches & not expired) | validate outputs against pinned output_schema + `ai_max_batch()`; drafts only (unchanged); record_ai_usage; compute actual credits from p_usage (server formula, never client) → `ai_credit_settle` | status must be running; second call raises `invalid_state`, settle unique prevents double charge | invalid output → fail path, release |
 | `fail_ai_job(p_job_id, p_error, p_retry, p_usage)` — unchanged | service_role only | provider cost still rolled into ai_usage_daily; retry & attempts<max → queued with backoff, **reservation kept, no new reserve**; else failed + `ai_credit_release` | release unique | — |
 | `cancel_ai_job(p_job_id)` → extend to `cancel_ai_job(p_job_id uuid, p_reason text DEFAULT NULL)` | requester (own) or `ai.manage` same org | allowed from awaiting_approval/queued; from running only by ai.manage (sets cancelled; worker's later complete is rejected, release issued); writes cancel_reason/cancelled_by; audit | already-terminal → no-op | — |
-| `run_ai_maintenance()` — unchanged | service_role | requeue expired leases (no new reserve); expire jobs queued > 24h or awaiting_approval > 7d → `expired` + release; reconcile report (below) | each step idempotent | — |
+| `run_ai_maintenance()` — unchanged | service_role | requeue expired leases (no new reserve); per §13.4 (C4): expire → `expired` + release in same txn; reconcile report (below) | each step idempotent | — |
 | `ai_set_kill_switch(p_scope text, p_code text, p_enabled bool)` (NEW) | platform admin only | scope ∈ global/agent/model; audit; global flag lives in a platform settings row | idempotent | — |
 | `ai_credit_reconcile(p_from date, p_to date) → jsonb` (NEW, read) | service_role / platform admin | per org/day: ledger settle vs ai_jobs.cost_usd_micros vs ai_usage_daily; flags jobs with settle but no usage, usage but no settle, reserve without terminal | read-only | — |
 
@@ -303,14 +305,11 @@ Function EXECUTE: request_ai_*, cancel_ai_job, approve_ai_job, ai_credit_refund 
 
 ## 6. F1 / F2 / F3 resolutions
 
-**F1 — diagnosis narrative.** Future `complete_ai_job` for `explain_diagnosis` no longer writes `diagnoses.narrative`. It inserts `ai_content(kind='diagnosis_suggestion', status='draft_created', target_type='diagnosis', target_id=…)`. New `review_ai_diagnosis_suggestion(p_content_id uuid, p_accept bool, p_edited_text text DEFAULT NULL)` (definer; `cas.manage` + `can_view_student`, same org) → accept copies (optionally edited) text into `diagnoses.narrative` and marks content `applied`; reject marks `discarded`. Narratives already written stay (history preserved, no backfill). Student/parent views continue to see only staff-accepted narrative. Pseudonymous context unchanged.
+**F1 — diagnosis narrative.** Future `complete_ai_job` for `explain_diagnosis` no longer writes `diagnoses.narrative`. It inserts `ai_content(kind='diagnosis_narrative', status='draft_created', target_type='diagnosis', target_id=…)`. New `review_ai_diagnosis_narrative(p_content_id uuid, p_accept bool, p_edited_text text DEFAULT NULL)` (definer; `cas.manage` + `can_view_student`, same org) → accept copies (optionally edited) text into `diagnoses.narrative` and marks content `applied`; reject marks `discarded`. Narratives already written stay (history preserved, no backfill). Student/parent views continue to see only staff-accepted narrative. Pseudonymous context unchanged.
 
 **F2 — live-exam stems.** Future rule inside `build_ai_context` sample-question selection:
 ```sql
-AND NOT EXISTS (SELECT 1 FROM exam_questions eq JOIN exams e ON e.id = eq.exam_id
-                WHERE eq.question_id = q.id AND e.status = 'published'
-                  AND (e.closes_at IS NULL OR e.closes_at > now()))
-AND q is published (latest version status = 'published')
+-- superseded by v1.1 §13.1 (C1)
 ```
 `student_tutor` (safety_class student_facing) receives no question stems from any exam-linked question unless that exam is closed **and** results released. Privileged exam context requires a future explicit agent policy flag; none is granted now. Answer keys remain excluded everywhere (unchanged).
 
@@ -384,5 +383,5 @@ Each migration applied alone, verified, recorded in schema_migrations; existing 
 17. Audit: every governance action writes audit_events with real actor; ledger UPDATE/DELETE refused for all roles incl. service_role.
 18. Regression: full existing suite (261) + CBT P1–P4 + NoteBank/Question Bank unchanged.
 
-## 12. Statement
+## 12. Statement (v1.0)
 **DESIGN ONLY; NO DDL EXECUTED.** Zero migrations, zero function/RLS/RBAC/permission changes, zero production changes.
