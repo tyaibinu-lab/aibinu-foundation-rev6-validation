@@ -29,3 +29,4 @@
 - [x] Gate 8F hardening audit — app-only fixes + tests; DB proposals P1–P4 in docs/gate8f-proposed-db-changes.md
 - [ ] Apply P1–P4 — awaiting explicit DB-contract approval
 - [x] Gate 8G-1 P1 applied (release_results scope). P2/P3/P4 pending approval.
+- [x] Gate 8G-2 P3 applied (DB-stamped created_by on exams/exam_eligibility). P2/P4 pending approval.
