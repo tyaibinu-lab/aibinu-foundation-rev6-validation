@@ -100,7 +100,7 @@ function ExamResults() {
                     <td className="pr-3">{r.grade ?? "—"}</td>
                     <td className="pr-3">{r.passed === null ? "—" : r.passed ? "Yes" : "No"}</td>
                     <td className="pr-3">{r.position_in_class ?? "—"}</td>
-                    <td className="pr-3">{r.marking_complete ? "Complete" : "Pending"}</td>
+                    <td className="pr-3">{r.marking_complete ? "Complete" : "Pending"} · <Link to="/cbt/mark/$attemptId" params={{ attemptId: r.attempt_id }} className="text-primary underline underline-offset-4">{r.marking_complete ? "View marking" : "Mark"}</Link></td>
                     <td>{r.released_at ? fmtDate(r.released_at) : "Not released"}</td>
                   </tr>
                 ))}
