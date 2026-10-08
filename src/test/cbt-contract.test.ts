@@ -174,7 +174,8 @@ describe("Lifecycle", () => {
 function files(dir: string): string[] {
   return readdirSync(dir).flatMap((f) => { const p = join(dir, f); return statSync(p).isDirectory() ? files(p) : [p]; });
 }
-const cbtSources = [...files("src/lib/cbt"), ...files("src/components/cbt"), ...files("src/routes").filter((f) => /routes\/cbt/.test(f))];
+const STUDENT = /(lib\/cbt\/student|components\/cbt\/student|routes\/cbt\.(my|take))/;
+const cbtSources = [...files("src/lib/cbt"), ...files("src/components/cbt"), ...files("src/routes").filter((f) => /routes\/cbt/.test(f))].filter((f) => !STUDENT.test(f));
 
 describe("CBT security boundary (static)", () => {
   it.each(cbtSources)("%s: no scoring, attempt, result or student-taking calls", (f) => {
@@ -192,7 +193,7 @@ describe("CBT security boundary (static)", () => {
     const s = readFileSync(f, "utf8");
     expect(s).not.toMatch(/[,(]\s*questions\s*\(/);
   });
-  it("does not build student-taking routes in Phase 1", () => {
-    expect(readdirSync("src/routes").filter((f) => /^cbt\..*(take|attempt|result)/.test(f))).toEqual([]);
+  it("admin CBT sources never import the student taking layer", () => {
+    for (const f of cbtSources) expect(readFileSync(f, "utf8")).not.toMatch(/lib\/cbt\/student/);
   });
 });

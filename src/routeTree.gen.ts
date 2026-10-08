@@ -25,6 +25,7 @@ import { Route as QuestionbankIndexRouteImport } from './routes/questionbank.ind
 import { Route as QuestionbankQuestionIdRouteImport } from './routes/questionbank.$questionId'
 import { Route as QuestionbankNewRouteImport } from './routes/questionbank.new'
 import { Route as QuestionbankReviewRouteImport } from './routes/questionbank.review'
+import { Route as CbtTakeAttemptIdRouteImport } from './routes/cbt.take.$attemptId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -106,6 +107,11 @@ const QuestionbankReviewRoute = QuestionbankReviewRouteImport.update({
   path: '/review',
   getParentRoute: () => QuestionbankRoute,
 } as any)
+const CbtTakeAttemptIdRoute = CbtTakeAttemptIdRouteImport.update({
+  id: '/take/$attemptId',
+  path: '/take/$attemptId',
+  getParentRoute: () => CbtRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -124,6 +130,7 @@ export interface FileRoutesByFullPath {
   '/cbt/': typeof CbtIndexRoute
   '/notebank/': typeof NotebankIndexRoute
   '/questionbank/': typeof QuestionbankIndexRoute
+  '/cbt/take/$attemptId': typeof CbtTakeAttemptIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -139,6 +146,7 @@ export interface FileRoutesByTo {
   '/cbt': typeof CbtIndexRoute
   '/notebank': typeof NotebankIndexRoute
   '/questionbank': typeof QuestionbankIndexRoute
+  '/cbt/take/$attemptId': typeof CbtTakeAttemptIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -158,6 +166,7 @@ export interface FileRoutesById {
   '/cbt/': typeof CbtIndexRoute
   '/notebank/': typeof NotebankIndexRoute
   '/questionbank/': typeof QuestionbankIndexRoute
+  '/cbt/take/$attemptId': typeof CbtTakeAttemptIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -178,6 +187,7 @@ export interface FileRouteTypes {
     | '/cbt/'
     | '/notebank/'
     | '/questionbank/'
+    | '/cbt/take/$attemptId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -193,6 +203,7 @@ export interface FileRouteTypes {
     | '/cbt'
     | '/notebank'
     | '/questionbank'
+    | '/cbt/take/$attemptId'
   id:
     | '__root__'
     | '/'
@@ -211,6 +222,7 @@ export interface FileRouteTypes {
     | '/cbt/'
     | '/notebank/'
     | '/questionbank/'
+    | '/cbt/take/$attemptId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -335,6 +347,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof QuestionbankReviewRouteImport
       parentRoute: typeof QuestionbankRoute
     }
+    '/cbt/take/$attemptId': {
+      id: '/cbt/take/$attemptId'
+      path: '/take/$attemptId'
+      fullPath: '/cbt/take/$attemptId'
+      preLoaderRoute: typeof CbtTakeAttemptIdRouteImport
+      parentRoute: typeof CbtRoute
+    }
   }
 }
 
@@ -343,6 +362,7 @@ interface CbtRouteChildren {
   CbtMyRoute: typeof CbtMyRoute
   CbtNewRoute: typeof CbtNewRoute
   CbtIndexRoute: typeof CbtIndexRoute
+  CbtTakeAttemptIdRoute: typeof CbtTakeAttemptIdRoute
 }
 
 const CbtRouteChildren: CbtRouteChildren = {
@@ -350,6 +370,7 @@ const CbtRouteChildren: CbtRouteChildren = {
   CbtMyRoute: CbtMyRoute,
   CbtNewRoute: CbtNewRoute,
   CbtIndexRoute: CbtIndexRoute,
+  CbtTakeAttemptIdRoute: CbtTakeAttemptIdRoute,
 }
 
 const CbtRouteWithChildren = CbtRoute._addFileChildren(CbtRouteChildren)

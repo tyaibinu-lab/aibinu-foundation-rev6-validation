@@ -31,6 +31,7 @@ export function ExamStatusBadge({ status }: { status: ExamStatus }) {
 export const fmtDate = (iso: string) => new Date(iso).toLocaleString();
 
 export function CbtShell({ title, subtitle, actions, children }: { title: string; subtitle: string; actions?: ReactNode; children: ReactNode }) {
+  const staff = useExamAccess().canCreate;
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b-4 border-accent bg-primary text-primary-foreground">
@@ -41,8 +42,8 @@ export function CbtShell({ title, subtitle, actions, children }: { title: string
           </Link>
           <nav className="flex flex-wrap gap-4 text-sm" aria-label="CBT">
             <Link to="/cbt" activeOptions={{ exact: true }} activeProps={navActive}>Exams</Link>
-            <Link to="/cbt/new" activeProps={navActive}>New exam</Link>
-            <Link to="/questionbank" activeProps={navActive}>Question Bank</Link>
+            {staff && <Link to="/cbt/new" activeProps={navActive}>New exam</Link>}
+            {staff && <Link to="/questionbank" activeProps={navActive}>Question Bank</Link>}
           </nav>
           <AccountBar />
         </div>
@@ -57,6 +58,15 @@ export function CbtShell({ title, subtitle, actions, children }: { title: string
         </div>
         <div className="mt-6 space-y-6">{children}</div>
       </main>
+    </div>
+  );
+}
+
+/** Staff-only notice for accounts without exam.create (e.g. students). UX only; RLS hides the data anyway. */
+export function StaffOnly() {
+  return (
+    <div className="rounded-lg border border-border bg-card p-6 text-sm text-muted-foreground">
+      Exam administration is for staff. <Link to="/cbt/my" className="font-medium text-primary underline underline-offset-4">Go to My exams</Link>
     </div>
   );
 }
