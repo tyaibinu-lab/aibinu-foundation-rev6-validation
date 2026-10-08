@@ -15,6 +15,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as NotebankRouteImport } from './routes/notebank'
 import { Route as QuestionbankRouteImport } from './routes/questionbank'
 import { Route as CbtIndexRouteImport } from './routes/cbt.index'
+import { Route as CbtExamIdRouteImport } from './routes/cbt.$examId'
 import { Route as CbtNewRouteImport } from './routes/cbt.new'
 import { Route as NotebankIndexRouteImport } from './routes/notebank.index'
 import { Route as NotebankNoteIdRouteImport } from './routes/notebank.$noteId'
@@ -52,6 +53,11 @@ const QuestionbankRoute = QuestionbankRouteImport.update({
 const CbtIndexRoute = CbtIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => CbtRoute,
+} as any)
+const CbtExamIdRoute = CbtExamIdRouteImport.update({
+  id: '/$examId',
+  path: '/$examId',
   getParentRoute: () => CbtRoute,
 } as any)
 const CbtNewRoute = CbtNewRouteImport.update({
@@ -101,6 +107,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/notebank': typeof NotebankRouteWithChildren
   '/questionbank': typeof QuestionbankRouteWithChildren
+  '/cbt/$examId': typeof CbtExamIdRoute
   '/cbt/new': typeof CbtNewRoute
   '/notebank/$noteId': typeof NotebankNoteIdRoute
   '/notebank/review': typeof NotebankReviewRoute
@@ -114,6 +121,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/cbt/$examId': typeof CbtExamIdRoute
   '/cbt/new': typeof CbtNewRoute
   '/notebank/$noteId': typeof NotebankNoteIdRoute
   '/notebank/review': typeof NotebankReviewRoute
@@ -131,6 +139,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/notebank': typeof NotebankRouteWithChildren
   '/questionbank': typeof QuestionbankRouteWithChildren
+  '/cbt/$examId': typeof CbtExamIdRoute
   '/cbt/new': typeof CbtNewRoute
   '/notebank/$noteId': typeof NotebankNoteIdRoute
   '/notebank/review': typeof NotebankReviewRoute
@@ -149,6 +158,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/notebank'
     | '/questionbank'
+    | '/cbt/$examId'
     | '/cbt/new'
     | '/notebank/$noteId'
     | '/notebank/review'
@@ -162,6 +172,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/login'
+    | '/cbt/$examId'
     | '/cbt/new'
     | '/notebank/$noteId'
     | '/notebank/review'
@@ -178,6 +189,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/notebank'
     | '/questionbank'
+    | '/cbt/$examId'
     | '/cbt/new'
     | '/notebank/$noteId'
     | '/notebank/review'
@@ -241,6 +253,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CbtIndexRouteImport
       parentRoute: typeof CbtRoute
     }
+    '/cbt/$examId': {
+      id: '/cbt/$examId'
+      path: '/$examId'
+      fullPath: '/cbt/$examId'
+      preLoaderRoute: typeof CbtExamIdRouteImport
+      parentRoute: typeof CbtRoute
+    }
     '/cbt/new': {
       id: '/cbt/new'
       path: '/new'
@@ -301,11 +320,13 @@ declare module '@tanstack/react-router' {
 }
 
 interface CbtRouteChildren {
+  CbtExamIdRoute: typeof CbtExamIdRoute
   CbtNewRoute: typeof CbtNewRoute
   CbtIndexRoute: typeof CbtIndexRoute
 }
 
 const CbtRouteChildren: CbtRouteChildren = {
+  CbtExamIdRoute: CbtExamIdRoute,
   CbtNewRoute: CbtNewRoute,
   CbtIndexRoute: CbtIndexRoute,
 }
