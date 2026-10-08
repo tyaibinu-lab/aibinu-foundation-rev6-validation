@@ -19,3 +19,8 @@
 ## Gate 7 — Browser auth + organisation context (approved)
 - [x] /login, session restore, sign-out, protected NoteBank/Question Bank, org context + x-organisation-id
 - [x] Automated tests, live Teacher browser test, forged-org checks — STOPPED, awaiting approval
+
+## Gate 8C Phase 1 — CBT Exam Administration (approved)
+- [x] /cbt, /cbt/new, /cbt/$examId behind TenantGate; publish_exam/close_exam only
+- [x] Contract tests + live Publisher validation; UAT exam "[Gate8B UAT] Quadratics Check" published with 3 pinned versions, class UAT SS2 A
+- [ ] Phase 2 (student taking) — awaiting approval
