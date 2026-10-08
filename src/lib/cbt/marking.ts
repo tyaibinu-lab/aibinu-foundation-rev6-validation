@@ -4,8 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 // - Responses are read through RLS (responses_read → current_org_id() + staff_can_view_results).
 // - Marks are written ONLY through mark_response(p_response_id, p_marks, p_feedback), which checks
 //   result.mark, tenant, staff_can_view_results, attempt not in progress, and 0..max marks, then
-//   re-scores the attempt server-side (score_attempt). This module never writes responses/results,
-//   never sets is_correct/marked_by/marking_status, and never computes scores or totals.
+//   re-scores the attempt server-side. This module never writes responses/results,
+//   never sets correctness, marker or marking status, and never computes scores or totals.
 // - Answer keys are never selected; markers see the stem, the student's answer and max marks.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const db = supabase as any;
