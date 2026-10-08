@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -78,6 +78,7 @@ function MyExams() {
             <div key={`${r.exam_id}-${r.attempt_no}`} className="flex flex-wrap justify-between gap-2 rounded-md border border-border p-3">
               <span className="font-medium">{r.exam_title}</span>
               <span>{Number(r.score)} / {Number(r.total_marks)} ({Number(r.percentage)}%){r.grade ? ` · Grade ${r.grade}` : ""}{r.passed === null ? "" : r.passed ? " · Passed" : " · Not passed"}</span>
+              <Link to="/cbt/review/$examId" params={{ examId: r.exam_id }} className="text-primary underline underline-offset-4">Review answers</Link>
             </div>
           ))}
         </CardContent>

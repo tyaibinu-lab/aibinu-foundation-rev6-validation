@@ -44,6 +44,7 @@ export function CbtShell({ title, subtitle, actions, children }: { title: string
             <Link to="/cbt" activeOptions={{ exact: true }} activeProps={navActive}>Exams</Link>
             {staff && <Link to="/cbt/new" activeProps={navActive}>New exam</Link>}
             {staff && <Link to="/questionbank" activeProps={navActive}>Question Bank</Link>}
+            {staff && <Link to="/cbt/results" activeProps={navActive}>Results</Link>}
           </nav>
           <AccountBar />
         </div>
@@ -69,4 +70,9 @@ export function StaffOnly() {
       Exam administration is for staff. <Link to="/cbt/my" className="font-medium text-primary underline underline-offset-4">Go to My exams</Link>
     </div>
   );
+}
+
+/** Shown to accounts without result.read_all / result.read_class. UX only; RLS hides results anyway. */
+export function NoResultAccess() {
+  return <div className="rounded-lg border border-border bg-card p-6 text-sm text-muted-foreground">Results are available to staff with result access in this organisation.</div>;
 }
