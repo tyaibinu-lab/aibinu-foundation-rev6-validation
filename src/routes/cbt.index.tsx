@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { CbtError, CbtShell, ExamStatusBadge, fmtDate, useExamAccess } from "@/components/cbt/shared";
+import { CbtError, CbtShell, ExamStatusBadge, fmtDate, useExamAccess, StaffOnly } from "@/components/cbt/shared";
 import { listExams, listSubjects } from "@/lib/cbt/api";
 
 export const Route = createFileRoute("/cbt/")({
@@ -22,7 +22,7 @@ export const Route = createFileRoute("/cbt/")({
 
 function CbtHome() {
   const access = useExamAccess();
-  const exams = useQuery({ queryKey: ["cbt", "exams"], queryFn: listExams, retry: false });
+  const exams = useQuery({ queryKey: ["cbt", "exams"], queryFn: listExams, retry: false, enabled: access.canCreate });
   const subjects = useQuery({ queryKey: ["cbt", "subjects"], queryFn: listSubjects, retry: false });
   const subjectName = (id: string | null) => subjects.data?.find((s) => s.id === id)?.name ?? "—";
 
@@ -32,6 +32,7 @@ function CbtHome() {
       subtitle="Exams use only published Question Bank versions. Publishing and closing are checked by the database."
       actions={access.canCreate ? <Button asChild><Link to="/cbt/new">New exam</Link></Button> : undefined}
     >
+      {!access.loading && !access.canCreate && <StaffOnly />}
       {exams.error && <CbtError error={exams.error} />}
       {exams.isLoading && <p className="text-sm text-muted-foreground">Loading exams…</p>}
       {exams.data && exams.data.length === 0 && (

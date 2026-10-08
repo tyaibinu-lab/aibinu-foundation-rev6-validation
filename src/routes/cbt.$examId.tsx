@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CbtError, CbtShell, ExamStatusBadge, fmtDate, useExamAccess } from "@/components/cbt/shared";
+import { CbtError, CbtShell, ExamStatusBadge, fmtDate, useExamAccess, StaffOnly } from "@/components/cbt/shared";
 import { ExamForm, examToInput } from "@/components/cbt/ExamForm";
 import {
   addClassEligibility, addExamQuestion, closeExam, getExam, listClasses, listEligibility, listExamQuestions,
@@ -62,6 +62,7 @@ function ExamWorkspace() {
   const choices = (published.data ?? []).filter((p) => (topic === ALL || p.topicId === topic) && (!search || p.stem.toLowerCase().includes(search.toLowerCase())));
   const selectedTotal = (eqs.data ?? []).reduce((s, q) => s + q.marks, 0);
 
+  if (!access.loading && !access.canCreate) return <CbtShell title="Exam" subtitle=""><StaffOnly /></CbtShell>;
   if (exam.isLoading) return <CbtShell title="Exam" subtitle="Loading…"><p className="text-sm text-muted-foreground">Loading exam…</p></CbtShell>;
   if (exam.error) return <CbtShell title="Exam" subtitle=""><CbtError error={exam.error} /></CbtShell>;
   if (!exam.data) return <CbtShell title="Exam not found" subtitle="It does not exist or is not visible in your active organisation."><Button variant="outline" asChild><Link to="/cbt">Back to exams</Link></Button></CbtShell>;
