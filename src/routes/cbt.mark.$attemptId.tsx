@@ -39,12 +39,12 @@ function MarkAttempt() {
       <Button variant="outline" size="sm" onClick={() => history.back()}>← Back to results</Button>
       {items.error && <Alert variant="destructive"><AlertTitle>Could not load</AlertTitle><AlertDescription>{describeMarkingError(items.error)}</AlertDescription></Alert>}
       {items.data && list.length === 0 && <p className="text-sm text-muted-foreground">No answers you can see for this attempt.</p>}
-      {list.map((i) => <MarkCard key={i.responseId} item={i} attemptId={attemptId} />)}
+      {list.map((i) => <MarkCard key={i.responseId} item={i} />)}
     </CbtShell>
   );
 }
 
-function MarkCard({ item, attemptId }: { item: MarkingItem; attemptId: string }) {
+function MarkCard({ item }: { item: MarkingItem }) {
   const qc = useQueryClient();
   const manual = item.markingStatus !== "auto";
   const [marks, setMarks] = useState(item.marksAwarded === null ? "" : String(item.marksAwarded));
