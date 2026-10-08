@@ -22,7 +22,7 @@ export const ATTEMPT_POLICIES: AttemptPolicy[] = ["best", "latest", "first"];
 export const RELEASE_POLICIES: ReleasePolicy[] = ["manual", "immediate", "after_close"];
 
 /** Columns the client may set on a draft. Lifecycle/derived columns are excluded on purpose. */
-export const EXAM_PROTECTED_FIELDS = ["status", "total_marks", "created_by", "organisation_id_override"] as const;
+export const EXAM_PROTECTED_FIELDS = ["status", "total_marks", "created_by"] as const;
 
 export interface ExamRow {
   id: string;
