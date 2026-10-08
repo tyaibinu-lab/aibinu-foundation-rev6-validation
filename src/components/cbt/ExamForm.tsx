@@ -35,7 +35,8 @@ export function defaultExamInput(): ExamDraftInput {
   };
 }
 
-export function ExamForm({ initial, submitLabel, pending, disabled, onSubmit }: { initial: ExamDraftInput; submitLabel: string; pending: boolean; disabled?: boolean; onSubmit: (v: ExamDraftInput) => void }) {
+export function ExamForm({ initial, submitLabel, pending, disabled: disabledProp, onSubmit }: { initial: ExamDraftInput; submitLabel: string; pending: boolean; disabled?: boolean; onSubmit: (v: ExamDraftInput) => void }) {
+  const disabled = disabledProp === true;
   const [v, setV] = useState<ExamDraftInput>(initial);
   const [errors, setErrors] = useState<string[]>([]);
   const subjects = useQuery({ queryKey: ["cbt", "subjects"], queryFn: listSubjects, retry: false });
