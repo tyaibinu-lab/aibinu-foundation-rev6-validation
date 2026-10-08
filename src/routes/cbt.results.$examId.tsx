@@ -4,11 +4,10 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { CbtShell, ExamStatusBadge, fmtDate } from "@/components/cbt/shared";
+import { CbtShell, ExamStatusBadge, NoResultAccess, fmtDate } from "@/components/cbt/shared";
 import { getExam } from "@/lib/cbt/api";
 import { describeResultError, fetchResultAccess, listExamResults, releaseResults } from "@/lib/cbt/results";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { NoResultAccess } from "./cbt.results.index";
 
 export const Route = createFileRoute("/cbt/results/$examId")({
   head: () => ({

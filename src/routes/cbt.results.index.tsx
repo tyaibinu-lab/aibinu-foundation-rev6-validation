@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { CbtError, CbtShell } from "@/components/cbt/shared";
+import { CbtError, CbtShell, NoResultAccess } from "@/components/cbt/shared";
 import { fetchResultAccess, listResultSummaries } from "@/lib/cbt/results";
 
 export const Route = createFileRoute("/cbt/results/")({
@@ -18,10 +18,6 @@ export const Route = createFileRoute("/cbt/results/")({
   }),
   component: ResultsDashboard,
 });
-
-export function NoResultAccess() {
-  return <div className="rounded-lg border border-border bg-card p-6 text-sm text-muted-foreground">Results are available to staff with result access in this organisation.</div>;
-}
 
 function ResultsDashboard() {
   const access = useQuery({ queryKey: ["cbt", "results", "access"], queryFn: fetchResultAccess, retry: false });
