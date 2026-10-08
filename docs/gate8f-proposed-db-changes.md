@@ -1,4 +1,4 @@
-# Gate 8F — Proposed DB security-contract changes (P1 applied Gate 8G-1, P3 applied Gate 8G-2, P2(b) applied Gate 8G-3; P4 NOT APPLIED)
+# Gate 8F — Proposed DB security-contract changes (P1 applied Gate 8G-1, P3 applied Gate 8G-2, P2(b) applied Gate 8G-3, P4 applied Gate 8G-4)
 
 Status: PROPOSAL ONLY. Requires explicit approval. Validation project only; apply one at a time, verify after each.
 
