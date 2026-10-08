@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 // scoring and results. This module only calls RPCs: it never writes the attempts,
 // responses or results tables, never reads answer keys, and never scores.
 // Student identity and organisation come from current_student_id()/current_org_id()
-// in the database (session + x-organisation-id set by AuthProvider) — never from the caller.
+// in the database (session + organisation header set centrally by AuthProvider) — never from the caller.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const db = supabase as any;
 
