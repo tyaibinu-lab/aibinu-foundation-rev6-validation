@@ -1,0 +1,2 @@
+REVOKE TRUNCATE, REFERENCES, TRIGGER ON public.ai_model_registry, public.ai_agents, public.ai_plans, public.ai_org_plans FROM service_role;
+UPDATE public.schema_migrations SET description = description || ' [+grant correction: service_role DML only]' WHERE version = '011-m2';
