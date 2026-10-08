@@ -25,4 +25,4 @@
 - [x] Contract tests + live Publisher validation; UAT exam "[Gate8B UAT] Quadratics Check" published with 3 pinned versions, class UAT SS2 A
 - [x] Phase 2 student taking: /cbt/my, /cbt/take/$attemptId; live UAT attempt submitted (results unreleased)
 - [x] Gate 8D results & release: /cbt/results, /cbt/results/$examId, /cbt/review/$examId; UAT result released via release_results
-- [ ] Manual marking UI (mark_response) — not yet authorized
+- [x] Gate 8E manual marking: /cbt/mark/$attemptId via mark_response; UAT fixture "[Gate8E UAT] Manual Marking Check" marked 3/4 and released
