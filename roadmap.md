@@ -38,3 +38,4 @@
 - [x] Gate 10 v1.1 design revision (C1–C5 from Gate 11A) — document only. Next: Gate 11B M1 on approval.
 - [x] Gate 11B M1 applied (validation only): AI governance enum/type foundation, schema_migrations 011-m1. Next: M2 on approval.
 - [x] Gate 11B M2 applied (validation only): ai_model_registry, ai_agents (5), ai_plans (validation_default), ai_org_plans (Org A, Org B); schema_migrations 011-m2. Next: M3 on approval.
+- [x] Gate 11B M3 applied (validation only): prompt governance R1–R5, ai_jobs metadata, C3 idempotency; schema_migrations 011-m3. PASS/FROZEN. Next: M4 on approval.
