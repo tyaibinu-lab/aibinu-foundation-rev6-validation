@@ -6074,6 +6074,7 @@ export type Database = {
       is_self_or_parent: { Args: { p_student_id: string }; Returns: boolean }
       issue_invoice: { Args: { p_invoice_id: string }; Returns: undefined }
       learning_dashboard: { Args: { p_student_id?: string }; Returns: Json }
+      m3_selftest: { Args: never; Returns: Json }
       mark_intervention_done: {
         Args: { p_intervention_id: string }
         Returns: undefined
