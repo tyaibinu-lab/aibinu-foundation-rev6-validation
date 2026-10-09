@@ -5923,6 +5923,42 @@ export type Database = {
         }
         Returns: string
       }
+      ai_credit_adjust: {
+        Args: {
+          p_amount: number
+          p_direction: string
+          p_external_ref: string
+          p_note: string
+        }
+        Returns: number
+      }
+      ai_credit_available: { Args: { p_org: string }; Returns: number }
+      ai_credit_check_reason: { Args: { p_reason: string }; Returns: string }
+      ai_credit_lock: { Args: { p_org: string }; Returns: undefined }
+      ai_credit_monthly_grant: {
+        Args: { p_month: string; p_org: string }
+        Returns: undefined
+      }
+      ai_credit_refund: {
+        Args: { p_amount: number; p_job_id: string; p_reason: string }
+        Returns: undefined
+      }
+      ai_credit_release: {
+        Args: { p_job_id: string; p_reason: string }
+        Returns: undefined
+      }
+      ai_credit_reserve: {
+        Args: { p_amount: number; p_job_id: string }
+        Returns: undefined
+      }
+      ai_credit_settle: {
+        Args: { p_actual: number; p_job_id: string }
+        Returns: undefined
+      }
+      ai_estimate_credits: {
+        Args: { p_agent: string; p_model: string; p_units: number }
+        Returns: number
+      }
       ai_prompt_checksum: {
         Args: { p_schema: Json; p_system: string; p_user: string }
         Returns: string
