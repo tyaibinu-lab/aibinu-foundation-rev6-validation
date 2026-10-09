@@ -188,6 +188,76 @@ export type Database = {
           },
         ]
       }
+      ai_credit_transactions: {
+        Row: {
+          actor_id: string | null
+          actor_type: Database["public"]["Enums"]["audit_actor_type"]
+          amount: number
+          created_at: string
+          external_ref: string | null
+          id: number
+          job_id: string | null
+          kind: Database["public"]["Enums"]["ai_credit_kind"]
+          note: string | null
+          organisation_id: string
+          period_month: string | null
+          reason_code: string
+          user_id: string | null
+        }
+        Insert: {
+          actor_id?: string | null
+          actor_type: Database["public"]["Enums"]["audit_actor_type"]
+          amount: number
+          created_at?: string
+          external_ref?: string | null
+          id?: never
+          job_id?: string | null
+          kind: Database["public"]["Enums"]["ai_credit_kind"]
+          note?: string | null
+          organisation_id: string
+          period_month?: string | null
+          reason_code: string
+          user_id?: string | null
+        }
+        Update: {
+          actor_id?: string | null
+          actor_type?: Database["public"]["Enums"]["audit_actor_type"]
+          amount?: number
+          created_at?: string
+          external_ref?: string | null
+          id?: never
+          job_id?: string | null
+          kind?: Database["public"]["Enums"]["ai_credit_kind"]
+          note?: string | null
+          organisation_id?: string
+          period_month?: string | null
+          reason_code?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_credit_transactions_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "ai_jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_credit_transactions_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_credit_transactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ai_diagnostics: {
         Row: {
           created_at: string
@@ -5172,6 +5242,23 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "students"
             referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
+      ai_credit_balance: {
+        Row: {
+          available: number | null
+          consumed: number | null
+          held: number | null
+          organisation_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_credit_transactions_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
           },
         ]
       }
