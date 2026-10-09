@@ -5998,6 +5998,10 @@ export type Database = {
         Returns: number
       }
       ai_global_enabled: { Args: never; Returns: boolean }
+      ai_max_batch: {
+        Args: { p_agent: string; p_org?: string }
+        Returns: number
+      }
       ai_prompt_checksum: {
         Args: { p_schema: Json; p_system: string; p_user: string }
         Returns: string
@@ -6444,6 +6448,14 @@ export type Database = {
           score: number
           total_marks: number
         }[]
+      }
+      review_ai_diagnosis_narrative: {
+        Args: {
+          p_accept: boolean
+          p_content_id: string
+          p_edited_text?: string
+        }
+        Returns: undefined
       }
       review_ai_diagnostic: {
         Args: { p_accept: boolean; p_id: string }
