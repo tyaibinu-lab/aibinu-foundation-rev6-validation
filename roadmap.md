@@ -40,3 +40,4 @@
 - [x] Gate 11B M2 applied (validation only): ai_model_registry, ai_agents (5), ai_plans (validation_default), ai_org_plans (Org A, Org B); schema_migrations 011-m2. Next: M3 on approval.
 - [x] Gate 11B M3 applied (validation only): prompt governance R1–R5, ai_jobs metadata, C3 idempotency; schema_migrations 011-m3. PASS/FROZEN. Next: M4 on approval.
 - [x] Gate 11C M4 applied (validation only): ai_credit_transactions append-only ledger + ai_credit_balance view; schema_migrations 011-m4. PASS/FROZEN. Next: M5 on approval.
+- [x] Gate 11C M5 applied (validation only): credit lifecycle functions; schema_migrations 011-m5. PASS WITH FINDINGS/FROZEN. Next: M6 on approval.
