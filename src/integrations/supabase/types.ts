@@ -653,6 +653,35 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_platform_settings: {
+        Row: {
+          global_ai_enabled: boolean
+          id: boolean
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          global_ai_enabled?: boolean
+          id?: boolean
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          global_ai_enabled?: boolean
+          id?: boolean
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_platform_settings_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ai_prompt_templates: {
         Row: {
           agent_code: string | null
@@ -5934,6 +5963,15 @@ export type Database = {
       }
       ai_credit_available: { Args: { p_org: string }; Returns: number }
       ai_credit_check_reason: { Args: { p_reason: string }; Returns: string }
+      ai_credit_cost_for_org: {
+        Args: {
+          p_agent: string
+          p_model: string
+          p_org: string
+          p_units: number
+        }
+        Returns: number
+      }
       ai_credit_lock: { Args: { p_org: string }; Returns: undefined }
       ai_credit_monthly_grant: {
         Args: { p_month: string; p_org: string }
@@ -5959,6 +5997,7 @@ export type Database = {
         Args: { p_agent: string; p_model: string; p_units: number }
         Returns: number
       }
+      ai_global_enabled: { Args: never; Returns: boolean }
       ai_prompt_checksum: {
         Args: { p_schema: Json; p_system: string; p_user: string }
         Returns: string
@@ -5966,6 +6005,10 @@ export type Database = {
       ai_reusable_key_statuses: {
         Args: never
         Returns: Database["public"]["Enums"]["ai_job_status"][]
+      }
+      ai_set_kill_switch: {
+        Args: { p_code: string; p_enabled: boolean; p_scope: string }
+        Returns: undefined
       }
       anonymise_student: { Args: { p_student_id: string }; Returns: undefined }
       answer_matches: {
@@ -5980,6 +6023,10 @@ export type Database = {
       apply_wallet_to_invoice: {
         Args: { p_amount?: number; p_invoice_id: string }
         Returns: number
+      }
+      approve_ai_job: {
+        Args: { p_approve: boolean; p_job_id: string; p_reason?: string }
+        Returns: undefined
       }
       approve_parent_report: {
         Args: { p_content?: Json; p_report_id: string }
@@ -6067,7 +6114,10 @@ export type Database = {
       can_read_settings: { Args: { p_org_id: string }; Returns: boolean }
       can_read_user: { Args: { p_user_id: string }; Returns: boolean }
       can_view_student: { Args: { p_student_id: string }; Returns: boolean }
-      cancel_ai_job: { Args: { p_job_id: string }; Returns: undefined }
+      cancel_ai_job: {
+        Args: { p_job_id: string; p_reason?: string }
+        Returns: undefined
+      }
       claim_ai_job: {
         Args: { p_lease_seconds?: number; p_worker: string }
         Returns: Json
