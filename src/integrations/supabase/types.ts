@@ -261,10 +261,18 @@ export type Database = {
       }
       ai_jobs: {
         Row: {
+          agent_code: string | null
+          approval_required: boolean
+          approved_at: string | null
+          approved_by: string | null
           attempts: number
+          cancel_reason: string | null
+          cancelled_by: string | null
+          consumed_credits: number | null
           cost_usd_micros: number
           created_at: string
           error: string | null
+          estimated_credits: number | null
           finished_at: string | null
           id: string
           idempotency_key: string | null
@@ -274,24 +282,37 @@ export type Database = {
           locked_until: string | null
           max_attempts: number
           model: string | null
+          model_id: string | null
           organisation_id: string
           output_tokens: number | null
           priority: number
+          prompt_template_id: string | null
           requested_by: string | null
+          requester_role: string | null
           result_summary: Json | null
           run_after: string
+          source: string
           started_at: string | null
           status: Database["public"]["Enums"]["ai_job_status"]
           student_id: string | null
           target_id: string | null
           target_type: string | null
+          timeout_seconds: number
           type: Database["public"]["Enums"]["ai_job_type"]
         }
         Insert: {
+          agent_code?: string | null
+          approval_required?: boolean
+          approved_at?: string | null
+          approved_by?: string | null
           attempts?: number
+          cancel_reason?: string | null
+          cancelled_by?: string | null
+          consumed_credits?: number | null
           cost_usd_micros?: number
           created_at?: string
           error?: string | null
+          estimated_credits?: number | null
           finished_at?: string | null
           id?: string
           idempotency_key?: string | null
@@ -301,24 +322,37 @@ export type Database = {
           locked_until?: string | null
           max_attempts?: number
           model?: string | null
+          model_id?: string | null
           organisation_id: string
           output_tokens?: number | null
           priority?: number
+          prompt_template_id?: string | null
           requested_by?: string | null
+          requester_role?: string | null
           result_summary?: Json | null
           run_after?: string
+          source?: string
           started_at?: string | null
           status?: Database["public"]["Enums"]["ai_job_status"]
           student_id?: string | null
           target_id?: string | null
           target_type?: string | null
+          timeout_seconds?: number
           type: Database["public"]["Enums"]["ai_job_type"]
         }
         Update: {
+          agent_code?: string | null
+          approval_required?: boolean
+          approved_at?: string | null
+          approved_by?: string | null
           attempts?: number
+          cancel_reason?: string | null
+          cancelled_by?: string | null
+          consumed_credits?: number | null
           cost_usd_micros?: number
           created_at?: string
           error?: string | null
+          estimated_credits?: number | null
           finished_at?: string | null
           id?: string
           idempotency_key?: string | null
@@ -328,25 +362,65 @@ export type Database = {
           locked_until?: string | null
           max_attempts?: number
           model?: string | null
+          model_id?: string | null
           organisation_id?: string
           output_tokens?: number | null
           priority?: number
+          prompt_template_id?: string | null
           requested_by?: string | null
+          requester_role?: string | null
           result_summary?: Json | null
           run_after?: string
+          source?: string
           started_at?: string | null
           status?: Database["public"]["Enums"]["ai_job_status"]
           student_id?: string | null
           target_id?: string | null
           target_type?: string | null
+          timeout_seconds?: number
           type?: Database["public"]["Enums"]["ai_job_type"]
         }
         Relationships: [
+          {
+            foreignKeyName: "ai_jobs_agent_code_fkey"
+            columns: ["agent_code"]
+            isOneToOne: false
+            referencedRelation: "ai_agents"
+            referencedColumns: ["code"]
+          },
+          {
+            foreignKeyName: "ai_jobs_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_jobs_cancelled_by_fkey"
+            columns: ["cancelled_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_jobs_model_id_fkey"
+            columns: ["model_id"]
+            isOneToOne: false
+            referencedRelation: "ai_model_registry"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "ai_jobs_organisation_id_fkey"
             columns: ["organisation_id"]
             isOneToOne: false
             referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_jobs_prompt_template_id_fkey"
+            columns: ["prompt_template_id"]
+            isOneToOne: false
+            referencedRelation: "ai_prompt_templates"
             referencedColumns: ["id"]
           },
           {
@@ -511,39 +585,72 @@ export type Database = {
       }
       ai_prompt_templates: {
         Row: {
+          agent_code: string | null
+          approved_by: string | null
+          checksum: string
           created_at: string
+          effective_from: string | null
           id: string
           is_active: boolean
           job_type: Database["public"]["Enums"]["ai_job_type"]
           notes: string | null
           output_schema: Json
+          retired_at: string | null
+          state: Database["public"]["Enums"]["ai_prompt_state"]
           system_prompt: string
           user_template: string
           version: number
         }
         Insert: {
+          agent_code?: string | null
+          approved_by?: string | null
+          checksum: string
           created_at?: string
+          effective_from?: string | null
           id?: string
           is_active?: boolean
           job_type: Database["public"]["Enums"]["ai_job_type"]
           notes?: string | null
           output_schema: Json
+          retired_at?: string | null
+          state?: Database["public"]["Enums"]["ai_prompt_state"]
           system_prompt: string
           user_template: string
           version: number
         }
         Update: {
+          agent_code?: string | null
+          approved_by?: string | null
+          checksum?: string
           created_at?: string
+          effective_from?: string | null
           id?: string
           is_active?: boolean
           job_type?: Database["public"]["Enums"]["ai_job_type"]
           notes?: string | null
           output_schema?: Json
+          retired_at?: string | null
+          state?: Database["public"]["Enums"]["ai_prompt_state"]
           system_prompt?: string
           user_template?: string
           version?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "ai_prompt_templates_agent_code_fkey"
+            columns: ["agent_code"]
+            isOneToOne: false
+            referencedRelation: "ai_agents"
+            referencedColumns: ["code"]
+          },
+          {
+            foreignKeyName: "ai_prompt_templates_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       ai_recommendations: {
         Row: {
@@ -5728,6 +5835,14 @@ export type Database = {
           p_type: Database["public"]["Enums"]["intervention_type"]
         }
         Returns: string
+      }
+      ai_prompt_checksum: {
+        Args: { p_schema: Json; p_system: string; p_user: string }
+        Returns: string
+      }
+      ai_reusable_key_statuses: {
+        Args: never
+        Returns: Database["public"]["Enums"]["ai_job_status"][]
       }
       anonymise_student: { Args: { p_student_id: string }; Returns: undefined }
       answer_matches: {
