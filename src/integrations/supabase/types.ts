@@ -3034,6 +3034,24 @@ export type Database = {
           },
         ]
       }
+      m4_test_results: {
+        Row: {
+          d: string | null
+          k: string
+          v: boolean
+        }
+        Insert: {
+          d?: string | null
+          k: string
+          v: boolean
+        }
+        Update: {
+          d?: string | null
+          k?: string
+          v?: boolean
+        }
+        Relationships: []
+      }
       mastery_snapshots: {
         Row: {
           confidence: number
