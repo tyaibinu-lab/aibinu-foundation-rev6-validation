@@ -1,0 +1,1 @@
+DROP TABLE public.m4_test_results;
