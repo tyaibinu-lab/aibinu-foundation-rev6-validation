@@ -67,7 +67,8 @@ function Index() {
             Supabase preflight, followed by migration 001.
           </p>
           <div className="mt-5 flex flex-wrap gap-3">
-            <Link to="/notebank" className="inline-flex rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground">Open NoteBank</Link>
+            <Link to="/students" className="inline-flex rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground">Open Students</Link>
+            <Link to="/notebank" className="inline-flex rounded-md border border-primary px-4 py-2 text-sm font-medium text-primary">Open NoteBank</Link>
             <Link to="/questionbank" className="inline-flex rounded-md border border-primary px-4 py-2 text-sm font-medium text-primary">Open Question Bank</Link>
             <Link to="/cbt" className="inline-flex rounded-md border border-primary px-4 py-2 text-sm font-medium text-primary">Open CBT Exams</Link>
           </div>

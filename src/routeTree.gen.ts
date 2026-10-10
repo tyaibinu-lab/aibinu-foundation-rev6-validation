@@ -14,6 +14,7 @@ import { Route as CbtRouteImport } from './routes/cbt'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as NotebankRouteImport } from './routes/notebank'
 import { Route as QuestionbankRouteImport } from './routes/questionbank'
+import { Route as StudentsRouteImport } from './routes/students'
 import { Route as CbtIndexRouteImport } from './routes/cbt.index'
 import { Route as CbtExamIdRouteImport } from './routes/cbt.$examId'
 import { Route as CbtMyRouteImport } from './routes/cbt.my'
@@ -25,6 +26,9 @@ import { Route as QuestionbankIndexRouteImport } from './routes/questionbank.ind
 import { Route as QuestionbankQuestionIdRouteImport } from './routes/questionbank.$questionId'
 import { Route as QuestionbankNewRouteImport } from './routes/questionbank.new'
 import { Route as QuestionbankReviewRouteImport } from './routes/questionbank.review'
+import { Route as StudentsIndexRouteImport } from './routes/students.index'
+import { Route as StudentsStudentIdRouteImport } from './routes/students.$studentId'
+import { Route as StudentsClassesRouteImport } from './routes/students.classes'
 import { Route as CbtMarkAttemptIdRouteImport } from './routes/cbt.mark.$attemptId'
 import { Route as CbtResultsIndexRouteImport } from './routes/cbt.results.index'
 import { Route as CbtResultsExamIdRouteImport } from './routes/cbt.results.$examId'
@@ -54,6 +58,11 @@ const NotebankRoute = NotebankRouteImport.update({
 const QuestionbankRoute = QuestionbankRouteImport.update({
   id: '/questionbank',
   path: '/questionbank',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudentsRoute = StudentsRouteImport.update({
+  id: '/students',
+  path: '/students',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CbtIndexRoute = CbtIndexRouteImport.update({
@@ -111,6 +120,21 @@ const QuestionbankReviewRoute = QuestionbankReviewRouteImport.update({
   path: '/review',
   getParentRoute: () => QuestionbankRoute,
 } as any)
+const StudentsIndexRoute = StudentsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => StudentsRoute,
+} as any)
+const StudentsStudentIdRoute = StudentsStudentIdRouteImport.update({
+  id: '/$studentId',
+  path: '/$studentId',
+  getParentRoute: () => StudentsRoute,
+} as any)
+const StudentsClassesRoute = StudentsClassesRouteImport.update({
+  id: '/classes',
+  path: '/classes',
+  getParentRoute: () => StudentsRoute,
+} as any)
 const CbtMarkAttemptIdRoute = CbtMarkAttemptIdRouteImport.update({
   id: '/mark/$attemptId',
   path: '/mark/$attemptId',
@@ -143,6 +167,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/notebank': typeof NotebankRouteWithChildren
   '/questionbank': typeof QuestionbankRouteWithChildren
+  '/students': typeof StudentsRouteWithChildren
   '/cbt/$examId': typeof CbtExamIdRoute
   '/cbt/my': typeof CbtMyRoute
   '/cbt/new': typeof CbtNewRoute
@@ -151,9 +176,12 @@ export interface FileRoutesByFullPath {
   '/questionbank/$questionId': typeof QuestionbankQuestionIdRoute
   '/questionbank/new': typeof QuestionbankNewRoute
   '/questionbank/review': typeof QuestionbankReviewRoute
+  '/students/$studentId': typeof StudentsStudentIdRoute
+  '/students/classes': typeof StudentsClassesRoute
   '/cbt/': typeof CbtIndexRoute
   '/notebank/': typeof NotebankIndexRoute
   '/questionbank/': typeof QuestionbankIndexRoute
+  '/students/': typeof StudentsIndexRoute
   '/cbt/mark/$attemptId': typeof CbtMarkAttemptIdRoute
   '/cbt/results/$examId': typeof CbtResultsExamIdRoute
   '/cbt/review/$examId': typeof CbtReviewExamIdRoute
@@ -171,9 +199,12 @@ export interface FileRoutesByTo {
   '/questionbank/$questionId': typeof QuestionbankQuestionIdRoute
   '/questionbank/new': typeof QuestionbankNewRoute
   '/questionbank/review': typeof QuestionbankReviewRoute
+  '/students/$studentId': typeof StudentsStudentIdRoute
+  '/students/classes': typeof StudentsClassesRoute
   '/cbt': typeof CbtIndexRoute
   '/notebank': typeof NotebankIndexRoute
   '/questionbank': typeof QuestionbankIndexRoute
+  '/students': typeof StudentsIndexRoute
   '/cbt/mark/$attemptId': typeof CbtMarkAttemptIdRoute
   '/cbt/results/$examId': typeof CbtResultsExamIdRoute
   '/cbt/review/$examId': typeof CbtReviewExamIdRoute
@@ -187,6 +218,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/notebank': typeof NotebankRouteWithChildren
   '/questionbank': typeof QuestionbankRouteWithChildren
+  '/students': typeof StudentsRouteWithChildren
   '/cbt/$examId': typeof CbtExamIdRoute
   '/cbt/my': typeof CbtMyRoute
   '/cbt/new': typeof CbtNewRoute
@@ -195,9 +227,12 @@ export interface FileRoutesById {
   '/questionbank/$questionId': typeof QuestionbankQuestionIdRoute
   '/questionbank/new': typeof QuestionbankNewRoute
   '/questionbank/review': typeof QuestionbankReviewRoute
+  '/students/$studentId': typeof StudentsStudentIdRoute
+  '/students/classes': typeof StudentsClassesRoute
   '/cbt/': typeof CbtIndexRoute
   '/notebank/': typeof NotebankIndexRoute
   '/questionbank/': typeof QuestionbankIndexRoute
+  '/students/': typeof StudentsIndexRoute
   '/cbt/mark/$attemptId': typeof CbtMarkAttemptIdRoute
   '/cbt/results/$examId': typeof CbtResultsExamIdRoute
   '/cbt/review/$examId': typeof CbtReviewExamIdRoute
@@ -212,6 +247,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/notebank'
     | '/questionbank'
+    | '/students'
     | '/cbt/$examId'
     | '/cbt/my'
     | '/cbt/new'
@@ -220,9 +256,12 @@ export interface FileRouteTypes {
     | '/questionbank/$questionId'
     | '/questionbank/new'
     | '/questionbank/review'
+    | '/students/$studentId'
+    | '/students/classes'
     | '/cbt/'
     | '/notebank/'
     | '/questionbank/'
+    | '/students/'
     | '/cbt/mark/$attemptId'
     | '/cbt/results/$examId'
     | '/cbt/review/$examId'
@@ -240,9 +279,12 @@ export interface FileRouteTypes {
     | '/questionbank/$questionId'
     | '/questionbank/new'
     | '/questionbank/review'
+    | '/students/$studentId'
+    | '/students/classes'
     | '/cbt'
     | '/notebank'
     | '/questionbank'
+    | '/students'
     | '/cbt/mark/$attemptId'
     | '/cbt/results/$examId'
     | '/cbt/review/$examId'
@@ -255,6 +297,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/notebank'
     | '/questionbank'
+    | '/students'
     | '/cbt/$examId'
     | '/cbt/my'
     | '/cbt/new'
@@ -263,9 +306,12 @@ export interface FileRouteTypes {
     | '/questionbank/$questionId'
     | '/questionbank/new'
     | '/questionbank/review'
+    | '/students/$studentId'
+    | '/students/classes'
     | '/cbt/'
     | '/notebank/'
     | '/questionbank/'
+    | '/students/'
     | '/cbt/mark/$attemptId'
     | '/cbt/results/$examId'
     | '/cbt/review/$examId'
@@ -279,6 +325,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   NotebankRoute: typeof NotebankRouteWithChildren
   QuestionbankRoute: typeof QuestionbankRouteWithChildren
+  StudentsRoute: typeof StudentsRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -316,6 +363,13 @@ declare module '@tanstack/react-router' {
       path: '/questionbank'
       fullPath: '/questionbank'
       preLoaderRoute: typeof QuestionbankRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/students': {
+      id: '/students'
+      path: '/students'
+      fullPath: '/students'
+      preLoaderRoute: typeof StudentsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cbt/': {
@@ -394,6 +448,27 @@ declare module '@tanstack/react-router' {
       fullPath: '/questionbank/review'
       preLoaderRoute: typeof QuestionbankReviewRouteImport
       parentRoute: typeof QuestionbankRoute
+    }
+    '/students/': {
+      id: '/students/'
+      path: '/'
+      fullPath: '/students/'
+      preLoaderRoute: typeof StudentsIndexRouteImport
+      parentRoute: typeof StudentsRoute
+    }
+    '/students/$studentId': {
+      id: '/students/$studentId'
+      path: '/$studentId'
+      fullPath: '/students/$studentId'
+      preLoaderRoute: typeof StudentsStudentIdRouteImport
+      parentRoute: typeof StudentsRoute
+    }
+    '/students/classes': {
+      id: '/students/classes'
+      path: '/classes'
+      fullPath: '/students/classes'
+      preLoaderRoute: typeof StudentsClassesRouteImport
+      parentRoute: typeof StudentsRoute
     }
     '/cbt/mark/$attemptId': {
       id: '/cbt/mark/$attemptId'
@@ -493,12 +568,29 @@ const QuestionbankRouteWithChildren = QuestionbankRoute._addFileChildren(
   QuestionbankRouteChildren,
 )
 
+interface StudentsRouteChildren {
+  StudentsStudentIdRoute: typeof StudentsStudentIdRoute
+  StudentsClassesRoute: typeof StudentsClassesRoute
+  StudentsIndexRoute: typeof StudentsIndexRoute
+}
+
+const StudentsRouteChildren: StudentsRouteChildren = {
+  StudentsStudentIdRoute: StudentsStudentIdRoute,
+  StudentsClassesRoute: StudentsClassesRoute,
+  StudentsIndexRoute: StudentsIndexRoute,
+}
+
+const StudentsRouteWithChildren = StudentsRoute._addFileChildren(
+  StudentsRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CbtRoute: CbtRouteWithChildren,
   LoginRoute: LoginRoute,
   NotebankRoute: NotebankRouteWithChildren,
   QuestionbankRoute: QuestionbankRouteWithChildren,
+  StudentsRoute: StudentsRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
