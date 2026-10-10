@@ -42,3 +42,8 @@
 - [x] Gate 11C M4 applied (validation only): ai_credit_transactions append-only ledger + ai_credit_balance view; schema_migrations 011-m4. PASS/FROZEN. Next: M5 on approval.
 - [x] Gate 11C M5 applied (validation only): credit lifecycle functions; schema_migrations 011-m5. PASS WITH FINDINGS/FROZEN. Next: M6 on approval.
 - [x] Gate 11C M6a applied (validation only): request/worker credit integration, kill switch (default off), approval, governed-job rule; schema_migrations 011-m6a. PASS WITH FINDINGS/FROZEN. Next: M6b (F1–F3) on approval.
+
+## Rev6 Step 2 — Atomic student/guardian operations
+- [x] Revised SQL + DB tests drafted (Files), not applied — awaiting authorisation
+- [ ] Apply on validation after approval; run DB tests incl. two-session concurrency (needs writable runner)
+- [ ] Switch src/lib/students/api.ts to the three RPCs + update contract tests
