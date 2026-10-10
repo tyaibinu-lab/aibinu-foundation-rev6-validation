@@ -75,7 +75,7 @@ export async function currentOrgId(): Promise<string | null> {
   return unwrap<string | null>(await db.rpc("current_org_id")) ?? null;
 }
 
-export interface StudentFilters { search?: string; status?: PersonStatus | "all"; classId?: string; page?: number }
+export interface StudentFilters { search?: string; status?: PersonStatus | "all"; classId?: string | undefined; page?: number }
 
 export async function listStudents(f: StudentFilters): Promise<{ rows: StudentRow[]; total: number }> {
   const page = Math.max(0, f.page ?? 0);

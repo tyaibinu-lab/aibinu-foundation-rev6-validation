@@ -28,7 +28,7 @@ function Rosters() {
   const [classId, setClassId] = useState("");
 
   useEffect(() => {
-    if (!sessionId && sessions.data?.length) setSessionId((sessions.data.find((s) => s.is_current) ?? sessions.data[0]).id);
+    if (!sessionId && sessions.data?.length) setSessionId((sessions.data.find((s) => s.is_current) ?? sessions.data[0])!.id);
   }, [sessions.data, sessionId]);
 
   const classes = useQuery({ queryKey: ["students", "classes", sessionId], queryFn: () => listClasses(sessionId), enabled: !!sessionId, retry: false });
