@@ -5952,6 +5952,18 @@ export type Database = {
         }
         Returns: string
       }
+      add_student_guardian: {
+        Args: {
+          p_email: string
+          p_full_name: string
+          p_is_primary?: boolean
+          p_phone: string
+          p_relationship: string
+          p_student_id: string
+          p_whatsapp: string
+        }
+        Returns: Json
+      }
       ai_credit_adjust: {
         Args: {
           p_amount: number
@@ -6049,6 +6061,10 @@ export type Database = {
           p_intervention_id: string
         }
         Returns: undefined
+      }
+      assign_student_class: {
+        Args: { p_class_id: string; p_student_id: string }
+        Returns: Json
       }
       attach_checkout: {
         Args: {
@@ -6251,6 +6267,14 @@ export type Database = {
       is_self_or_parent: { Args: { p_student_id: string }; Returns: boolean }
       issue_invoice: { Args: { p_invoice_id: string }; Returns: undefined }
       learning_dashboard: { Args: { p_student_id?: string }; Returns: Json }
+      lock_student_for_class_op: {
+        Args: { p_student_id: string }
+        Returns: undefined
+      }
+      lock_student_for_guardian_op: {
+        Args: { p_student_id: string }
+        Returns: undefined
+      }
       mark_intervention_done: {
         Args: { p_intervention_id: string }
         Returns: undefined
@@ -6520,6 +6544,10 @@ export type Database = {
           p_secret: string
         }
         Returns: undefined
+      }
+      set_primary_guardian: {
+        Args: { p_link_id: string; p_student_id: string }
+        Returns: Json
       }
       staff_can_view_results: {
         Args: { p_student_id: string }
