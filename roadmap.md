@@ -50,4 +50,6 @@
 
 ## Step 2 v5.3 finalization (static only)
 - [x] v5.3 candidate, rollback, changelog, checklist in Files — NOT applied
-- [ ] S2-B..S2-F awaiting explicit approval
+- [x] S2-B preflight + S2-C v5.3 applied on validation (2026-10-11); postflight PASS
+- [ ] S2-D DB tests v5.2 + C1–C8 — need psql/two-session runner (not available here)
+- [ ] S2-E api.ts switch, S2-F human live checklist — awaiting approval
