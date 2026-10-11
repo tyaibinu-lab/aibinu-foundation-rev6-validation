@@ -101,21 +101,40 @@ describe("Tenant-safe data contract", () => {
     expect(c.filters).toContainEqual(["is", "deleted_at", null]);
     expect(c.filters).toContainEqual(["range", 40, 59]);
   });
-  it("assigning a class transfers the existing active enrolment first", async () => {
-    results["select:enrolments"] = { data: [{ id: "e-old", class_id: "c-old" }], error: null };
+  const directWrites = () =>
+    calls.filter((c) => ["insert", "update", "delete"].includes(c.kind) && ["parents", "student_parents", "enrolments"].includes(c.table ?? ""));
+  it("assignClass calls assign_student_class exactly once with no direct writes", async () => {
     await api.assignClass("org-a", "s1", { id: "c-new", name: "SS2 A", academic_session_id: "sess", capacity: null });
-    const kinds = calls.filter((c) => c.table === "enrolments").map((c) => c.kind);
-    expect(kinds).toEqual(["select", "update", "insert"]);
-    expect(calls.find((c) => c.kind === "update")!.payload).toMatchObject({ status: "transferred" });
+    const rpcs = calls.filter((c) => c.kind === "rpc");
+    expect(rpcs).toEqual([{ kind: "rpc", fn: "assign_student_class", args: { p_student_id: "s1", p_class_id: "c-new" }, filters: [] }]);
+    expect(calls.filter((c) => c.table === "enrolments")).toEqual([]);
   });
-  it("refuses to re-enrol into the same class", async () => {
-    results["select:enrolments"] = { data: [{ id: "e1", class_id: "c1" }], error: null };
+  it("assignClass propagates the database 'already in this class' error", async () => {
+    results["rpc:assign_student_class"] = { data: null, error: { message: "The student is already in this class" } };
     await expect(api.assignClass("org-a", "s1", { id: "c1", name: "x", academic_session_id: "sess", capacity: null })).rejects.toThrow(/already in this class/);
   });
-  it("making a guardian primary clears the old primary first", async () => {
+  it("setPrimaryGuardian calls set_primary_guardian exactly once", async () => {
     await api.setPrimaryGuardian("s1", "l2");
-    const ups = calls.filter((c) => c.kind === "update").map((c) => c.payload);
-    expect(ups).toEqual([{ is_primary: false }, { is_primary: true }]);
+    const rpcs = calls.filter((c) => c.kind === "rpc");
+    expect(rpcs).toEqual([{ kind: "rpc", fn: "set_primary_guardian", args: { p_student_id: "s1", p_link_id: "l2" }, filters: [] }]);
+    expect(directWrites()).toEqual([]);
+  });
+  it("setPrimaryGuardian propagates RPC errors", async () => {
+    results["rpc:set_primary_guardian"] = { data: null, error: { message: "Permission denied: student.manage required" } };
+    await expect(api.setPrimaryGuardian("s1", "l2")).rejects.toThrow(/Permission denied/);
+  });
+  it("addGuardian calls add_student_guardian once with normalized values and no org id", async () => {
+    await api.addGuardian("org-a", "s1", { fullName: "  Bola Obi ", phone: " ", email: "b@x.com", whatsapp: "", relationship: "mother", isPrimary: true });
+    const rpcs = calls.filter((c) => c.kind === "rpc");
+    expect(rpcs).toHaveLength(1);
+    expect(rpcs[0].fn).toBe("add_student_guardian");
+    expect(rpcs[0].args).toEqual({ p_student_id: "s1", p_full_name: "Bola Obi", p_phone: null, p_email: "b@x.com", p_whatsapp: null, p_relationship: "mother", p_is_primary: true });
+    expect(directWrites()).toEqual([]);
+  });
+  it("addGuardian propagates RPC errors without fallback writes", async () => {
+    results["rpc:add_student_guardian"] = { data: null, error: { message: "Permission denied: student.manage and parent.manage required" } };
+    await expect(api.addGuardian("org-a", "s1", { fullName: "Bola Obi", phone: "1", email: "", whatsapp: "", relationship: "mother", isPrimary: false })).rejects.toThrow(/Permission denied/);
+    expect(directWrites()).toEqual([]);
   });
   it("student module never uses the service-role client or admin keys", () => {
     const files: string[] = [];

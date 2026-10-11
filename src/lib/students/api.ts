@@ -126,30 +126,29 @@ export async function listGuardians(studentId: string): Promise<GuardianLink[]> 
   ) ?? [];
 }
 
-async function clearPrimary(studentId: string) {
-  unwrap(await db.from("student_parents").update({ is_primary: false }).eq("student_id", studentId).eq("is_primary", true));
-}
-
-/** Creates a parent (needs parent.manage) then links it (needs student.manage). */
-export async function addGuardian(orgId: string, studentId: string, g: GuardianInput): Promise<void> {
-  const parent = unwrap<{ id: string }>(
-    await db
-      .from("parents")
-      .insert({ organisation_id: orgId, full_name: g.fullName.trim(), phone: blank(g.phone), email: blank(g.email), whatsapp: blank(g.whatsapp) })
-      .select("id")
-      .single(),
-  );
-  if (g.isPrimary) await clearPrimary(studentId);
+/**
+ * Atomic: one RPC creates the parent, optionally moves the primary flag, and links it.
+ * The database derives the organisation from current_org_id() and checks
+ * student.manage + parent.manage. `_orgId` is kept for caller compatibility only
+ * and is never sent. No direct-write fallback by design.
+ */
+export async function addGuardian(_orgId: string, studentId: string, g: GuardianInput): Promise<void> {
   unwrap(
-    await db
-      .from("student_parents")
-      .insert({ organisation_id: orgId, student_id: studentId, parent_id: parent.id, relationship: g.relationship, is_primary: g.isPrimary }),
+    await db.rpc("add_student_guardian", {
+      p_student_id: studentId,
+      p_full_name: g.fullName.trim(),
+      p_phone: blank(g.phone),
+      p_email: blank(g.email),
+      p_whatsapp: blank(g.whatsapp),
+      p_relationship: g.relationship,
+      p_is_primary: g.isPrimary,
+    }),
   );
 }
 
+/** Atomic: clears the old primary and sets the new one in one transaction (student.manage). */
 export async function setPrimaryGuardian(studentId: string, linkId: string): Promise<void> {
-  await clearPrimary(studentId);
-  unwrap(await db.from("student_parents").update({ is_primary: true }).eq("id", linkId));
+  unwrap(await db.rpc("set_primary_guardian", { p_student_id: studentId, p_link_id: linkId }));
 }
 
 /** Removes the link only; the parent record is kept. */
@@ -184,32 +183,13 @@ export async function getRoster(classId: string): Promise<RosterRow[]> {
 }
 
 /**
- * Assigns a class for the class's academic session. An existing active enrolment in
- * that session is closed as 'transferred' first, because uq_one_active_enrolment
- * allows only one. Requires class.manage (enrolments_write).
+ * Atomic: one RPC closes any active enrolment in the class's session as
+ * 'transferred' and inserts the new active one (class.manage). The database
+ * rejects re-enrolment into the same class. `_orgId` and `cls` other than its id
+ * are kept for caller compatibility and are never sent.
  */
-export async function assignClass(orgId: string, studentId: string, cls: ClassRow): Promise<void> {
-  const today = new Date().toISOString().slice(0, 10);
-  const current = unwrap<{ id: string; class_id: string }[]>(
-    await db
-      .from("enrolments")
-      .select("id,class_id")
-      .eq("student_id", studentId)
-      .eq("academic_session_id", cls.academic_session_id)
-      .eq("status", "active"),
-  ) ?? [];
-  if (current.some((e) => e.class_id === cls.id)) throw new Error("The student is already in this class.");
-  for (const e of current) unwrap(await db.from("enrolments").update({ status: "transferred", ended_on: today }).eq("id", e.id));
-  unwrap(
-    await db.from("enrolments").insert({
-      organisation_id: orgId,
-      student_id: studentId,
-      class_id: cls.id,
-      academic_session_id: cls.academic_session_id,
-      status: "active",
-      enrolled_on: today,
-    }),
-  );
+export async function assignClass(_orgId: string, studentId: string, cls: ClassRow): Promise<void> {
+  unwrap(await db.rpc("assign_student_class", { p_student_id: studentId, p_class_id: cls.id }));
 }
 
 export async function withdrawEnrolment(enrolmentId: string): Promise<void> {
