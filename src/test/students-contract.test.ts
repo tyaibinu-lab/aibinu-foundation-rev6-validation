@@ -127,8 +127,8 @@ describe("Tenant-safe data contract", () => {
     await api.addGuardian("org-a", "s1", { fullName: "  Bola Obi ", phone: " ", email: "b@x.com", whatsapp: "", relationship: "mother", isPrimary: true });
     const rpcs = calls.filter((c) => c.kind === "rpc");
     expect(rpcs).toHaveLength(1);
-    expect(rpcs[0].fn).toBe("add_student_guardian");
-    expect(rpcs[0].args).toEqual({ p_student_id: "s1", p_full_name: "Bola Obi", p_phone: null, p_email: "b@x.com", p_whatsapp: null, p_relationship: "mother", p_is_primary: true });
+    expect(rpcs[0]!.fn).toBe("add_student_guardian");
+    expect(rpcs[0]!.args).toEqual({ p_student_id: "s1", p_full_name: "Bola Obi", p_phone: null, p_email: "b@x.com", p_whatsapp: null, p_relationship: "mother", p_is_primary: true });
     expect(directWrites()).toEqual([]);
   });
   it("addGuardian propagates RPC errors without fallback writes", async () => {
