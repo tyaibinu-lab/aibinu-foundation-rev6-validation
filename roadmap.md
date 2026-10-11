@@ -47,3 +47,7 @@
 - [x] Revised SQL + DB tests drafted (Files), not applied — awaiting authorisation
 - [ ] Apply on validation after approval; run DB tests incl. two-session concurrency (needs writable runner)
 - [ ] Switch src/lib/students/api.ts to the three RPCs + update contract tests
+
+## Step 2 v5.3 finalization (static only)
+- [x] v5.3 candidate, rollback, changelog, checklist in Files — NOT applied
+- [ ] S2-B..S2-F awaiting explicit approval
