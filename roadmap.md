@@ -45,6 +45,8 @@
 
 ## Rev6 Step 2 — Atomic student/guardian operations
 - [x] Revised SQL + DB tests drafted (Files), not applied — awaiting authorisation
+- [x] Fixture preflight A run read-only (2026-10-13): P0/P1/P2 pass; P2-email "fail" explained — six fx2 Auth users already created via Auth Admin (2026-10-12), all active, none platform admin, zero memberships (= preflight B conditions met)
+- [ ] O2 audit-residue decision + approval to run fixture setup script (orgs, roles, memberships, student, classes)
 - [ ] Apply on validation after approval; run DB tests incl. two-session concurrency (needs writable runner)
 - [ ] Switch src/lib/students/api.ts to the three RPCs + update contract tests
 
