@@ -61,14 +61,14 @@ describe("Curriculum API contract", () => {
   });
 
   it("loads units and topics of a single version and groups topics by unit", async () => {
-    results.curriculum_units = { data: [{ id: "u1", version_id: "v1", title: "Mechanics", position: 0 }], error: null };
-    results.curriculum_topics = { data: [
+    results["curriculum_units"] = { data: [{ id: "u1", version_id: "v1", title: "Mechanics", position: 0 }], error: null };
+    results["curriculum_topics"] = { data: [
       { id: "t1", version_id: "v1", unit_id: "u1", code: "A", title: "Motion", position: 0, class_level: "SS1", term: "first", topic_key: "k1" },
       { id: "t2", version_id: "v1", unit_id: "uX", code: "B", title: "Orphan", position: 1, class_level: null, term: "any", topic_key: "k2" },
     ], error: null };
     const tree = await api.getVersionTree("v1");
     expect(calls.map((c) => [c.table, c.filters[0]])).toEqual([["curriculum_units", ["eq", "version_id", "v1"]], ["curriculum_topics", ["eq", "version_id", "v1"]]]);
-    expect(tree.units[0].topics.map((t) => t.id)).toEqual(["t1"]);
+    expect(tree.units[0]!.topics.map((t) => t.id)).toEqual(["t1"]);
     expect(tree.unassigned.map((t) => t.id)).toEqual(["t2"]);
   });
 
@@ -81,7 +81,7 @@ describe("Curriculum API contract", () => {
   });
 
   it("propagates database errors", async () => {
-    results.curricula = { data: null, error: { message: "permission denied" } };
+    results["curricula"] = { data: null, error: { message: "permission denied" } };
     await expect(api.listCurricula()).rejects.toMatchObject({ message: "permission denied" });
   });
 
