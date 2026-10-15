@@ -58,3 +58,18 @@ export function buildTree(units: UnitRow[], topics: TopicRow[]): VersionTree {
 export function defaultVersion(versions: VersionRow[]): VersionRow | null {
   return versions.find((v) => v.status === "published") ?? null;
 }
+
+/** Versions the user can currently see. */
+export function visibleVersions(versions: VersionRow[], showAll: boolean): VersionRow[] {
+  return versions.filter((v) => showAll || v.status === "published");
+}
+
+/**
+ * The selected version, derived at render time: the user's choice only if it is
+ * one of the visible versions of the current curriculum, else the visible default.
+ * A hidden or foreign version id can never be selected.
+ */
+export function selectVersion(versions: VersionRow[], showAll: boolean, chosenId: string | null): VersionRow | null {
+  const visible = visibleVersions(versions, showAll);
+  return visible.find((v) => v.id === chosenId) ?? defaultVersion(visible);
+}

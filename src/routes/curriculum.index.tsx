@@ -47,11 +47,13 @@ function CurriculumBank() {
 
   const curricula = useQuery({ queryKey: ["curriculum", "list"], queryFn: listCurricula, retry: false });
   const versions = useQuery({ queryKey: ["curriculum", "versions", curriculumId], queryFn: () => listVersions(curriculumId!), retry: false, enabled: !!curriculumId });
-  const tree = useQuery({ queryKey: ["curriculum", "tree", versionId], queryFn: () => getVersionTree(versionId!), retry: false, enabled: !!versionId });
+  // Versions only come from the current curriculum's query, so a stale id can never resolve.
+  const versionList = curriculumId ? versions.data ?? [] : [];
+  const visible = visibleVersions(versionList, showAll);
+  const selectedId = selectVersion(versionList, showAll, versionId)?.id ?? null;
+  const tree = useQuery({ queryKey: ["curriculum", "tree", selectedId], queryFn: () => getVersionTree(selectedId!), retry: false, enabled: !!selectedId });
 
-  useEffect(() => { setVersionId(versions.data ? defaultVersion(versions.data)?.id ?? null : null); }, [versions.data]);
-
-  const visibleVersions = (versions.data ?? []).filter((v) => showAll || v.status === "published");
+  const chooseCurriculum = (id: string) => { setCurriculumId(id); setVersionId(null); };
 
   return (
     <div className="min-h-screen bg-background">
