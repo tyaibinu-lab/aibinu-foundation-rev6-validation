@@ -1,13 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { AccountBar } from "@/components/auth/TenantGate";
-import { defaultVersion, getVersionTree, listCurricula, listVersions, type VersionRow } from "@/lib/curriculum/api";
+import { getVersionTree, listCurricula, listVersions, selectVersion, visibleVersions, type VersionRow } from "@/lib/curriculum/api";
 
 export const Route = createFileRoute("/curriculum/")({
   head: () => ({
@@ -47,11 +47,13 @@ function CurriculumBank() {
 
   const curricula = useQuery({ queryKey: ["curriculum", "list"], queryFn: listCurricula, retry: false });
   const versions = useQuery({ queryKey: ["curriculum", "versions", curriculumId], queryFn: () => listVersions(curriculumId!), retry: false, enabled: !!curriculumId });
-  const tree = useQuery({ queryKey: ["curriculum", "tree", versionId], queryFn: () => getVersionTree(versionId!), retry: false, enabled: !!versionId });
+  // Versions only come from the current curriculum's query, so a stale id can never resolve.
+  const versionList = curriculumId ? versions.data ?? [] : [];
+  const visible = visibleVersions(versionList, showAll);
+  const selectedId = selectVersion(versionList, showAll, versionId)?.id ?? null;
+  const tree = useQuery({ queryKey: ["curriculum", "tree", selectedId], queryFn: () => getVersionTree(selectedId!), retry: false, enabled: !!selectedId });
 
-  useEffect(() => { setVersionId(versions.data ? defaultVersion(versions.data)?.id ?? null : null); }, [versions.data]);
-
-  const visibleVersions = (versions.data ?? []).filter((v) => showAll || v.status === "published");
+  const chooseCurriculum = (id: string) => { setCurriculumId(id); setVersionId(null); };
 
   return (
     <div className="min-h-screen bg-background">
@@ -78,7 +80,7 @@ function CurriculumBank() {
                 <ul className="space-y-1">
                   {curricula.data!.map((c) => (
                     <li key={c.id}>
-                      <button type="button" onClick={() => setCurriculumId(c.id)} aria-pressed={curriculumId === c.id}
+                      <button type="button" onClick={() => chooseCurriculum(c.id)} aria-pressed={curriculumId === c.id}
                         className={`w-full rounded-md px-2 py-2 text-left text-sm hover:bg-muted ${curriculumId === c.id ? "bg-muted font-semibold" : ""}`}>
                         {c.name}
                         <span className="block text-xs text-muted-foreground">{[c.exam_body, c.subjects?.name, c.level].filter(Boolean).join(" · ")}</span>
@@ -102,18 +104,18 @@ function CurriculumBank() {
               {!curriculumId ? <p className="text-sm text-muted-foreground">Choose a curriculum.</p>
                 : versions.error ? <ErrorBox error={versions.error} />
                 : versions.isLoading ? <p className="text-sm text-muted-foreground">Loading versions…</p>
-                : visibleVersions.length === 0 ? <p className="text-sm text-muted-foreground">{showAll ? "This curriculum has no versions." : "No published version. Turn on “Show draft and archived” to browse others."}</p>
+                : visible.length === 0 ? <p className="text-sm text-muted-foreground">{showAll ? "This curriculum has no versions." : "No published version. Turn on “Show draft and archived” to browse others."}</p>
                 : (
                   <>
                     <div className="flex flex-wrap gap-2">
-                      {visibleVersions.map((v) => (
-                        <button key={v.id} type="button" onClick={() => setVersionId(v.id)} aria-pressed={versionId === v.id}
-                          className={`flex items-center gap-2 rounded-md border px-3 py-1 text-sm ${versionId === v.id ? "border-primary" : "border-border"}`}>
+                      {visible.map((v) => (
+                        <button key={v.id} type="button" onClick={() => setVersionId(v.id)} aria-pressed={selectedId === v.id}
+                          className={`flex items-center gap-2 rounded-md border px-3 py-1 text-sm ${selectedId === v.id ? "border-primary" : "border-border"}`}>
                           {v.version_label} <VersionBadge status={v.status} />
                         </button>
                       ))}
                     </div>
-                    {!versionId ? <p className="text-sm text-muted-foreground">Choose a version.</p>
+                    {!selectedId ? <p className="text-sm text-muted-foreground">Choose a version.</p>
                       : tree.error ? <ErrorBox error={tree.error} />
                       : tree.isLoading ? <p className="text-sm text-muted-foreground">Loading topics…</p>
                       : tree.data!.units.length === 0 ? <p className="text-sm text-muted-foreground">This version has no units yet.</p>

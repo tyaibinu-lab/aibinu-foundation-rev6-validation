@@ -90,4 +90,19 @@ describe("Curriculum API contract", () => {
     expect(api.defaultVersion([v("d", "draft"), v("p", "published")])?.id).toBe("p");
     expect(api.defaultVersion([v("d", "draft"), v("a", "archived")])).toBeNull();
   });
+
+  const ver = (id: string, curriculum_id: string, status: "draft" | "published" | "archived") => ({ id, curriculum_id, version_label: id, status, effective_from: null, published_at: null });
+
+  it("drops a selected draft when drafts are hidden, falling back to the published version", () => {
+    const list = [ver("d", "c1", "draft"), ver("p", "c1", "published")];
+    expect(api.selectVersion(list, true, "d")?.id).toBe("d");
+    expect(api.selectVersion(list, false, "d")?.id).toBe("p");
+    expect(api.selectVersion([ver("d", "c1", "draft")], false, "d")).toBeNull();
+  });
+
+  it("never selects a version from a previous curriculum after switching", () => {
+    const c2 = [ver("p2", "c2", "published"), ver("d2", "c2", "draft")];
+    expect(api.selectVersion(c2, true, "p1-from-c1")?.id).toBe("p2");
+    expect(api.selectVersion([], true, "p1-from-c1")).toBeNull();
+  });
 });
