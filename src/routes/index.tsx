@@ -71,6 +71,7 @@ function Index() {
             <Link to="/notebank" className="inline-flex rounded-md border border-primary px-4 py-2 text-sm font-medium text-primary">Open NoteBank</Link>
             <Link to="/questionbank" className="inline-flex rounded-md border border-primary px-4 py-2 text-sm font-medium text-primary">Open Question Bank</Link>
             <Link to="/cbt" className="inline-flex rounded-md border border-primary px-4 py-2 text-sm font-medium text-primary">Open CBT Exams</Link>
+            <Link to="/curriculum" className="inline-flex rounded-md border border-primary px-4 py-2 text-sm font-medium text-primary">Open Curriculum Bank</Link>
           </div>
         </section>
 

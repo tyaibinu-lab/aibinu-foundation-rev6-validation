@@ -56,3 +56,4 @@
 - [ ] S2-D DB tests v5.2 + C1–C8 — need psql/two-session runner (not available here)
 - [ ] S2-E api.ts switch, S2-F human live checklist — awaiting approval
 - [x] Curriculum Bank read-only slice: /curriculum catalogue (curricula → versions → units → topics), no writes
+- [x] Curriculum review fixes: derived version selection, home link, regression tests
