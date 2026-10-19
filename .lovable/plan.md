@@ -1,78 +1,92 @@
-# Curriculum Bank read-only slice — post-implementation review
+# Rev6 Validation — Isolated Tenant-Test Plan (no execution)
 
-Review only. I made no edits, commits, SQL, database connections or setting changes. Every finding below comes from reading source code and git history. Nothing was checked against a live database.
+Scope: staging `mdcmwhcjfpgewetsnunk` only. Production `rsjwiaiyppiqrprfcqsr` excluded. Approving this plan approves nothing executable; each gate below needs its own explicit approval.
 
-## Evidence
+## 1. Proposed test identities
 
-- Commits: the slice landed in `6517753`, `1aa3e72` and `59b0fca` (test adjustment, AGENTS.md, roadmap.md). It was merged into HEAD `13d42954b4123b33b97c417a588b23ac5e98c36a`.
-- Changed files: `src/lib/curriculum/api.ts` (+60), `src/routes/curriculum.tsx` (+8), `src/routes/curriculum.index.tsx` (+149), `src/test/curriculum-contract.test.ts` (+93), `src/routeTree.gen.ts` (generated, +50), `AGENTS.md` (+1), `roadmap.md` (+1).
-- Tests and types: the build turn reported 294/294 tests passing and a clean `tsgo`. I did not re-run them in this review.
+| Identity | Auth user | Intended membership | Purpose |
+|---|---|---|---|
+| `iso-a@aibinu.test` (new) | new, confirmed, no emails sent | Org A only, one active `org_admin` row | Org A actor |
+| `iso-b@aibinu.test` (new) | new, confirmed | Org B only, one active `org_admin` row | Org B actor / adversary to A |
+| `iso-none@aibinu.test` (new, optional) | new | no membership | Negative control (zero tenant data) |
 
-## BLOCKER
+- `org_admin` rather than `org_owner` so owner-protection logic and the existing ownership evidence aren't affected. Test owner-only paths separately, later.
+- `rls-test-a` and `rls-test-b` stay as they are. Don't use `rls-test-b` as a cross-tenant adversary, because it legitimately belongs to both organisations.
 
-None found.
+## 2. Existing memberships to review (read-only, no changes)
 
-## SHOULD FIX
+- `rls-test-a`: Org A `org_admin` (active).
+- `rls-test-b`: Org A `org_admin` + Org A `org_owner` + Org B `org_owner` (all active).
+- Owners of record for Org A and Org B, and any owner-protection rows that refer to them.
+- Audit rows for the past grants/ownership changes (`audit_events`). Snapshot them by count and id range only, with no PII.
 
-**S1. A draft can stay selected but hidden after switching "Show draft and archived" off.** `curriculum.index.tsx:46,54,110-120`
-- `versionId` is never checked against `visibleVersions`.
-- Example: select a draft, then turn the switch off. The draft's topics stay on screen, but no version button is highlighted, so the page does not show which version you are looking at.
+## 3. Dependency checklist
 
-**S2. Switching curriculum can briefly show the previous curriculum's version.** `curriculum.index.tsx:52,81,116-120`
-- The reset happens in a `useEffect` after render. For one render, the old `versionId` stays active under the new curriculum.
-- If the old tree is cached under `["curriculum","tree",oldId]`, the previous curriculum's units appear for that frame.
-- The same effect also resets a user's manual choice whenever `versions.data` changes reference after a background refetch.
-- Query keys themselves are correct: every key includes `curriculumId` or `versionId`.
+- [ ] Supabase Auth: create users through Auth Admin only (Dashboard or the reviewed guarded script pattern). Never by SQL insert into `auth.users`.
+- [ ] `public.users`: confirm that `handle_new_auth_user` creates the matching row with status `active`. A suspended or invited status would make `current_org_id()` reject the user.
+- [ ] Roles: reuse the system `org_admin` role (organisation_id NULL). No new or edited roles or permissions.
+- [ ] Memberships: one row per identity, inserted by an approved privileged runner. The insert writes an audit row, which is accepted as permanent evidence and must be approved explicitly.
+- [ ] Test data: one dedicated fixture student per organisation (e.g. "ISO Fixture A", "ISO Fixture B"), clearly labelled, never UAT records. Optionally one fixture class each for write tests.
+- [ ] Credentials: disposable passwords held by the tester out-of-band, never printed or committed.
 
-**S3. No link to the page.** `/curriculum` is reachable only by typing the address. Nothing in `src/routes/index.tsx` or the header points to it.
+## 4. Execution plan with gates
 
-Smallest fix for S1 and S2 together:
-- Derive the selection during render: `selected = visibleVersions.find(v => v.id === versionId) ?? defaultVersion(visibleVersions)`.
-- Drive the tree query and `aria-pressed` from `selected?.id`.
-- In the curriculum click handler, call `setVersionId(null)` and remove the effect.
-- Add one test each for: draft deselected when hidden, and no previous-curriculum version after switching.
+```text
+G0 Approval of this plan
+G1 Read-only preflight (approved read-only runner, not ambient tool)
+   - confirm project ref, role = supabase_read_only_user
+   - iso-* emails do not exist; Org A/B ids; org_admin role id
+   - snapshot counts: memberships, audit_events, students per org
+G2 Provision (separate approval): Auth Admin create iso-a, iso-b, iso-none
+   -> verify public.users rows active
+G3 Memberships + fixtures (separate approval, privileged runner)
+   -> insert exactly 2 memberships + 2 fixture students
+G4 Membership verification gate (read-only)
+   - iso-a: exactly 1 active row, Org A; iso-b: exactly 1, Org B; iso-none: 0
+   - rls-test-a/b memberships unchanged versus the G1 snapshot
+   STOP if any mismatch
+G5 Authenticated app-session RLS tests (browser, real sign-in)
+G6 Evidence capture + classification
+G7 Cleanup decision (separate approval)
+```
 
-Fix for S3: add one `<Link to="/curriculum">` next to the existing module links on the home page.
+## 5. Tests (G5), run through real signed-in app sessions
 
-## ACCEPTABLE (with notes)
+| # | Test | Method | Expected |
+|---|---|---|---|
+| T1 | Authorised read | iso-a opens /students | Sees Fixture A; never Fixture B |
+| T2 | Mirror read | iso-b opens /students | Sees Fixture B only |
+| T3 | Foreign record by id | iso-a opens /students/<FixtureB id> | Not found / empty; no data |
+| T4 | Header tampering | iso-a session, REST call with `x-organisation-id` = Org B | `current_org_id()` null; 0 rows or error |
+| T5 | Header absent | iso-a with no header | No tenant rows |
+| T6 | Cross-tenant insert | iso-a inserts a student with Org B context | Rejected (RLS/permission error) |
+| T7 | Cross-tenant update | iso-a updates the Fixture B name | 0 rows affected or error; row unchanged (verify as iso-b) |
+| T8 | Cross-tenant RPC | iso-a calls `assign_student_class` / `add_student_guardian` on Fixture B | Rejected |
+| T9 | No-membership control | iso-none signs in | "No organisation access" screen; REST returns 0 rows |
+| T10 | Sign-out | iso-a signs out, then back navigation / refetch | Redirect to login; requests without a token return 0 rows |
+| T11 | Cache isolation | iso-a signs out, iso-b signs in in the same tab | No Fixture A visible at any point; header = Org B |
+| T12 | Header after switch | Inspect requests after T11 | `x-organisation-id` = Org B only |
 
-**A1. Tenant header is really sent with database requests.**
-- `applyOrgHeader` (`src/lib/auth/org-context.ts:56-59`) mutates `supabase.rest.headers`.
-- In postgrest-js 2.117.2 (`dist/index.mjs:265`), each request builder copies those headers when `from()` is called. So `x-organisation-id` goes with every curriculum request made after `AuthProvider.tsx:66/116` sets it.
-- Switching organisation clears the query cache first (`AuthProvider.tsx:113-117`). `TenantGate` renders protected pages only once the organisation is ready.
-- The client uses only the publishable key. I did not reproduce it here.
-- Not proven: that RLS isolates tenants. The mocked tests only show that the client sends no `organisation_id` filter.
+Write tests (T6–T8) target fixtures only. If one unexpectedly succeeds, record it as FAIL and stop; don't continue.
 
-**A2. Schema matches the migration source.** `003_curriculum.sql:33-106`, `004:33`
-- `curricula` has `subject_id` and a single composite FK to `subjects`. `types.ts:1420` has only `curricula_subject_id_organisation_id_fkey`, so the `subjects(name)` embed is unambiguous.
-- `curriculum_versions.created_at` exists.
-- All selected unit and topic columns exist; `topic_key` comes from 004.
-- Only `curricula` has `deleted_at`, and the filter applies only there, which is correct.
-- Not verified: that the live staging schema and RLS match these files.
+## 6. Classification and evidence
 
-**A3. Topics without a unit are built but never shown.** `api.ts:50-55`, `curriculum.index.tsx:119-139`
-- The page never renders `tree.unassigned`, and its "no units" empty state ignores it.
-- Real-world impact is near zero: `unit_id` is `NOT NULL`, and the composite FK `(unit_id, version_id)` blocks orphans. The only path is RLS hiding a unit while showing its topics, and the policies use the same organisation rule for both.
-- Optional: render a "Topics without a unit" group when `unassigned.length > 0`.
+- PASS: the expected outcome is observed, with request URL/status, a redacted response body (row count, error code) and a screenshot, all tied to the identity and a timestamp.
+- FAIL: any foreign-tenant row returned, any cross-tenant mutation that persists, or stale cross-tenant UI. Attach the same evidence and halt further write tests.
+- BLOCKED: the precondition gate failed (G4 mismatch, sign-in impossible, fixture missing) or the evidence is incomplete.
+- Tokens, passwords and student PII are never captured. Use ids and counts only.
 
-**A4. Test validity.**
-- The 7 tests correctly check: exact tables, columns and filters; read-only use (no writes or RPCs, plus a source scan for `insert/update/upsert/delete/rpc/client.server/SERVICE_ROLE`); grouping by unit; error propagation; published-by-default selection; and the client-only layout.
-- The route test depends on the generated `routeTree.gen.ts`. Other modules' tests use the same pattern, so the dependency is consistent rather than new.
-- The source-file regex checks (`ssr: false`, `TenantGate`) are brittle to formatting but harmless.
-- Gaps: there are no component-level tests for S1/S2 selection state and no RLS or two-tenant integration tests. The mock checks the client contract only.
+## 7. Preservation and cleanup (future approval)
 
-**A5. Accessibility and UX.**
-- Good: `aria-pressed` on toggle buttons, `<details>/<summary>` for units, a labelled switch, and distinct loading, empty and error states.
-- Minor:
-  - Loading text is not announced to screen readers (consider `role="status"`).
-  - Error boxes show raw database messages.
-  - The "AF" logo link has visible text, which is fine.
-  - Version buttons have no visible focus style beyond the browser default.
+- `rls-test-a`/`rls-test-b`, their memberships and existing audit rows stay untouched. G1 and G4 snapshots prove this.
+- Audit rows created in G3 are permanent and append-only. Never delete them. Their existence must be accepted at G3 approval.
+- Cleanup options for G7: set the iso memberships to `removed` and the fixture students to `withdrawn`/anonymised through the existing `anonymise_student` function, and disable or delete the iso Auth users through Auth Admin. Each option creates further audit rows. Leaving the fixtures in place, clearly labelled, is the option with the least residue.
 
-## Proposed fix scope (for separate approval)
+## 8. Unresolved assumptions
 
-1. S1 + S2: derive the selection, drop the effect, reset on curriculum click, and add 2 tests.
-2. S3: home-page link.
-3. Optional A3: unassigned-topics group.
-
-None of these touch the database, permissions, the tenant header or migrations.
+- Whether `handle_new_auth_user` sets new users to `active` (needs a source or live check at G1).
+- Whether an `org_admin` holds `student.read`/`student.manage` in staging role_permissions.
+- Who the approved privileged runner for G2/G3 is (Dashboard SQL as owner vs the guarded server script).
+- Whether audit residue from G3 is acceptable. It was previously rejected for Step 2 fixtures, so this needs a fresh decision.
+- Whether a third identity (iso-none) is wanted.
+- That Org B has no data links to Org A (shared curricula and similar) that could legitimately appear in reads.
