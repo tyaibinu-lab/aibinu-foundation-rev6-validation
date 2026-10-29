@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { createSingleFlight } from "@/lib/students/single-flight";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -106,6 +107,9 @@ function EnrolmentCard({ studentId, orgId, canManage }: { studentId: string; org
     onError: (e) => toast.error(describeStudentError(e)),
   });
   const withdraw = useMutation({ mutationFn: withdrawEnrolment, onSuccess: () => done("Enrolment withdrawn"), onError: (e) => toast.error(describeStudentError(e)) });
+  // One gate for the card: assign and withdraw never run concurrently or twice.
+  const gate = useRef(createSingleFlight()).current;
+  const enrolBusy = assign.isPending || withdraw.isPending;
 
   const sessionName = (id: string) => { const s = sessions.data?.find((x) => x.id === id); return s ? `${s.name} · ${s.term}` : ""; };
   const active = (enrolments.data ?? []).filter((e) => e.status === "active");
@@ -124,7 +128,7 @@ function EnrolmentCard({ studentId, orgId, canManage }: { studentId: string; org
               <p className="font-medium">{e.classes?.name ?? "Class"}</p>
               <p className="text-muted-foreground">{e.academic_sessions ? `${e.academic_sessions.name} · ${e.academic_sessions.term}` : ""} · since {e.enrolled_on}</p>
             </div>
-            {canManage && <Button variant="outline" size="sm" disabled={withdraw.isPending} onClick={() => withdraw.mutate(e.id)}>Withdraw</Button>}
+            {canManage && <Button variant="outline" size="sm" disabled={enrolBusy} onClick={() => gate.run((settle) => withdraw.mutate(e.id, { onSettled: settle }))}>Withdraw</Button>}
           </div>
         ))}
         {canManage && (
@@ -136,7 +140,7 @@ function EnrolmentCard({ studentId, orgId, canManage }: { studentId: string; org
                 <SelectContent>{(classes.data ?? []).map((c) => <SelectItem key={c.id} value={c.id}>{c.name} {sessionName(c.academic_session_id) && `(${sessionName(c.academic_session_id)})`}</SelectItem>)}</SelectContent>
               </Select>
             </div>
-            <Button disabled={!classId || !orgId || assign.isPending} onClick={() => assign.mutate()}>{assign.isPending ? "Assigning…" : "Assign"}</Button>
+            <Button disabled={!classId || !orgId || enrolBusy} onClick={() => gate.run((settle) => assign.mutate(undefined, { onSettled: settle }))}>{assign.isPending ? "Assigning…" : "Assign"}</Button>
           </div>
         )}
         {history.length > 0 && (
@@ -166,6 +170,9 @@ function GuardianCard({ studentId, orgId, canManage, canCreateParent }: { studen
   const add = useMutation({ mutationFn: () => addGuardian(orgId!, studentId, g), onSuccess: () => { done("Guardian linked"); setG(EMPTY_GUARDIAN); setOpen(false); }, onError: fail });
   const primary = useMutation({ mutationFn: (id: string) => setPrimaryGuardian(studentId, id), onSuccess: () => done("Primary guardian updated"), onError: fail });
   const unlink = useMutation({ mutationFn: unlinkGuardian, onSuccess: () => done("Guardian unlinked"), onError: fail });
+  // One gate for the card: add, make-primary and unlink never overlap or repeat.
+  const gate = useRef(createSingleFlight()).current;
+  const guardianBusy = add.isPending || primary.isPending || unlink.isPending;
   const set = (k: keyof GuardianInput) => (e: React.ChangeEvent<HTMLInputElement>) => setG({ ...g, [k]: e.target.value });
 
   return (
@@ -186,15 +193,15 @@ function GuardianCard({ studentId, orgId, canManage, canCreateParent }: { studen
             </div>
             {canManage && (
               <div className="flex gap-2">
-                {!l.is_primary && <Button variant="outline" size="sm" disabled={primary.isPending} onClick={() => primary.mutate(l.id)}>Make primary</Button>}
-                <Button variant="outline" size="sm" disabled={unlink.isPending} onClick={() => { if (confirm("Unlink this guardian from the student?")) unlink.mutate(l.id); }}>Unlink</Button>
+                {!l.is_primary && <Button variant="outline" size="sm" disabled={guardianBusy} onClick={() => gate.run((settle) => primary.mutate(l.id, { onSettled: settle }))}>Make primary</Button>}
+                <Button variant="outline" size="sm" disabled={guardianBusy} onClick={() => { if (confirm("Unlink this guardian from the student?")) gate.run((settle) => unlink.mutate(l.id, { onSettled: settle })); }}>Unlink</Button>
               </div>
             )}
           </div>
         ))}
         {canManage && !canCreateParent && <p className="text-muted-foreground">Adding new guardians requires the parent.manage permission.</p>}
         {open && (
-          <form className="space-y-3 rounded-md border border-border p-3" onSubmit={(e) => { e.preventDefault(); const errs = validateGuardian(g); setErrors(errs); if (!errs.length) add.mutate(); }}>
+          <form className="space-y-3 rounded-md border border-border p-3" onSubmit={(e) => { e.preventDefault(); const errs = validateGuardian(g); setErrors(errs); if (!errs.length) gate.run((settle) => add.mutate(undefined, { onSettled: settle })); }}>
             <FormErrors errors={errors} />
             <div className="grid gap-3 sm:grid-cols-2">
               <div><Label htmlFor="gn">Full name *</Label><Input id="gn" value={g.fullName} onChange={set("fullName")} maxLength={150} /></div>
@@ -211,7 +218,7 @@ function GuardianCard({ studentId, orgId, canManage, canCreateParent }: { studen
               <label className="flex items-center gap-2 pt-6"><Checkbox checked={g.isPrimary} onCheckedChange={(c) => setG({ ...g, isPrimary: c === true })} /> Primary contact</label>
             </div>
             <div className="flex gap-2">
-              <Button type="submit" disabled={add.isPending || !orgId}>{add.isPending ? "Saving…" : "Link guardian"}</Button>
+              <Button type="submit" disabled={guardianBusy || !orgId}>{add.isPending ? "Saving…" : "Link guardian"}</Button>
               <Button type="button" variant="outline" onClick={() => { setOpen(false); setErrors([]); }}>Cancel</Button>
             </div>
           </form>
