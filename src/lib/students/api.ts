@@ -151,9 +151,9 @@ export async function setPrimaryGuardian(studentId: string, linkId: string): Pro
   unwrap(await db.rpc("set_primary_guardian", { p_student_id: studentId, p_link_id: linkId }));
 }
 
-/** Removes the link only; the parent record is kept. */
+/** Atomic locked unlink; retains the parent. Primary-with-other-links rejects. */
 export async function unlinkGuardian(linkId: string): Promise<void> {
-  unwrap(await db.from("student_parents").delete().eq("id", linkId));
+  unwrap(await db.rpc("unlink_student_guardian", { p_link_id: linkId }));
 }
 
 export async function listSessions(): Promise<SessionRow[]> {
@@ -193,5 +193,5 @@ export async function assignClass(_orgId: string, studentId: string, cls: ClassR
 }
 
 export async function withdrawEnrolment(enrolmentId: string): Promise<void> {
-  unwrap(await db.from("enrolments").update({ status: "withdrawn", ended_on: new Date().toISOString().slice(0, 10) }).eq("id", enrolmentId));
+  unwrap(await db.rpc("withdraw_enrolment", { p_enrolment_id: enrolmentId }));
 }
