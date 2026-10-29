@@ -54,9 +54,13 @@ DO $$ BEGIN
     RAISE EXCEPTION 'Requires an active non-future enrolment';
   END IF;
 END $$;
-CREATE TEMP TABLE before_links ON COMMIT DROP AS SELECT * FROM public.student_parents;
-CREATE TEMP TABLE before_enrolments ON COMMIT DROP AS SELECT * FROM public.enrolments;
-CREATE TEMP TABLE before_parents ON COMMIT DROP AS SELECT * FROM public.parents;
+-- Explicit fixture scope; these are NOT whole-database/RLS-hidden-row proofs.
+CREATE TEMP TABLE before_links ON COMMIT DROP AS SELECT * FROM public.student_parents
+ WHERE id IN (current_setting('test.primary')::uuid, current_setting('test.secondary')::uuid, current_setting('test.sole')::uuid);
+CREATE TEMP TABLE before_enrolments ON COMMIT DROP AS SELECT * FROM public.enrolments
+ WHERE id = current_setting('test.enrolment')::uuid;
+CREATE TEMP TABLE before_parents ON COMMIT DROP AS SELECT * FROM public.parents
+ WHERE id IN (SELECT parent_id FROM before_links);
 SAVEPOINT functional_state;
 
 -- Permission-only and cross-tenant tests: no superuser business calls.
@@ -82,8 +86,8 @@ SELECT set_config('request.headers', json_build_object('x-organisation-id', curr
 -- Primary with another link must reject without changing either link.
 SELECT pg_temp.expect_error('SELECT public.unlink_student_guardian(' || quote_literal(current_setting('test.primary')) || ')', '22023');
 DO $$ BEGIN
-  IF EXISTS ((SELECT * FROM public.student_parents EXCEPT SELECT * FROM before_links)
-         UNION ALL (SELECT * FROM before_links EXCEPT SELECT * FROM public.student_parents)) THEN
+  IF EXISTS ((SELECT * FROM public.student_parents WHERE id IN (SELECT id FROM before_links) EXCEPT SELECT * FROM before_links)
+         UNION ALL (SELECT * FROM before_links EXCEPT SELECT * FROM public.student_parents WHERE id IN (SELECT id FROM before_links))) THEN
     RAISE EXCEPTION 'Rejected unlink changed links';
   END IF;
 END $$;
@@ -101,8 +105,8 @@ END $$;
 SELECT public.unlink_student_guardian(current_setting('test.sole')::uuid);
 DO $$ BEGIN
   IF EXISTS (SELECT 1 FROM public.student_parents WHERE id = current_setting('test.sole')::uuid)
-     OR EXISTS ((SELECT * FROM public.parents EXCEPT SELECT * FROM before_parents)
-             UNION ALL (SELECT * FROM before_parents EXCEPT SELECT * FROM public.parents)) THEN
+     OR EXISTS ((SELECT * FROM public.parents WHERE id IN (SELECT id FROM before_parents) EXCEPT SELECT * FROM before_parents)
+             UNION ALL (SELECT * FROM before_parents EXCEPT SELECT * FROM public.parents WHERE id IN (SELECT id FROM before_parents))) THEN
     RAISE EXCEPTION 'Last unlink must remove link only and retain parents';
   END IF;
 END $$;
@@ -117,10 +121,10 @@ SELECT pg_temp.expect_error('SELECT public.withdraw_enrolment(' || quote_literal
 ROLLBACK TO SAVEPOINT functional_state;
 -- Successful mutations, trigger effects and error-side effects must roll back.
 DO $$ BEGIN
-  IF EXISTS ((SELECT * FROM public.student_parents EXCEPT SELECT * FROM before_links)
-         UNION ALL (SELECT * FROM before_links EXCEPT SELECT * FROM public.student_parents))
-     OR EXISTS ((SELECT * FROM public.enrolments EXCEPT SELECT * FROM before_enrolments)
-         UNION ALL (SELECT * FROM before_enrolments EXCEPT SELECT * FROM public.enrolments)) THEN
+  IF EXISTS ((SELECT * FROM public.student_parents WHERE id IN (SELECT id FROM before_links) EXCEPT SELECT * FROM before_links)
+         UNION ALL (SELECT * FROM before_links EXCEPT SELECT * FROM public.student_parents WHERE id IN (SELECT id FROM before_links)))
+     OR EXISTS ((SELECT * FROM public.enrolments WHERE id IN (SELECT id FROM before_enrolments) EXCEPT SELECT * FROM before_enrolments)
+         UNION ALL (SELECT * FROM before_enrolments EXCEPT SELECT * FROM public.enrolments WHERE id IN (SELECT id FROM before_enrolments))) THEN
     RAISE EXCEPTION 'Rollback did not restore fixture state';
   END IF;
 END $$;
