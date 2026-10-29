@@ -1,52 +1,45 @@
-# Rev6 Student Management — Guardian & Class Write Integrity (inspection result + plan)
+# Review: prerequisites for supabase/tests/60_student_unlink_withdraw.sql (read-only)
 
-Read-only inspection on HEAD `e3a6812`. No files, database, migrations or deployments touched.
+No database was accessed, no files other than this note were changed, and no secrets were read.
 
-## Evidence: workflow trace
+## 1. Is the script designed to refuse non-disposable databases?
+Yes. Lines 7-12 abort unless BOTH:
+- the database name literally starts with `rev6_disposable_` (checked with `left(...)`, so underscores are not treated as wildcards), and
+- the server address is local (`127.0.0.1`, `::1`, or a Unix socket, where the address is NULL).
 
-```text
-UI  src/routes/students.$studentId.tsx
-  L104  assign mutation   -> assignClass(orgId, studentId, cls)
-  L166  add guardian      -> addGuardian(orgId, studentId, g)
-  L167  make primary      -> setPrimaryGuardian(studentId, linkId)
-API src/lib/students/api.ts
-  L135  addGuardian        -> 1 call: rpc add_student_guardian (trimmed/blank-normalised, no org id)
-  L150  setPrimaryGuardian -> 1 call: rpc set_primary_guardian
-  L191  assignClass        -> 1 call: rpc assign_student_class (only class id sent)
-DB  supabase/migrations/20261011043814_49333c42-...sql (Step 2 v5.3)
-  3 business functions SECURITY INVOKER (RLS applies), each a single transaction
-  L98/L130 SECURITY DEFINER lock helpers: pg_advisory_xact_lock per student
-    'rev6_step2:class:<id>' and 'rev6_step2:guardian:<id>'
-```
+Limits: the check depends on name and address only. A local database that is wrongly named `rev6_disposable_*`, or a tunnel/port-forward to a remote server on 127.0.0.1, would pass. It also runs inside `BEGIN ... ROLLBACK`, but committed fixtures and logs stay, so the whole instance should be destroyed afterward.
 
-Finding: the three workflows are **no longer multi-step on the client**. The earlier sequences (insert parent -> clear primary -> insert link; close enrolment -> insert enrolment) now run inside one database function each, serialised per student by transaction-scoped advisory locks. Partial client-side failure is not possible in source.
+## 2. Required environment (from docs/student-unlink-withdraw-tests.md)
+- A new, isolated local PostgreSQL database that works like Supabase, named `rev6_disposable_*`. No validation/production URLs, passwords or data.
+- Supabase-style auth emulation, checked separately: `authenticated` role, `auth.uid()` reading `request.jwt.claim.sub` / `request.jwt.claims`, `request.headers` with `x-organisation-id`. Do not use the legacy `app_user` / `app.current_org` seeds.
+- A disposable psql session with owner-level rights that can `SET LOCAL ROLE authenticated`.
+- Run with `psql -X --set ON_ERROR_STOP=1 -v name=uuid ... --file supabase/tests/60_student_unlink_withdraw.sql`. Credentials go in a private local service config, not on the command line or in logs.
 
-## Remaining risks (verified in source unless marked)
+## 3. Required schema, in order (separately authorised; do not auto-replay folders)
+1. The reviewed Rev6 baseline: `supabase/migrations/001`-`010` plus the tool-managed migrations through `20261011043814_49333c42-...sql` (Step 2: `add_student_guardian`, `set_primary_guardian`, `assign_student_class`, and the lock helpers `lock_student_for_guardian_op` / `lock_student_for_class_op`).
+2. The candidate `docs/migration-candidates/20261029010400_student_unlink_withdraw.sql` (`unlink_student_guardian`, `withdraw_enrolment`).
+- Keep real RLS, grants, indexes (including the at-most-one-primary index), triggers and the enrolment date CHECK.
+- The script needs: `public.current_org_id()`, `public.has_permission(text)`, and the tables `student_parents`, `enrolments` and `parents`.
 
-1. **Live equivalence UNVERIFIED** — the migration header still says "STATIC CANDIDATE, NOT APPLIED", while the staging ledger previously listed `20261011043814`. Live function bodies on `mdcmwhcjfpgewetsnunk` have not been compared to source.
-2. **Real concurrency UNVERIFIED** — tests are mocks; C1–C8 two-session tests never ran (fixtures blocked by audit-residue decision).
-3. **Adjacent single-statement writes (not atomic-sensitive, but integrity gaps):**
-   - `unlinkGuardian` (L155) direct delete: unlinking the primary leaves the student with no primary guardian; not under the guardian lock.
-   - `withdrawEnrolment` (L195) direct update: not under the class lock, so it can interleave with `assign_student_class`; uses client date for `ended_on`.
-4. **UI double-submit** — mutations do not appear disabled while pending (to confirm in file during implementation); the DB rejects duplicate class enrolment, but duplicate guardian adds would create two parents.
+## 4. Required roles/permissions
+Permissions `student.manage`, `class.manage`, `student.read` assigned through Rev6 RBAC, with active memberships.
 
-## Existing tests
+## 5. Required committed synthetic fixtures (psql variables)
+| Variable | Fixture |
+|---|---|
+| staff | Active non-admin Org A member with student.manage + class.manage (+ student.read) |
+| plain | Org A member with neither write permission |
+| student_only / class_only | Org A members with only one permission each |
+| org_a / org_b | Two separate active orgs; staff has no rights in B |
+| primary_link / secondary_link | Same Org A student; primary + non-primary |
+| sole_link | A different Org A student with exactly one link (run once as primary and once as non-primary) |
+| enrolment | Active Org A enrolment, enrolled_on on or before today |
+| foreign_link / foreign_enrolment | Existing Org B records (checked before the role switch) |
 
-`src/test/students-contract.test.ts` L106–136: six contract tests (one RPC each, normalised args, no org id, no direct writes, error propagation). Mocked client only — no PL/pgSQL, RLS or lock proof.
+The script checks these preconditions and stops early if any are missing. It does not create them; setup is a separately reviewed step. The two-session assign-vs-withdraw test is a separate manual procedure in the doc and needs a second class in the same academic session.
 
-## Proposed minimal fix (each step needs separate approval)
+## Not verified
+Whether the local auth emulation matches Supabase, and whether the live helper bodies match the source. No SQL has been run.
 
-1. **No change to the three refactored calls** — retain.
-2. **Verification gate (read-only, approved runner as `supabase_read_only_user`)**: compare live `pg_get_functiondef` hashes of the 3 RPCs + 2 lock helpers to source; confirm grants and no duplicate overloads.
-3. **UI guard (source-only)**: disable add/primary/assign/unlink/withdraw buttons while their mutation is pending.
-4. **Optional, requires a new reviewed migration (not now)**: `unlink_student_guardian` and `withdraw_enrolment` RPCs taking the same advisory locks, server date, and primary-reassignment rule (decision needed: block unlinking the primary, or auto-promote). Then switch the two API functions to one RPC each.
-
-## Test plan
-
-- Contract (Vitest, mocked): button-disabled-while-pending; if step 4 approved, unlink/withdraw call exactly one RPC with no direct writes and propagate errors.
-- Rollback-only single-session DB tests (T1–T20 design) in a disposable DB: one primary per student, no two active enrolments per session, permission denials, cross-tenant rejection.
-- Concurrency C1–C8 in a disposable isolated PostgreSQL/Supabase, not shared staging: parallel add-primary, parallel assign, assign vs withdraw.
-- Run `bunx vitest run` and typecheck after any source change.
-
-## Out of scope
-Production, deployment, migrations, fixtures/accounts, RLS/permission changes.
+## Proposed next step (needs your approval)
+None is executed here. Next would be a reviewed fixture-setup script for the local Windows database, for your approval.
