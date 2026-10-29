@@ -57,3 +57,5 @@
 - [ ] S2-E api.ts switch, S2-F human live checklist — awaiting approval
 - [x] Curriculum Bank read-only slice: /curriculum catalogue (curricula → versions → units → topics), no writes
 - [x] Curriculum review fixes: derived version selection, home link, regression tests
+- [x] Student page pending-state guards (add/primary/unlink guardian, assign/withdraw class) — source-only
+- [ ] Unlink/withdraw as locked atomic RPCs — needs separate migration approval
