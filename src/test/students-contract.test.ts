@@ -103,6 +103,28 @@ describe("Tenant-safe data contract", () => {
   });
   const directWrites = () =>
     calls.filter((c) => ["insert", "update", "delete"].includes(c.kind) && ["parents", "student_parents", "enrolments"].includes(c.table ?? ""));
+  it("unlinkGuardian uses exactly one RPC with only the link id", async () => {
+    await api.unlinkGuardian("l1");
+    expect(calls).toEqual([{ kind: "rpc", fn: "unlink_student_guardian", args: { p_link_id: "l1" }, filters: [] }]);
+  });
+  it("unlinkGuardian propagates primary/permission errors without fallback writes", async () => {
+    const error = { code: "22023", message: "Make another guardian primary before unlinking this guardian" };
+    results["rpc:unlink_student_guardian"] = { data: null, error };
+    await expect(api.unlinkGuardian("l1")).rejects.toBe(error);
+    expect(calls).toHaveLength(1);
+    expect(directWrites()).toEqual([]);
+  });
+  it("withdrawEnrolment uses exactly one RPC without a browser date or tenant", async () => {
+    await api.withdrawEnrolment("e1");
+    expect(calls).toEqual([{ kind: "rpc", fn: "withdraw_enrolment", args: { p_enrolment_id: "e1" }, filters: [] }]);
+  });
+  it("withdrawEnrolment propagates permission errors without fallback writes", async () => {
+    const error = { code: "42501", message: "Permission denied: class.manage required" };
+    results["rpc:withdraw_enrolment"] = { data: null, error };
+    await expect(api.withdrawEnrolment("e1")).rejects.toBe(error);
+    expect(calls).toHaveLength(1);
+    expect(directWrites()).toEqual([]);
+  });
   it("assignClass calls assign_student_class exactly once with no direct writes", async () => {
     await api.assignClass("org-a", "s1", { id: "c-new", name: "SS2 A", academic_session_id: "sess", capacity: null });
     const rpcs = calls.filter((c) => c.kind === "rpc");

@@ -58,4 +58,5 @@
 - [x] Curriculum Bank read-only slice: /curriculum catalogue (curricula → versions → units → topics), no writes
 - [x] Curriculum review fixes: derived version selection, home link, regression tests
 - [x] Student page pending-state guards (add/primary/unlink guardian, assign/withdraw class) — source-only
-- [ ] Unlink/withdraw as locked atomic RPCs — needs separate migration approval
+- [x] Unlink/withdraw source candidate and single-RPC API contracts — unapplied
+- [ ] Apply unlink/withdraw candidate and verify live RLS/concurrency — blocked on separate migration/test approval and disposable runner; API calls require these RPCs
