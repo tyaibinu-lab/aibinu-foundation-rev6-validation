@@ -5,7 +5,7 @@ BEGIN;
 SET LOCAL lock_timeout = '2s';
 SET LOCAL statement_timeout = '15s';
 DO $$ BEGIN
-  IF current_database() NOT LIKE 'rev6_disposable_%'
+  IF left(current_database(), length('rev6_disposable_')) <> 'rev6_disposable_'
      OR (inet_server_addr() IS NOT NULL AND inet_server_addr() NOT IN ('127.0.0.1'::inet, '::1'::inet)) THEN
     RAISE EXCEPTION 'Requires explicitly isolated local rev6_disposable_* database';
   END IF;
@@ -16,6 +16,23 @@ SELECT set_config('test.staff', :'staff', true), set_config('test.plain', :'plai
        set_config('test.primary', :'primary_link', true), set_config('test.secondary', :'secondary_link', true),
        set_config('test.sole', :'sole_link', true), set_config('test.enrolment', :'enrolment', true),
        set_config('test.foreign_link', :'foreign_link', true), set_config('test.foreign_enrolment', :'foreign_enrolment', true);
+
+-- Owner-context fixture checks only; business assertions below remain authenticated.
+DO $$ BEGIN
+  IF current_setting('test.foreign_org')::uuid = current_setting('test.org')::uuid THEN
+    RAISE EXCEPTION 'Requires distinct Org A and Org B fixtures';
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM public.student_parents
+      WHERE id = current_setting('test.foreign_link')::uuid
+        AND organisation_id = current_setting('test.foreign_org')::uuid) THEN
+    RAISE EXCEPTION 'Requires an existing foreign guardian link belonging to Org B';
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM public.enrolments
+      WHERE id = current_setting('test.foreign_enrolment')::uuid
+        AND organisation_id = current_setting('test.foreign_org')::uuid) THEN
+    RAISE EXCEPTION 'Requires an existing foreign enrolment belonging to Org B';
+  END IF;
+END $$;
 
 CREATE FUNCTION pg_temp.expect_error(stmt text, expected text) RETURNS void LANGUAGE plpgsql AS $$
 DECLARE actual text;
