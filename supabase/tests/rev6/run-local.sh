@@ -9,4 +9,5 @@ psql -X -q -v ON_ERROR_STOP=1 -f "$STUBS" >/dev/null
 for f in $(ls supabase/migrations/*.sql | sort); do psql -X -q -v ON_ERROR_STOP=1 -f "$f" >/dev/null || { echo "MIGRATION FAILED: $f"; exit 1; }; done
 echo "migrations: all applied"
 psql -X -q -f supabase/tests/rev6/curriculum_integrity.sql
+psql -X -q -v ON_ERROR_STOP=1 -f supabase/tests/rev6/curriculum_bank_phase1.sql
 bash supabase/tests/rev6/curriculum_cycle_race.sh
