@@ -3,6 +3,10 @@ DECLARE A uuid := '514be2cb-54ba-435b-a4cb-505baf0d0a47'; OWN uuid := 'ebdc7c53-
   TB uuid := '21686610-0b2c-4c23-9390-8af207afe763'; J1 uuid := '2daf3b9a-1d61-43e5-a6a4-8dc27855b98c'; J2 uuid := '1f52f5d9-7f4c-4f9b-9347-47ddf45efffe';
   s1 text; s2 text; s3 text;
 BEGIN
+  IF NOT EXISTS (SELECT 1 FROM public.organisations WHERE id = A) THEN
+    RAISE NOTICE 'fixture organisation absent; skipping embedded self-test';
+    RETURN;
+  END IF;
   BEGIN
     INSERT INTO ai_credit_transactions(organisation_id,kind,amount,actor_type,reason_code,period_month) VALUES (A,'grant',100,'system','monthly_grant','2026-10-01');
     INSERT INTO ai_credit_transactions(organisation_id,kind,amount,job_id,user_id,actor_type,reason_code) VALUES

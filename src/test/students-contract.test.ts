@@ -160,7 +160,11 @@ describe("Tenant-safe data contract", () => {
   });
   it("student module never uses the service-role client or admin keys", () => {
     const files: string[] = [];
-    const walk = (d: string) => readdirSync(d).forEach((f) => { const x = join(d, f); statSync(x).isDirectory() ? walk(x) : files.push(x); });
+    const walk = (d: string) => readdirSync(d).forEach((f) => {
+      const x = join(d, f);
+      if (statSync(x).isDirectory()) walk(x);
+      else files.push(x);
+    });
     ["src/lib/students", "src/components/students"].forEach((d) => walk(join(process.cwd(), d)));
     files.push(...readdirSync("src/routes").filter((f) => f.startsWith("students")).map((f) => join("src/routes", f)));
     for (const f of files) expect(readFileSync(f, "utf8")).not.toMatch(/client\.server|SERVICE_ROLE|supabaseAdmin/);

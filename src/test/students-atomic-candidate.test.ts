@@ -2,7 +2,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
-const sql = readFileSync("docs/migration-candidates/20261029010400_student_unlink_withdraw.sql", "utf8");
+const sql = readFileSync("docs/migration-candidates/20261029010400_student_unlink_withdraw.sql", "utf8").replace(/\r\n/g, "\n");
 function body(name: string) {
   const match = sql.match(new RegExp(`CREATE FUNCTION public\\.${name}\\([\\s\\S]*?\\n\\$\\$;`));
   if (!match) throw new Error(`Missing candidate function ${name}`);
