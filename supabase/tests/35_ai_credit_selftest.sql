@@ -33,9 +33,16 @@ SELECT '00000000-0000-0000-0000-000000035000', m.u, r.id, 'active'
 FROM (VALUES ('00000000-0000-0000-0000-000000035a01'::uuid,'org_owner'),
              ('00000000-0000-0000-0000-000000035a02'::uuid,'teacher')) m(u,code)
 JOIN public.roles r ON r.code=m.code AND r.organisation_id IS NULL;
-INSERT INTO public.ai_jobs (id,organisation_id,type,input,requested_by,status) VALUES
- ('00000000-0000-0000-0000-000000035b01','00000000-0000-0000-0000-000000035000','generate_note','{}','00000000-0000-0000-0000-000000035a01','queued'),
- ('00000000-0000-0000-0000-000000035b02','00000000-0000-0000-0000-000000035000','generate_note','{}','00000000-0000-0000-0000-000000035a01','queued');
+-- Synthetic disabled model so jobs satisfy ai_jobs_governed_chk (M6a).
+INSERT INTO public.ai_model_registry (id,provider,provider_model,state,safety_classes,context_tokens)
+VALUES ('m4-selftest-model','selftest','none','disabled','{staff_generation}',1000);
+INSERT INTO public.ai_jobs (id,organisation_id,type,input,requested_by,status,agent_code,model_id,prompt_template_id,estimated_credits)
+SELECT j.id,'00000000-0000-0000-0000-000000035000','generate_note','{}','00000000-0000-0000-0000-000000035a01','queued',
+       'lesson_note','m4-selftest-model',t.id,1
+FROM (VALUES ('00000000-0000-0000-0000-000000035b01'::uuid),('00000000-0000-0000-0000-000000035b02'::uuid)) j(id)
+CROSS JOIN (SELECT id FROM public.ai_prompt_templates WHERE job_type='generate_note' AND state='active') t;
+DO $$ BEGIN IF (SELECT count(*) FROM public.ai_jobs WHERE id IN ('00000000-0000-0000-0000-000000035b01','00000000-0000-0000-0000-000000035b02'))<>2
+  THEN RAISE EXCEPTION 'fixture jobs not created'; END IF; END $$;
 
 DO $$
 DECLARE
