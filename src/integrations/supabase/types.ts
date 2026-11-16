@@ -1381,6 +1381,8 @@ export type Database = {
           level: string | null
           name: string
           organisation_id: string
+          region: string | null
+          sitting_code: string | null
           subject_id: string
           updated_at: string
         }
@@ -1393,6 +1395,8 @@ export type Database = {
           level?: string | null
           name: string
           organisation_id: string
+          region?: string | null
+          sitting_code?: string | null
           subject_id: string
           updated_at?: string
         }
@@ -1405,6 +1409,8 @@ export type Database = {
           level?: string | null
           name?: string
           organisation_id?: string
+          region?: string | null
+          sitting_code?: string | null
           subject_id?: string
           updated_at?: string
         }
@@ -1422,6 +1428,48 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "subjects"
             referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
+      curriculum_governance_settings: {
+        Row: {
+          allow_self_review: boolean
+          created_at: string
+          organisation_id: string
+          require_review: boolean
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          allow_self_review?: boolean
+          created_at?: string
+          organisation_id: string
+          require_review?: boolean
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          allow_self_review?: boolean
+          created_at?: string
+          organisation_id?: string
+          require_review?: boolean
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "curriculum_governance_settings_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: true
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "curriculum_governance_settings_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -1647,41 +1695,111 @@ export type Database = {
           },
         ]
       }
+      curriculum_version_reviews: {
+        Row: {
+          action: string
+          actor_user_id: string | null
+          created_at: string
+          id: string
+          note: string | null
+          organisation_id: string
+          version_id: string
+        }
+        Insert: {
+          action: string
+          actor_user_id?: string | null
+          created_at?: string
+          id?: string
+          note?: string | null
+          organisation_id: string
+          version_id: string
+        }
+        Update: {
+          action?: string
+          actor_user_id?: string | null
+          created_at?: string
+          id?: string
+          note?: string | null
+          organisation_id?: string
+          version_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "curriculum_version_reviews_actor_user_id_fkey"
+            columns: ["actor_user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "curriculum_version_reviews_version_id_organisation_id_fkey"
+            columns: ["version_id", "organisation_id"]
+            isOneToOne: false
+            referencedRelation: "curriculum_versions"
+            referencedColumns: ["id", "organisation_id"]
+          },
+        ]
+      }
       curriculum_versions: {
         Row: {
+          authored_by: string | null
           created_at: string
           curriculum_id: string
           effective_from: string | null
           id: string
           organisation_id: string
           published_at: string | null
+          review_state: Database["public"]["Enums"]["curriculum_review_state"]
+          reviewed_at: string | null
+          reviewed_by: string | null
           status: Database["public"]["Enums"]["curriculum_status"]
+          submitted_at: string | null
+          submitted_by: string | null
           updated_at: string
           version_label: string
         }
         Insert: {
+          authored_by?: string | null
           created_at?: string
           curriculum_id: string
           effective_from?: string | null
           id?: string
           organisation_id: string
           published_at?: string | null
+          review_state?: Database["public"]["Enums"]["curriculum_review_state"]
+          reviewed_at?: string | null
+          reviewed_by?: string | null
           status?: Database["public"]["Enums"]["curriculum_status"]
+          submitted_at?: string | null
+          submitted_by?: string | null
           updated_at?: string
           version_label: string
         }
         Update: {
+          authored_by?: string | null
           created_at?: string
           curriculum_id?: string
           effective_from?: string | null
           id?: string
           organisation_id?: string
           published_at?: string | null
+          review_state?: Database["public"]["Enums"]["curriculum_review_state"]
+          reviewed_at?: string | null
+          reviewed_by?: string | null
           status?: Database["public"]["Enums"]["curriculum_status"]
+          submitted_at?: string | null
+          submitted_by?: string | null
           updated_at?: string
           version_label?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "curriculum_versions_authored_by_fkey"
+            columns: ["authored_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "curriculum_versions_curriculum_id_organisation_id_fkey"
             columns: ["curriculum_id", "organisation_id"]
@@ -1694,6 +1812,20 @@ export type Database = {
             columns: ["organisation_id"]
             isOneToOne: false
             referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "curriculum_versions_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "curriculum_versions_submitted_by_fkey"
+            columns: ["submitted_by"]
+            isOneToOne: false
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -6173,6 +6305,18 @@ export type Database = {
       current_org_id: { Args: never; Returns: string }
       current_student_id: { Args: never; Returns: string }
       current_user_id: { Args: never; Returns: string }
+      curriculum_publish_version: {
+        Args: { p_version_id: string }
+        Returns: string
+      }
+      curriculum_review_version: {
+        Args: { p_decision: string; p_note?: string; p_version_id: string }
+        Returns: Database["public"]["Enums"]["curriculum_review_state"]
+      }
+      curriculum_submit_for_review: {
+        Args: { p_note?: string; p_version_id: string }
+        Returns: Database["public"]["Enums"]["curriculum_review_state"]
+      }
       dismiss_diagnosis: {
         Args: { p_diagnosis_id: string; p_reason: string }
         Returns: undefined
@@ -6678,6 +6822,11 @@ export type Database = {
         | "published"
         | "archived"
       content_visibility: "private" | "organisation" | "shared"
+      curriculum_review_state:
+        | "not_submitted"
+        | "in_review"
+        | "changes_requested"
+        | "approved"
       curriculum_status: "draft" | "published" | "archived"
       diagnosis_kind: "weak_topic" | "prerequisite_gap" | "declining"
       diagnosis_source: "rule" | "ai"
@@ -6948,6 +7097,12 @@ export const Constants = {
         "archived",
       ],
       content_visibility: ["private", "organisation", "shared"],
+      curriculum_review_state: [
+        "not_submitted",
+        "in_review",
+        "changes_requested",
+        "approved",
+      ],
       curriculum_status: ["draft", "published", "archived"],
       diagnosis_kind: ["weak_topic", "prerequisite_gap", "declining"],
       diagnosis_source: ["rule", "ai"],
