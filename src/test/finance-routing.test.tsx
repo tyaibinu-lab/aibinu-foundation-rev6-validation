@@ -5,11 +5,20 @@ import { createRouter } from "@tanstack/react-router";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-const rpc = vi.fn(); const from = vi.fn();
-vi.mock("@/integrations/supabase/client", () => ({ supabase: { rpc, from, auth: { getSession: vi.fn(), onAuthStateChange: vi.fn() }, rest: { headers: new Headers() } } }));
+const rpc = vi.fn();
+const from = vi.fn();
+vi.mock("@/integrations/supabase/client", () => ({
+  supabase: {
+    rpc,
+    from,
+    auth: { getSession: vi.fn(), onAuthStateChange: vi.fn() },
+    rest: { headers: new Headers() },
+  },
+}));
 
 const { routeTree } = await import("@/routeTree.gen");
-const { DemoDataBanner, FinanceDashboardCards } = await import("@/components/finance/FinanceDashboardCards");
+const { DemoDataBanner, FinanceDashboardCards } =
+  await import("@/components/finance/FinanceDashboardCards");
 const { MOCK_DASHBOARD } = await import("@/lib/finance/api");
 
 describe("finance routing", () => {
@@ -30,8 +39,15 @@ describe("finance routing", () => {
     }
   });
   it("dashboard renders with the demo-data label and makes no data calls", () => {
-    render(<><DemoDataBanner /><FinanceDashboardCards data={MOCK_DASHBOARD} /></>);
-    expect(screen.getByText("DEMO DATA — NOT CONNECTED TO LIVE FINANCIAL RECORDS")).toBeInTheDocument();
+    render(
+      <>
+        <DemoDataBanner />
+        <FinanceDashboardCards data={MOCK_DASHBOARD} />
+      </>,
+    );
+    expect(
+      screen.getByText("DEMO DATA — NOT CONNECTED TO LIVE FINANCIAL RECORDS"),
+    ).toBeInTheDocument();
     expect(screen.getByText("Total invoiced")).toBeInTheDocument();
     expect(screen.getByText("₦42,500,000.00")).toBeInTheDocument();
     expect(rpc).not.toHaveBeenCalled();

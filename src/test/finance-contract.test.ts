@@ -7,7 +7,10 @@ const calls: { kind: string; name: string; args?: unknown }[] = [];
 const grants: Record<string, boolean> = {};
 vi.mock("@/integrations/supabase/client", () => ({
   supabase: {
-    from: (t: string) => { calls.push({ kind: "from", name: t }); throw new Error("no table access in Phase 1"); },
+    from: (t: string) => {
+      calls.push({ kind: "from", name: t });
+      throw new Error("no table access in Phase 1");
+    },
     rpc: (fn: string, args?: { perm: string }) => {
       calls.push({ kind: "rpc", name: fn, args });
       return Promise.resolve({ data: grants[args?.perm ?? ""] === true, error: null });
@@ -15,18 +18,34 @@ vi.mock("@/integrations/supabase/client", () => ({
   },
 }));
 
-const { fetchFinancePermissions, financeCapabilities, EMPTY_FINANCE_PERMISSIONS } = await import("@/lib/finance/permissions");
+const { fetchFinancePermissions, financeCapabilities, EMPTY_FINANCE_PERMISSIONS } =
+  await import("@/lib/finance/permissions");
 const { getDashboardSummary, MOCK_DASHBOARD } = await import("@/lib/finance/api");
 
-beforeEach(() => { calls.length = 0; for (const k of Object.keys(grants)) delete grants[k]; });
+beforeEach(() => {
+  calls.length = 0;
+  for (const k of Object.keys(grants)) delete grants[k];
+});
 
 describe("finance capabilities", () => {
   it("no permissions -> nothing visible or operable", () => {
-    expect(financeCapabilities(EMPTY_FINANCE_PERMISSIONS)).toEqual({ canSeeFinanceNav: false, canViewOrgOverview: false, canViewOwnRecords: false, canManage: false, canApprove: false });
+    expect(financeCapabilities(EMPTY_FINANCE_PERMISSIONS)).toEqual({
+      canSeeFinanceNav: false,
+      canViewOrgOverview: false,
+      canViewOwnRecords: false,
+      canManage: false,
+      canApprove: false,
+    });
   });
   it("finance.read -> own records only, no org overview", () => {
     const c = financeCapabilities({ ...EMPTY_FINANCE_PERMISSIONS, "finance.read": true });
-    expect(c).toMatchObject({ canSeeFinanceNav: true, canViewOwnRecords: true, canViewOrgOverview: false, canManage: false, canApprove: false });
+    expect(c).toMatchObject({
+      canSeeFinanceNav: true,
+      canViewOwnRecords: true,
+      canViewOrgOverview: false,
+      canManage: false,
+      canApprove: false,
+    });
   });
   it("finance.view_all -> org overview but no operations", () => {
     const c = financeCapabilities({ ...EMPTY_FINANCE_PERMISSIONS, "finance.view_all": true });
@@ -34,7 +53,12 @@ describe("finance capabilities", () => {
   });
   it("finance.manage alone does not grant the overview or approval", () => {
     const c = financeCapabilities({ ...EMPTY_FINANCE_PERMISSIONS, "finance.manage": true });
-    expect(c).toMatchObject({ canSeeFinanceNav: true, canManage: true, canViewOrgOverview: false, canApprove: false });
+    expect(c).toMatchObject({
+      canSeeFinanceNav: true,
+      canManage: true,
+      canViewOrgOverview: false,
+      canApprove: false,
+    });
   });
   it("finance.approve alone grants approval only", () => {
     const c = financeCapabilities({ ...EMPTY_FINANCE_PERMISSIONS, "finance.approve": true });
@@ -49,7 +73,12 @@ describe("Phase 1 data contract", () => {
     expect(p["finance.view_all"]).toBe(true);
     expect(p["finance.manage"]).toBe(false);
     expect(calls.every((c) => c.kind === "rpc" && c.name === "has_permission")).toBe(true);
-    expect(calls.map((c) => (c.args as { perm: string }).perm).sort()).toEqual(["finance.approve", "finance.manage", "finance.read", "finance.view_all"]);
+    expect(calls.map((c) => (c.args as { perm: string }).perm).sort()).toEqual([
+      "finance.approve",
+      "finance.manage",
+      "finance.read",
+      "finance.view_all",
+    ]);
   });
   it("dashboard returns labelled mock fixtures without touching Supabase", async () => {
     const d = await getDashboardSummary();
@@ -59,12 +88,23 @@ describe("Phase 1 data contract", () => {
   });
   it("finance source contains no table access, finance RPCs, ledger writes or provider endpoints", () => {
     const files = [
-      "src/lib/finance/api.ts", "src/lib/finance/currency.ts", "src/lib/finance/permissions.ts", "src/lib/finance/types.ts",
-      "src/components/finance/FinanceShell.tsx", "src/components/finance/FinanceDashboardCards.tsx",
-      "src/routes/finance.tsx", "src/routes/finance.index.tsx",
+      "src/lib/finance/api.ts",
+      "src/lib/finance/currency.ts",
+      "src/lib/finance/permissions.ts",
+      "src/lib/finance/types.ts",
+      "src/components/finance/FinanceShell.tsx",
+      "src/components/finance/FinanceDashboardCards.tsx",
+      "src/routes/finance.tsx",
+      "src/routes/finance.index.tsx",
     ];
-    const forbidden = [/\.from\(/, /\bfetch\(/, /api\.paystack|api\.flutterwave/i, /\.(insert|update|upsert|delete)\(/,
-      /rpc\(\s*["'](?!has_permission)/, /create_invoice|issue_invoice|void_invoice|initiate_payment|record_manual_payment|ingest_payment_event|_refund|apply_wallet|write_off/];
+    const forbidden = [
+      /\.from\(/,
+      /\bfetch\(/,
+      /api\.paystack|api\.flutterwave/i,
+      /\.(insert|update|upsert|delete)\(/,
+      /rpc\(\s*["'](?!has_permission)/,
+      /create_invoice|issue_invoice|void_invoice|initiate_payment|record_manual_payment|ingest_payment_event|_refund|apply_wallet|write_off/,
+    ];
     for (const f of files) {
       const src = readFileSync(join(process.cwd(), f), "utf8");
       for (const re of forbidden) expect({ f, hit: re.test(src) }).toEqual({ f, hit: false });

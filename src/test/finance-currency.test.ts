@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { formatKobo, formatNaira, koboToNairaString, nairaStringToKobo, toKobo } from "@/lib/finance/currency";
+import {
+  formatKobo,
+  formatNaira,
+  koboToNairaString,
+  nairaStringToKobo,
+  toKobo,
+} from "@/lib/finance/currency";
 
 describe("finance currency", () => {
   it("converts valid Naira strings to integer kobo", () => {

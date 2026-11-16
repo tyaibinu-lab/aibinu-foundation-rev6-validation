@@ -4,7 +4,12 @@ import { useQuery } from "@tanstack/react-query";
 // Verified Rev6 finance permission codes (migration 001 catalogue). Role mappings live
 // only in the database. Everything here is UX only: RLS and SECURITY DEFINER checks in
 // migration 006 decide every finance read and write.
-export const FINANCE_PERMISSIONS = ["finance.read", "finance.view_all", "finance.manage", "finance.approve"] as const;
+export const FINANCE_PERMISSIONS = [
+  "finance.read",
+  "finance.view_all",
+  "finance.manage",
+  "finance.approve",
+] as const;
 export type FinancePermission = (typeof FINANCE_PERMISSIONS)[number];
 export type FinancePermissionMap = Record<FinancePermission, boolean>;
 
@@ -53,7 +58,11 @@ export async function fetchFinancePermissions(): Promise<FinancePermissionMap> {
 }
 
 export function useFinanceAccess() {
-  const q = useQuery({ queryKey: ["finance", "perms"], queryFn: fetchFinancePermissions, retry: false });
+  const q = useQuery({
+    queryKey: ["finance", "perms"],
+    queryFn: fetchFinancePermissions,
+    retry: false,
+  });
   const perms = q.data ?? EMPTY_FINANCE_PERMISSIONS;
   return { perms, caps: financeCapabilities(perms), loading: q.isLoading, error: q.error };
 }

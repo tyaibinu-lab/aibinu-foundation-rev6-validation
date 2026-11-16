@@ -4,17 +4,36 @@ import { AccountBar } from "@/components/auth/TenantGate";
 import { Badge } from "@/components/ui/badge";
 
 export const FINANCE_SECTIONS = [
-  "Overview", "Fee Catalogue", "Invoices", "Payments", "Student Accounts", "Discounts & Scholarships",
-  "Receipts", "Refunds", "Expenditure", "Vendors", "Reports",
+  "Overview",
+  "Fee Catalogue",
+  "Invoices",
+  "Payments",
+  "Student Accounts",
+  "Discounts & Scholarships",
+  "Receipts",
+  "Refunds",
+  "Expenditure",
+  "Vendors",
+  "Reports",
 ] as const;
 
-export function FinanceShell({ title, subtitle, children }: { title: string; subtitle: string; children: ReactNode }) {
+export function FinanceShell({
+  title,
+  subtitle,
+  children,
+}: {
+  title: string;
+  subtitle: string;
+  children: ReactNode;
+}) {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b-4 border-accent bg-primary text-primary-foreground">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-4">
           <Link to="/" className="flex items-center gap-3">
-            <span className="flex h-9 w-9 items-center justify-center rounded-md bg-accent text-sm font-bold text-accent-foreground">AF</span>
+            <span className="flex h-9 w-9 items-center justify-center rounded-md bg-accent text-sm font-bold text-accent-foreground">
+              AF
+            </span>
             <span className="font-semibold">Aibinu Flexiprep · Finance</span>
           </Link>
           <AccountBar />
@@ -24,11 +43,26 @@ export function FinanceShell({ title, subtitle, children }: { title: string; sub
             {FINANCE_SECTIONS.map((s) =>
               s === "Overview" ? (
                 <li key={s}>
-                  <Link to="/finance" activeOptions={{ exact: true }} activeProps={{ className: "underline decoration-accent decoration-2 underline-offset-4" }} className="whitespace-nowrap font-medium">Overview</Link>
+                  <Link
+                    to="/finance"
+                    activeOptions={{ exact: true }}
+                    activeProps={{
+                      className: "underline decoration-accent decoration-2 underline-offset-4",
+                    }}
+                    className="whitespace-nowrap font-medium"
+                  >
+                    Overview
+                  </Link>
                 </li>
               ) : (
-                <li key={s} aria-disabled="true" title="Not yet available" className="flex items-center gap-1 whitespace-nowrap opacity-60">
-                  {s}<span className="text-[10px] uppercase">· soon</span>
+                <li
+                  key={s}
+                  aria-disabled="true"
+                  title="Not yet available"
+                  className="flex items-center gap-1 whitespace-nowrap opacity-60"
+                >
+                  {s}
+                  <span className="text-[10px] uppercase">· soon</span>
                 </li>
               ),
             )}
