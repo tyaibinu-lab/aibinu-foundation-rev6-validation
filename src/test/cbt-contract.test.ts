@@ -172,7 +172,7 @@ describe("Lifecycle", () => {
 });
 
 function files(dir: string): string[] {
-  return readdirSync(dir).flatMap((f) => { const p = join(dir, f); return statSync(p).isDirectory() ? files(p) : [p]; });
+  return readdirSync(dir).flatMap((f) => { const p = join(dir, f); return statSync(p).isDirectory() ? files(p) : [p.replace(/\\/g, "/")]; });
 }
 // Gate 8D results/review sources have their own boundary tests in cbt-results-contract.test.ts.
 const STUDENT = /(lib\/cbt\/student|lib\/cbt\/results|lib\/cbt\/marking|components\/cbt\/student|routes\/cbt\.(my|take|results|review|mark))/;
