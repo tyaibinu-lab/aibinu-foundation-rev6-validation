@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CbtRouteImport } from './routes/cbt'
 import { Route as CurriculumRouteImport } from './routes/curriculum'
+import { Route as FinanceRouteImport } from './routes/finance'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as NotebankRouteImport } from './routes/notebank'
 import { Route as QuestionbankRouteImport } from './routes/questionbank'
@@ -21,6 +22,7 @@ import { Route as CbtExamIdRouteImport } from './routes/cbt.$examId'
 import { Route as CbtMyRouteImport } from './routes/cbt.my'
 import { Route as CbtNewRouteImport } from './routes/cbt.new'
 import { Route as CurriculumIndexRouteImport } from './routes/curriculum.index'
+import { Route as FinanceIndexRouteImport } from './routes/finance.index'
 import { Route as NotebankIndexRouteImport } from './routes/notebank.index'
 import { Route as NotebankNoteIdRouteImport } from './routes/notebank.$noteId'
 import { Route as NotebankReviewRouteImport } from './routes/notebank.review'
@@ -50,6 +52,11 @@ const CbtRoute = CbtRouteImport.update({
 const CurriculumRoute = CurriculumRouteImport.update({
   id: '/curriculum',
   path: '/curriculum',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FinanceRoute = FinanceRouteImport.update({
+  id: '/finance',
+  path: '/finance',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -96,6 +103,11 @@ const CurriculumIndexRoute = CurriculumIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => CurriculumRoute,
+} as any)
+const FinanceIndexRoute = FinanceIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => FinanceRoute,
 } as any)
 const NotebankIndexRoute = NotebankIndexRouteImport.update({
   id: '/',
@@ -177,6 +189,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/cbt': typeof CbtRouteWithChildren
   '/curriculum': typeof CurriculumRouteWithChildren
+  '/finance': typeof FinanceRouteWithChildren
   '/login': typeof LoginRoute
   '/notebank': typeof NotebankRouteWithChildren
   '/questionbank': typeof QuestionbankRouteWithChildren
@@ -193,6 +206,7 @@ export interface FileRoutesByFullPath {
   '/students/classes': typeof StudentsClassesRoute
   '/cbt/': typeof CbtIndexRoute
   '/curriculum/': typeof CurriculumIndexRoute
+  '/finance/': typeof FinanceIndexRoute
   '/notebank/': typeof NotebankIndexRoute
   '/questionbank/': typeof QuestionbankIndexRoute
   '/students/': typeof StudentsIndexRoute
@@ -217,6 +231,7 @@ export interface FileRoutesByTo {
   '/students/classes': typeof StudentsClassesRoute
   '/cbt': typeof CbtIndexRoute
   '/curriculum': typeof CurriculumIndexRoute
+  '/finance': typeof FinanceIndexRoute
   '/notebank': typeof NotebankIndexRoute
   '/questionbank': typeof QuestionbankIndexRoute
   '/students': typeof StudentsIndexRoute
@@ -231,6 +246,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/cbt': typeof CbtRouteWithChildren
   '/curriculum': typeof CurriculumRouteWithChildren
+  '/finance': typeof FinanceRouteWithChildren
   '/login': typeof LoginRoute
   '/notebank': typeof NotebankRouteWithChildren
   '/questionbank': typeof QuestionbankRouteWithChildren
@@ -247,6 +263,7 @@ export interface FileRoutesById {
   '/students/classes': typeof StudentsClassesRoute
   '/cbt/': typeof CbtIndexRoute
   '/curriculum/': typeof CurriculumIndexRoute
+  '/finance/': typeof FinanceIndexRoute
   '/notebank/': typeof NotebankIndexRoute
   '/questionbank/': typeof QuestionbankIndexRoute
   '/students/': typeof StudentsIndexRoute
@@ -262,6 +279,7 @@ export interface FileRouteTypes {
     | '/'
     | '/cbt'
     | '/curriculum'
+    | '/finance'
     | '/login'
     | '/notebank'
     | '/questionbank'
@@ -278,6 +296,7 @@ export interface FileRouteTypes {
     | '/students/classes'
     | '/cbt/'
     | '/curriculum/'
+    | '/finance/'
     | '/notebank/'
     | '/questionbank/'
     | '/students/'
@@ -302,6 +321,7 @@ export interface FileRouteTypes {
     | '/students/classes'
     | '/cbt'
     | '/curriculum'
+    | '/finance'
     | '/notebank'
     | '/questionbank'
     | '/students'
@@ -315,6 +335,7 @@ export interface FileRouteTypes {
     | '/'
     | '/cbt'
     | '/curriculum'
+    | '/finance'
     | '/login'
     | '/notebank'
     | '/questionbank'
@@ -331,6 +352,7 @@ export interface FileRouteTypes {
     | '/students/classes'
     | '/cbt/'
     | '/curriculum/'
+    | '/finance/'
     | '/notebank/'
     | '/questionbank/'
     | '/students/'
@@ -345,6 +367,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CbtRoute: typeof CbtRouteWithChildren
   CurriculumRoute: typeof CurriculumRouteWithChildren
+  FinanceRoute: typeof FinanceRouteWithChildren
   LoginRoute: typeof LoginRoute
   NotebankRoute: typeof NotebankRouteWithChildren
   QuestionbankRoute: typeof QuestionbankRouteWithChildren
@@ -372,6 +395,13 @@ declare module '@tanstack/react-router' {
       path: '/curriculum'
       fullPath: '/curriculum'
       preLoaderRoute: typeof CurriculumRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/finance': {
+      id: '/finance'
+      path: '/finance'
+      fullPath: '/finance'
+      preLoaderRoute: typeof FinanceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -436,6 +466,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/curriculum/'
       preLoaderRoute: typeof CurriculumIndexRouteImport
       parentRoute: typeof CurriculumRoute
+    }
+    '/finance/': {
+      id: '/finance/'
+      path: '/'
+      fullPath: '/finance/'
+      preLoaderRoute: typeof FinanceIndexRouteImport
+      parentRoute: typeof FinanceRoute
     }
     '/notebank/': {
       id: '/notebank/'
@@ -583,6 +620,17 @@ const CurriculumRouteWithChildren = CurriculumRoute._addFileChildren(
   CurriculumRouteChildren,
 )
 
+interface FinanceRouteChildren {
+  FinanceIndexRoute: typeof FinanceIndexRoute
+}
+
+const FinanceRouteChildren: FinanceRouteChildren = {
+  FinanceIndexRoute: FinanceIndexRoute,
+}
+
+const FinanceRouteWithChildren =
+  FinanceRoute._addFileChildren(FinanceRouteChildren)
+
 interface NotebankRouteChildren {
   NotebankNoteIdRoute: typeof NotebankNoteIdRoute
   NotebankReviewRoute: typeof NotebankReviewRoute
@@ -637,6 +685,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CbtRoute: CbtRouteWithChildren,
   CurriculumRoute: CurriculumRouteWithChildren,
+  FinanceRoute: FinanceRouteWithChildren,
   LoginRoute: LoginRoute,
   NotebankRoute: NotebankRouteWithChildren,
   QuestionbankRoute: QuestionbankRouteWithChildren,
