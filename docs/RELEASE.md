@@ -10,6 +10,6 @@ Status of this document: written during the technical-audit remediation. Nothing
 
 ## Known items that need the project owner
 - `20261011043814_*` is labelled "STATIC CANDIDATE, NOT APPLIED" yet sits in `supabase/migrations`; confirm whether it belongs in the chain before production.
-- `20261009005746` creates `public.m4_test_results` (a test table). Decide whether to drop it in a later migration before production.
+- `20261009005746` and `20261009010318` are now no-ops (fix from `main`); the M4 self-test lives in `supabase/tests/35_ai_credit_selftest.sql`, and `20261009010347` drops `m4_test_results` with `IF EXISTS`.
 - Applying `20261102000100_curriculum_integrity_hardening.sql` to the validation project, then runtime checks through the Supabase API with real tokens, then dashboard review (Auth settings, storage policies, exposed schemas).
 - Production migration and deployment require the owner's explicit written approval. Not performed.
