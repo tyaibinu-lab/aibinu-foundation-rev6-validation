@@ -51,7 +51,11 @@ async function renderFinanceRoute() {
     history: createMemoryHistory({ initialEntries: ["/finance"] }),
   });
   await router.load();
-  render(<QueryClientProvider client={queryClient}><RouterProvider router={router} /></QueryClientProvider>);
+  render(
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>,
+  );
   return router;
 }
 

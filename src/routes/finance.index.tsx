@@ -43,7 +43,9 @@ export function FinanceOverview() {
       ) : summary.data ? (
         <FinanceDashboardCards data={summary.data} />
       ) : (
-        <p role="status" className="text-sm text-muted-foreground">Loading demonstration figures…</p>
+        <p role="status" className="text-sm text-muted-foreground">
+          Loading demonstration figures…
+        </p>
       )}
     </FinanceShell>
   );

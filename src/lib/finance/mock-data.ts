@@ -58,4 +58,3 @@ export const MOCK_DASHBOARD: FinanceDashboardSummary = {
     },
   ],
 };
-
