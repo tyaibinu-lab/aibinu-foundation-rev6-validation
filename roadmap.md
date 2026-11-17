@@ -6,6 +6,17 @@
 - [x] Run Finance and regression tests, scoped lint; document protected-file verification and unavailable checks (full lint timed out; manual build/typecheck prohibited by platform).
 - [x] Deliver file-by-file report; stop before Phase 2 (not authorised). Live signed-in browser verification remains blocked by the no-database-access gate.
 
+## Modules Phase 2 — source build (2026-11-17, branch feature/modules-phase2)
+Built outside Lovable against the existing Rev6 contract. No migrations, no auth/session changes, no environment or deployment changes. Report: docs/modules-phase2-report.md.
+- [x] Finance Phase 2 source: fee catalogue, draft → issue invoices, manual payments (cash/transfer/POS), wallet credit, void/write-off, refunds with separation of duties, student accounts + statements, family "My fees" (migration 006 functions only)
+- [x] Learning Progress (CAS) source: class topic map, support-task board, learner dashboard, diagnoses, parent reports draft → approve → sent (migration 007 functions only)
+- [x] AI drafting source: request note/question drafts, job tracking/cancel, approvals & usage (ai.manage), AI suggestions for diagnoses, learner reviews and report comments — drafts only
+- [x] Onboarding source: /welcome create school / accept invitation, /members people + one-time invitation links
+- [x] Contract tests written: finance-live-contract, cas-contract, ai-drafting-contract, onboarding-contract
+- [ ] Apply in Lovable; regenerate routeTree.gen.ts; run full test suite, lint and build — tests have NOT yet been executed in the project
+- [ ] Live UAT on validation: bursar (manage+view_all), approver (finance.approve), teacher (cas.manage, ai.use), parent, student
+- [ ] Separate gates (not built): online payment checkout + webhook (Paystack/Flutterwave), AI worker (server-side, provider key), self-service sign-up, Virtual Lab / Communication schema design
+
 ## Gate 1 — Backend initialization (APPROVED by project owner, 2026-10-06)
 - [ ] Enable Lovable Cloud / Supabase for the project
 - [ ] Preflight: confirm connection and environment
