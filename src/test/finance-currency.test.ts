@@ -43,4 +43,12 @@ describe("finance currency", () => {
   it("avoids floating-point drift (0.1 + 0.2 case)", () => {
     expect(nairaStringToKobo("0.10") + nairaStringToKobo("0.20")).toBe(30n);
   });
+  it("rejects fractional kobo, exponential values and non-finite numbers", () => {
+    for (const bad of ["1.1", "1e3", "", "NaN"]) expect(() => toKobo(bad)).toThrow();
+    for (const bad of [Infinity, -Infinity, NaN]) expect(() => toKobo(bad)).toThrow();
+  });
+  it("preserves safe-integer boundaries and negative large amounts", () => {
+    expect(toKobo(Number.MAX_SAFE_INTEGER)).toBe(9007199254740991n);
+    expect(formatKobo("-12345678901234567899")).toBe("-₦123,456,789,012,345,678.99");
+  });
 });

@@ -1,10 +1,9 @@
-// Phase 1 contract: the Finance layer only reads has_permission() and serves mock data.
+// Phase 1 contract: Finance serves mock data and makes zero network calls.
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const calls: { kind: string; name: string; args?: unknown }[] = [];
-const grants: Record<string, boolean> = {};
 vi.mock("@/integrations/supabase/client", () => ({
   supabase: {
     from: (t: string) => {
@@ -13,18 +12,17 @@ vi.mock("@/integrations/supabase/client", () => ({
     },
     rpc: (fn: string, args?: { perm: string }) => {
       calls.push({ kind: "rpc", name: fn, args });
-      return Promise.resolve({ data: grants[args?.perm ?? ""] === true, error: null });
+      throw new Error("no RPC access in Phase 1");
     },
   },
 }));
 
-const { fetchFinancePermissions, financeCapabilities, EMPTY_FINANCE_PERMISSIONS } =
+const { useFinanceAccess, financeCapabilities, EMPTY_FINANCE_PERMISSIONS } =
   await import("@/lib/finance/permissions");
 const { getDashboardSummary, MOCK_DASHBOARD } = await import("@/lib/finance/api");
 
 beforeEach(() => {
   calls.length = 0;
-  for (const k of Object.keys(grants)) delete grants[k];
 });
 
 describe("finance capabilities", () => {
@@ -67,18 +65,29 @@ describe("finance capabilities", () => {
 });
 
 describe("Phase 1 data contract", () => {
-  it("permission lookup uses only has_permission with verified codes", async () => {
-    grants["finance.view_all"] = true;
-    const p = await fetchFinancePermissions();
-    expect(p["finance.view_all"]).toBe(true);
-    expect(p["finance.manage"]).toBe(false);
-    expect(calls.every((c) => c.kind === "rpc" && c.name === "has_permission")).toBe(true);
-    expect(calls.map((c) => (c.args as { perm: string }).perm).sort()).toEqual([
-      "finance.approve",
-      "finance.manage",
-      "finance.read",
-      "finance.view_all",
-    ]);
+  it("offline access denies live capabilities without invoking any RPC", () => {
+    const access = useFinanceAccess();
+    expect(access.source).toBe("offline");
+    expect(access.caps).toEqual(financeCapabilities(EMPTY_FINANCE_PERMISSIONS));
+    expect(access.caps.canSeeFinanceNav).toBe(false);
+    expect(access.caps.canManage).toBe(false);
+    expect(access.caps.canApprove).toBe(false);
+    expect(calls).toHaveLength(0);
+  });
+  it("supplied presentation permissions do not trigger a live lookup", () => {
+    const access = useFinanceAccess({ ...EMPTY_FINANCE_PERMISSIONS, "finance.read": true });
+    expect(access.caps.canViewOwnRecords).toBe(true);
+    expect(access.caps.canViewOrgOverview).toBe(false);
+    expect(calls).toHaveLength(0);
+  });
+  it("mock service does not invoke fetch or payment providers", async () => {
+    const network = vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline only"));
+    try {
+      await getDashboardSummary();
+      expect(network).not.toHaveBeenCalled();
+    } finally {
+      network.mockRestore();
+    }
   });
   it("dashboard returns labelled mock fixtures without touching Supabase", async () => {
     const d = await getDashboardSummary();
@@ -89,6 +98,7 @@ describe("Phase 1 data contract", () => {
   it("finance source contains no table access, finance RPCs, ledger writes or provider endpoints", () => {
     const files = [
       "src/lib/finance/api.ts",
+      "src/lib/finance/mock-data.ts",
       "src/lib/finance/currency.ts",
       "src/lib/finance/permissions.ts",
       "src/lib/finance/types.ts",
@@ -102,7 +112,8 @@ describe("Phase 1 data contract", () => {
       /\bfetch\(/,
       /api\.paystack|api\.flutterwave/i,
       /\.(insert|update|upsert|delete)\(/,
-      /rpc\(\s*["'](?!has_permission)/,
+      /\.rpc\(/,
+      /integrations\/supabase/,
       /create_invoice|issue_invoice|void_invoice|initiate_payment|record_manual_payment|ingest_payment_event|_refund|apply_wallet|write_off/,
     ];
     for (const f of files) {

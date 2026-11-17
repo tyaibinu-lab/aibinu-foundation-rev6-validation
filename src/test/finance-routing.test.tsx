@@ -1,9 +1,23 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { QueryClient } from "@tanstack/react-query";
-import { createRouter } from "@tanstack/react-router";
-import { render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { createRouter, RouterProvider, createMemoryHistory } from "@tanstack/react-router";
+import { render, screen, cleanup } from "@testing-library/react";
+import { beforeEach, afterEach, describe, expect, it, vi } from "vitest";
+
+const auth = vi.hoisted(() => ({
+  status: "signed_in",
+  orgStatus: "ready",
+  activeOrg: { id: "synthetic-org", name: "Synthetic demo organisation" },
+  organisations: [{ id: "synthetic-org", name: "Synthetic demo organisation" }],
+  user: { email: "demo@example.test" },
+  selectOrganisation: vi.fn(),
+  signOut: vi.fn(),
+}));
+vi.mock("@/lib/auth/AuthProvider", () => ({
+  useAuth: () => auth,
+  AuthProvider: ({ children }: { children: React.ReactNode }) => children,
+}));
 
 const rpc = vi.fn();
 const from = vi.fn();
@@ -20,6 +34,26 @@ const { routeTree } = await import("@/routeTree.gen");
 const { DemoDataBanner, FinanceDashboardCards } =
   await import("@/components/finance/FinanceDashboardCards");
 const { MOCK_DASHBOARD } = await import("@/lib/finance/api");
+
+beforeEach(() => {
+  rpc.mockReset();
+  from.mockReset();
+  auth.status = "signed_in";
+  auth.orgStatus = "ready";
+});
+afterEach(cleanup);
+
+async function renderFinanceRoute() {
+  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  const router = createRouter({
+    routeTree,
+    context: { queryClient },
+    history: createMemoryHistory({ initialEntries: ["/finance"] }),
+  });
+  await router.load();
+  render(<QueryClientProvider client={queryClient}><RouterProvider router={router} /></QueryClientProvider>);
+  return router;
+}
 
 describe("finance routing", () => {
   const router = createRouter({ routeTree, context: { queryClient: new QueryClient() } });
@@ -50,6 +84,23 @@ describe("finance routing", () => {
     ).toBeInTheDocument();
     expect(screen.getByText("Total invoiced")).toBeInTheDocument();
     expect(screen.getByText("₦42,500,000.00")).toBeInTheDocument();
+    expect(rpc).not.toHaveBeenCalled();
+    expect(from).not.toHaveBeenCalled();
+  });
+  it("renders the full tenant-gated overview with synthetic context and zero live calls", async () => {
+    const router = await renderFinanceRoute();
+    expect(await screen.findByRole("heading", { name: "Finance overview" })).toBeInTheDocument();
+    expect(await screen.findByText("₦42,500,000.00")).toBeInTheDocument();
+    expect(screen.getByText("Synthetic demo organisation")).toBeInTheDocument();
+    expect(router.state.location.pathname).toBe("/finance");
+    expect(rpc).not.toHaveBeenCalled();
+    expect(from).not.toHaveBeenCalled();
+  });
+  it("existing TenantGate blocks the overview without organisation access", async () => {
+    auth.orgStatus = "none";
+    await renderFinanceRoute();
+    expect(await screen.findByText("No organisation access")).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Finance overview" })).not.toBeInTheDocument();
     expect(rpc).not.toHaveBeenCalled();
     expect(from).not.toHaveBeenCalled();
   });
