@@ -40,7 +40,7 @@ function Kpi({ label, value, hint }: { label: string; value: string; hint?: stri
         <CardTitle className="text-sm font-medium text-muted-foreground">{label}</CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="text-2xl font-bold tabular-nums text-foreground">{value}</p>
+        <p className="break-words text-xl font-bold tabular-nums text-foreground">{value}</p>
         {hint ? <p className="mt-1 text-xs text-muted-foreground">{hint}</p> : null}
       </CardContent>
     </Card>
@@ -141,7 +141,7 @@ export function FinanceDashboardCards({ data }: { data: FinanceDashboardSummary 
           <CardHeader>
             <CardTitle className="text-base">Expenditure summary</CardTitle>
           </CardHeader>
-          <CardContent className="grid grid-cols-3 gap-3 text-sm">
+          <CardContent className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-3">
             <div>
               <p className="text-muted-foreground">Approved</p>
               <p className="font-semibold tabular-nums">{formatKobo(data.expenditure.approved)}</p>
@@ -164,7 +164,7 @@ export function FinanceDashboardCards({ data }: { data: FinanceDashboardSummary 
           <CardContent>
             <ul className="divide-y divide-border text-sm">
               {data.recentActivity.map((a) => (
-                <li key={a.id} className="flex items-center justify-between gap-3 py-2">
+                <li key={a.id} className="flex flex-wrap items-center justify-between gap-3 py-2">
                   <span>
                     <span className="text-muted-foreground">{a.at}</span> — {a.description}
                   </span>
