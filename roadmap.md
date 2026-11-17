@@ -1,5 +1,11 @@
 # Roadmap
 
+## Finance Phase 1 — Controlled mock-only foundation (2026-11-17)
+- [ ] Remove Finance permission network calls; retain deny-by-default presentation helper and existing TenantGate.
+- [ ] Isolate demo fixtures, verify currency precision and dashboard/navigation behavior.
+- [ ] Run Finance and regression tests, lint; document protected-file verification and unavailable checks.
+- [ ] Deliver file-by-file report; stop before Phase 2 (not authorised).
+
 ## Gate 1 — Backend initialization (APPROVED by project owner, 2026-10-06)
 - [ ] Enable Lovable Cloud / Supabase for the project
 - [ ] Preflight: confirm connection and environment
