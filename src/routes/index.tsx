@@ -8,7 +8,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Aibinu Flexiprep Global Learning Platform — engineering baseline shell. Modules: Student Management, NoteBank, CBT, Virtual Laboratory, AICAS, Finance, Analytics, Communication, Offline.",
+          "Aibinu Flexiprep Global Learning Platform — Student Management, NoteBank, CBT, Learning Progress, AI drafting and Finance for secondary schools.",
       },
       { property: "og:title", content: "Aibinu Flexiprep — Global Learning Platform" },
       {
@@ -23,17 +23,18 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
+// Status reflects what is wired in the app; the database (RLS + functions) is the authority for every module.
 const modules = [
-  { name: "Student Management", status: "Baseline" },
-  { name: "Academic / NoteBank", status: "Baseline" },
-  { name: "Reviewer Workflow", status: "Baseline" },
-  { name: "CBT Examinations", status: "Baseline" },
-  { name: "Virtual Laboratory", status: "Baseline" },
-  { name: "AICAS Intelligence", status: "Baseline" },
-  { name: "Finance", status: "Baseline" },
-  { name: "Analytics", status: "Baseline" },
-  { name: "Communication", status: "Baseline" },
-  { name: "Offline", status: "Baseline" },
+  { name: "Student Management", status: "Live — students, guardians, classes" },
+  { name: "Academic / NoteBank", status: "Live — notes with review workflow" },
+  { name: "Reviewer Workflow", status: "Live — notes and questions" },
+  { name: "CBT Examinations", status: "Live — exams, taking, marking, results" },
+  { name: "Virtual Laboratory", status: "Planned — needs schema design gate" },
+  { name: "AICAS Intelligence", status: "Live — learning progress, AI drafting (worker pending)" },
+  { name: "Finance", status: "Live — fees, invoices, manual payments, refunds" },
+  { name: "Analytics", status: "Partial — class topic maps in Learning Progress" },
+  { name: "Communication", status: "Planned — needs schema design gate" },
+  { name: "Offline", status: "Planned" },
 ];
 
 function Index() {
@@ -57,14 +58,12 @@ function Index() {
       <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-10 sm:px-6 sm:py-14">
         <section className="max-w-2xl">
           <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            Platform shell established
+            Aibinu Flexiprep platform
           </h1>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
-            This is the controlled engineering baseline for the Aibinu Flexiprep
-            Global Learning Platform. Architecture, security, database, and
-            module documentation are in place. No database is connected and no
-            business logic is implemented yet — the next approved gate is
-            Supabase preflight, followed by migration 001.
+            Curriculum-aligned teaching, assessment and school administration for
+            WAEC, NECO and UTME preparation. Choose a module below. New here?{" "}
+            <Link to="/welcome" className="font-medium text-primary underline underline-offset-4">Set up or join a school</Link>.
           </p>
           <div className="mt-5 flex flex-wrap gap-3">
             <Link to="/students" className="inline-flex rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground">Open Students</Link>
@@ -73,6 +72,9 @@ function Index() {
             <Link to="/cbt" className="inline-flex rounded-md border border-primary px-4 py-2 text-sm font-medium text-primary">Open CBT Exams</Link>
             <Link to="/curriculum" className="inline-flex rounded-md border border-primary px-4 py-2 text-sm font-medium text-primary">Open Curriculum Bank</Link>
             <Link to="/finance" className="inline-flex rounded-md border border-primary px-4 py-2 text-sm font-medium text-primary">Open Finance</Link>
+            <Link to="/learning" className="inline-flex rounded-md border border-primary px-4 py-2 text-sm font-medium text-primary">Open Learning Progress</Link>
+            <Link to="/ai" className="inline-flex rounded-md border border-primary px-4 py-2 text-sm font-medium text-primary">Open AI Drafting</Link>
+            <Link to="/members" className="inline-flex rounded-md border border-primary px-4 py-2 text-sm font-medium text-primary">People & Invitations</Link>
           </div>
         </section>
 
@@ -88,7 +90,7 @@ function Index() {
               >
                 <p className="text-sm font-medium text-card-foreground">{m.name}</p>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  {m.status} — not yet implemented
+                  {m.status}
                 </p>
               </div>
             ))}
@@ -99,8 +101,8 @@ function Index() {
       <footer className="border-t border-border">
         <div className="mx-auto w-full max-w-5xl px-4 py-4 sm:px-6">
           <p className="text-xs text-muted-foreground">
-            Aibinu Flexiprep — controlled engineering project. Gate 0 complete;
-            Gate 1 (Supabase preflight) requires explicit approval.
+            Aibinu Flexiprep — controlled engineering project. Every change ships
+            through an approved gate.
           </p>
         </div>
       </footer>

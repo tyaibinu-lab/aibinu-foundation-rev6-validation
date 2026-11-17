@@ -17,6 +17,16 @@ export const FINANCE_SECTIONS = [
   "Reports",
 ] as const;
 
+// Phase 2 live sections. Each page checks access itself; this nav makes no data calls.
+const LIVE_SECTION_ROUTES: Partial<Record<(typeof FINANCE_SECTIONS)[number], string>> = {
+  "Fee Catalogue": "/finance/catalogue",
+  Invoices: "/finance/invoices",
+  Payments: "/finance/payments",
+  "Student Accounts": "/finance/accounts",
+  Receipts: "/finance/my",
+  Refunds: "/finance/refunds",
+};
+
 export function FinanceShell({
   title,
   subtitle,
@@ -40,18 +50,19 @@ export function FinanceShell({
         </div>
         <nav aria-label="Finance sections" className="mx-auto max-w-6xl overflow-x-auto px-4 pb-3">
           <ul className="flex gap-2 text-sm">
-            {FINANCE_SECTIONS.map((s) =>
-              s === "Overview" ? (
+            {FINANCE_SECTIONS.map((s) => {
+              const to = s === "Overview" ? "/finance" : LIVE_SECTION_ROUTES[s];
+              return to ? (
                 <li key={s}>
                   <Link
-                    to="/finance"
-                    activeOptions={{ exact: true }}
+                    to={to as "/finance"}
+                    activeOptions={{ exact: s === "Overview" }}
                     activeProps={{
                       className: "underline decoration-accent decoration-2 underline-offset-4",
                     }}
                     className="whitespace-nowrap font-medium"
                   >
-                    Overview
+                    {s === "Receipts" ? "My fees & receipts" : s}
                   </Link>
                 </li>
               ) : (
@@ -64,8 +75,8 @@ export function FinanceShell({
                   {s}
                   <span className="text-[10px] uppercase">· soon</span>
                 </li>
-              ),
-            )}
+              );
+            })}
           </ul>
         </nav>
       </header>
