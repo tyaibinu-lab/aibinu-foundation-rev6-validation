@@ -1,6 +1,3 @@
-import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
-
 // Verified Rev6 finance permission codes (migration 001 catalogue). Role mappings live
 // only in the database. Everything here is UX only: RLS and SECURITY DEFINER checks in
 // migration 006 decide every finance read and write.
@@ -44,25 +41,17 @@ export function financeCapabilities(p: FinancePermissionMap): FinanceCapabilitie
   };
 }
 
-/** Uses the existing has_permission() check (same mechanism as Students). Read-only. */
-export async function fetchFinancePermissions(): Promise<FinancePermissionMap> {
-  const out = { ...EMPTY_FINANCE_PERMISSIONS };
-  await Promise.all(
-    FINANCE_PERMISSIONS.map(async (perm) => {
-      const res = await supabase.rpc("has_permission", { perm } as never);
-      if (res.error) throw res.error;
-      out[perm] = res.data === true;
-    }),
-  );
-  return out;
-}
-
-export function useFinanceAccess() {
-  const q = useQuery({
-    queryKey: ["finance", "perms"],
-    queryFn: fetchFinancePermissions,
-    retry: false,
-  });
-  const perms = q.data ?? EMPTY_FINANCE_PERMISSIONS;
-  return { perms, caps: financeCapabilities(perms), loading: q.isLoading, error: q.error };
+/**
+ * Offline Phase 1: no permission lookup or role assumptions. A later approved
+ * integration may supply permissions from the central mechanism. The demo
+ * overview is not permission-protected financial data; operations stay absent.
+ */
+export function useFinanceAccess(perms: FinancePermissionMap = EMPTY_FINANCE_PERMISSIONS) {
+  return {
+    perms,
+    caps: financeCapabilities(perms),
+    source: "offline" as const,
+    loading: false,
+    error: null,
+  };
 }

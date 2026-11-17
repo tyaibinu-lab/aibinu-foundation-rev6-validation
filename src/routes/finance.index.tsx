@@ -1,11 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
 import { DemoDataBanner, FinanceDashboardCards } from "@/components/finance/FinanceDashboardCards";
 import { FinanceShell } from "@/components/finance/FinanceShell";
 import { getDashboardSummary } from "@/lib/finance/api";
-import { useFinanceAccess } from "@/lib/finance/permissions";
 
 export const Route = createFileRoute("/finance/")({
   head: () => ({
@@ -25,8 +23,7 @@ export const Route = createFileRoute("/finance/")({
   component: FinanceOverview,
 });
 
-function FinanceOverview() {
-  const access = useFinanceAccess();
+export function FinanceOverview() {
   const summary = useQuery({
     queryKey: ["finance", "dashboard", "mock"],
     queryFn: getDashboardSummary,
@@ -37,39 +34,18 @@ function FinanceOverview() {
       title="Finance overview"
       subtitle="Fees, collections and expenditure at a glance."
     >
-      {access.loading ? (
-        <p role="status" className="text-sm text-muted-foreground">
-          Checking your finance access…
-        </p>
-      ) : access.error ? (
+      <DemoDataBanner />
+      {summary.isError ? (
         <Alert variant="destructive">
-          <AlertTitle>Could not check finance access</AlertTitle>
-          <AlertDescription>Please try again later.</AlertDescription>
+          <AlertTitle>Could not load demonstration figures</AlertTitle>
+          <AlertDescription>Please refresh this page.</AlertDescription>
         </Alert>
-      ) : !access.caps.canViewOrgOverview ? (
-        <Alert>
-          <AlertTitle>No access to the finance overview</AlertTitle>
-          <AlertDescription className="space-y-3">
-            <p>
-              The organisation overview needs finance staff access. Ask your administrator if you
-              need it.
-            </p>
-            <Button variant="outline" asChild>
-              <Link to="/">Home</Link>
-            </Button>
-          </AlertDescription>
-        </Alert>
+      ) : summary.data ? (
+        <FinanceDashboardCards data={summary.data} />
       ) : (
-        <>
-          <DemoDataBanner />
-          {summary.data ? (
-            <FinanceDashboardCards data={summary.data} />
-          ) : (
-            <p role="status" className="text-sm text-muted-foreground">
-              Loading…
-            </p>
-          )}
-        </>
+        <p role="status" className="text-sm text-muted-foreground">
+          Loading demonstration figures…
+        </p>
       )}
     </FinanceShell>
   );

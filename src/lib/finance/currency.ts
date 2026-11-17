@@ -4,6 +4,10 @@
 export type Kobo = bigint;
 
 const NAIRA_RE = /^(-)?(?:(\d{1,3}(?:,\d{3})+)|(\d+))(?:\.(\d{1,2}))?$/;
+const NGN_WHOLE_FORMAT = new Intl.NumberFormat("en-NG", {
+  useGrouping: true,
+  maximumFractionDigits: 0,
+});
 
 /** Parse a Naira string ("1,250.50", "-20", "0.5") to kobo. Throws on malformed input; never rounds. */
 export function nairaStringToKobo(input: string): Kobo {
@@ -33,7 +37,7 @@ export function koboToNairaString(kobo: Kobo | number | string): string {
   const k = toKobo(kobo);
   const neg = k < 0n;
   const abs = neg ? -k : k;
-  const whole = (abs / 100n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  const whole = NGN_WHOLE_FORMAT.format(abs / 100n);
   const frac = (abs % 100n).toString().padStart(2, "0");
   return `${neg ? "-" : ""}${whole}.${frac}`;
 }
